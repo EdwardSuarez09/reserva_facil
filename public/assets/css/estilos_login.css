@@ -1,0 +1,140 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  background-color: #000;
+}
+
+.fondo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('../img/Imagenes/fondo_login.png') no-repeat center center;
+  background-size: cover;
+  background-color: #000; /* por si la imagen no carga */
+  z-index: 0;
+}
+
+.login-container {
+  position: relative;
+  z-index: 1;
+  background: rgba(0, 0, 0, 0.85);
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  transform: translateX(-20px); /* centrado fino visual */
+}
+
+
+.login-container h2 {
+  margin-bottom: 25px;
+  color: white;
+}
+
+.login-container input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #aaa;
+  border-radius: 6px;
+  font-size: 16px;
+  background: #1f1f1f;
+  color: white;
+}
+
+.login-container button {
+  width: 100%;
+  background-color: #f39c12;
+  color: white;
+  border: none;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.login-container button:hover {
+  background-color: #e08e0b;
+}
+
+.error-msg {
+  color: red;
+  margin-top: 10px;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined');
+
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-size: 24px;
+  color: white;
+}
+
+
+
+
+.logo-superior {
+  text-align: center;
+  color: #f39c12;
+  margin-bottom: 15px;
+}
+
+.logo-superior h1 {
+  margin: 5px 0;
+  font-size: 24px;
+  letter-spacing: 1px;
+}
+
+.icono-campana {
+  font-size: 40px;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  background: #1f1f1f;
+  border: 1px solid #aaa;
+  border-radius: 6px;
+  padding: 0 10px;
+  margin-bottom: 15px;
+}
+
+.input-group input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: white;
+  font-size: 16px;
+  width: 100%;
+  padding: 12px;
+}
+.icono-campana {
+  font-size: 60px;
+  color: #f39c12;
+  display: block;
+  margin-bottom: 10px;
+}
+.icono-campana {
+  font-size: 60px !important;
+  color: #f39c12 !important;
+  display: inline-block;
+  line-height: 1;
+  margin-bottom: 10px;
+}
+input:-webkit-autofill {
+  box-shadow: 0 0 0 1000px #1f1f1f inset !important;
+  -webkit-text-fill-color: white !important;
+  caret-color: white;
+  border-radius: 6px;
+}

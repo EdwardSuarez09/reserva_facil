@@ -1,0 +1,417 @@
+/* ================================
+   ESTILOS PANEL ADMINISTRACIÓN
+   ================================ */
+
+/* Reset específico para el panel */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f5f7fa;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ================================
+   NAVEGACIÓN LATERAL MEJORADA
+   ================================ */
+
+.sidebar-nav {
+  width: 280px;
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 2px 0 15px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.nav-header {
+  padding: 25px 20px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nav-logo {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin-bottom: 15px;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.nav-logo:hover {
+  transform: scale(1.05);
+}
+
+.nav-title {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #ecf0f1;
+}
+
+.nav-subtitle {
+  margin: 5px 0 0 0;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 300;
+}
+
+.nav-menu {
+  flex: 1;
+  padding: 20px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 20px;
+  margin: 5px 0;
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  width: 100%;
+  max-width: 220px;
+  text-align: center;
+}
+
+.nav-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  transform: translateX(5px);
+}
+
+.nav-link.active {
+  background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+  color: white;
+  box-shadow: 0 3px 10px rgba(243, 156, 18, 0.3);
+}
+
+.nav-icon {
+  font-size: 1.2rem;
+  margin-right: 12px;
+  width: 24px;
+  text-align: center;
+}
+
+.nav-text {
+  font-size: 0.95rem;
+}
+
+.nav-footer {
+  padding: 15px 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nav-link.logout {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.nav-link.logout:hover {
+  background: rgba(231, 76, 60, 0.2);
+  color: #e74c3c;
+}
+
+/* ================================
+   CONTENIDO PRINCIPAL
+   ================================ */
+
+.main-content {
+  flex: 1;
+  margin-left: 280px;
+  padding: 0;
+  background: #f5f7fa;
+  min-height: 100vh;
+}
+
+.dashboard-header {
+  background: white;
+  padding: 30px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid #ecf0f1;
+}
+
+.header-content {
+  margin-bottom: 25px;
+}
+
+.page-title {
+  font-size: 2.2rem;
+  color: #2c3e50;
+  margin: 0 0 8px 0;
+  font-weight: 300;
+}
+
+.page-subtitle {
+  color: #7f8c8d;
+  font-size: 1.1rem;
+  margin: 0;
+  font-weight: 400;
+}
+
+.header-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.stat-card {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 3px 15px rgba(52, 152, 219, 0.2);
+  transition: transform 0.3s ease;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+}
+
+.stat-number {
+  display: block;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ================================
+   SECCIONES DE CONTENIDO
+   ================================ */
+
+.quick-actions,
+.restaurant-info {
+  padding: 30px;
+}
+
+.section-title {
+  font-size: 1.8rem;
+  color: #2c3e50;
+  margin: 0 0 25px 0;
+  font-weight: 400;
+}
+
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
+}
+
+.action-card {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s ease;
+  border: 1px solid #ecf0f1;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.action-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  border-color: #f39c12;
+}
+
+.action-icon {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+  display: block;
+}
+
+.action-card h3 {
+  font-size: 1.3rem;
+  color: #2c3e50;
+  margin: 0 0 10px 0;
+  font-weight: 600;
+}
+
+.action-card p {
+  color: #7f8c8d;
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* ================================
+   PREVIEW DEL RESTAURANTE
+   ================================ */
+
+.restaurant-preview {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+  border: 1px solid #ecf0f1;
+}
+
+.loading-message {
+  text-align: center;
+  color: #7f8c8d;
+  font-style: italic;
+  padding: 40px 20px;
+}
+
+.error-message {
+  text-align: center;
+  color: #e74c3c;
+  padding: 40px 20px;
+  background: rgba(231, 76, 60, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(231, 76, 60, 0.2);
+}
+
+/* ================================
+   RESPONSIVE DESIGN
+   ================================ */
+
+@media (max-width: 1024px) {
+  .sidebar-nav {
+    width: 260px;
+  }
+  
+  .main-content {
+    margin-left: 260px;
+  }
+  
+  .header-stats {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar-nav {
+    width: 100%;
+    position: relative;
+    height: auto;
+  }
+  
+  .main-content {
+    margin-left: 0;
+  }
+  
+  .dashboard-header {
+    padding: 20px;
+  }
+  
+  .page-title {
+    font-size: 1.8rem;
+  }
+  
+  .header-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  
+  .stat-number {
+    font-size: 2rem;
+  }
+  
+  .quick-actions,
+  .restaurant-info {
+    padding: 20px;
+  }
+  
+  .actions-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .nav-menu {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    padding: 15px;
+  }
+  
+  .nav-header {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-header {
+    padding: 15px;
+  }
+  
+  .page-title {
+    font-size: 1.5rem;
+  }
+  
+  .page-subtitle {
+    font-size: 1rem;
+  }
+  
+  .header-stats {
+    grid-template-columns: 1fr;
+  }
+  
+  .quick-actions,
+  .restaurant-info {
+    padding: 15px;
+  }
+  
+  .section-title {
+    font-size: 1.5rem;
+  }
+}
+
+/* ================================
+   ANIMACIONES
+   ================================ */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.action-card,
+.stat-card {
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+/* Efectos de hover mejorados */
+.action-card:hover .action-icon {
+  transform: scale(1.1);
+  transition: transform 0.3s ease;
+}
+
+.stat-card:hover .stat-number {
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
+} 

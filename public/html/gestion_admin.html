@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Administradores - ReservaFácil</title>
+    <link rel="stylesheet" href="../assets/css/gestion_moderna.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navegación lateral -->
+    <nav class="sidebar-nav">
+        <div class="nav-header">
+            <img src="../assets/img/Imagenes/DALL·E 2024-11-06 21.54.50 - An elegant logo for a restaurant, featuring a stylized fork and knife crossed over a plate with subtle decorative elements. The background should be s.webp" alt="Logo ReservaFácil" class="nav-logo">
+            <h3 class="nav-title">Panel SuperAdmin</h3>
+            <p class="nav-subtitle">Control Total del Sistema</p>
+        </div>
+        
+        <div class="nav-menu">
+            <a href="../index_superadmin.html" class="nav-link">
+                <span class="nav-icon"></span>
+                <span class="nav-text">Inicio</span>
+            </a>
+            <a href="gestion_admin.html" class="nav-link active">
+                <span class="nav-icon"></span>
+                <span class="nav-text">Administradores</span>
+            </a>
+            <a href="gestion_restaurantes.html" class="nav-link">
+                <span class="nav-icon"></span>
+                <span class="nav-text">Restaurantes</span>
+            </a>
+            <a href="gestion_todas_categorias.html" class="nav-link">
+                <span class="nav-icon"></span>
+                <span class="nav-text">Todas las Categorías</span>
+            </a>
+            <a href="gestion_todos_platos.html" class="nav-link">
+                <span class="nav-icon"></span>
+                <span class="nav-text">Todos los Platos</span>
+            </a>
+            <a href="gestion_todas_mesas.html" class="nav-link">
+                <span class="nav-icon"></span>
+                <span class="nav-text">Todas las Mesas</span>
+            </a>
+            <a href="ver_todas_reservas.html" class="nav-link">
+                <span class="nav-icon"></span>
+                <span class="nav-text">Todas las Reservas</span>
+            </a>
+        </div>
+        
+        <div class="nav-footer">
+            <a href="../../src/api/auth/logout.php" class="nav-link logout">
+                <span class="nav-icon"></span>
+                <span class="nav-text">Cerrar Sesión</span>
+            </a>
+        </div>
+  </nav>
+
+    <!-- Contenido principal -->
+    <main class="main-content">
+        <!-- Header de la página -->
+        <header class="page-header">
+            <div class="header-content">
+                <div class="header-text">
+                    <h1 class="page-title">Gestión de Administradores</h1>
+                    <p class="page-subtitle">Administra los usuarios con permisos administrativos del sistema</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-export" onclick="exportarAdmins()">
+                        Exportar Lista
+                    </button>
+                    <button class="btn btn-refresh" onclick="actualizarDatos()">
+                        Actualizar
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Sección de estadísticas -->
+        <section class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon"></div>
+                    <div class="stat-content">
+                        <span class="stat-number" id="total-admins">-</span>
+                        <span class="stat-label">Total Administradores</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"></div>
+                    <div class="stat-content">
+                        <span class="stat-number" id="total-superadmins">-</span>
+                        <span class="stat-label">Super Administradores</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"></div>
+                    <div class="stat-content">
+                        <span class="stat-number" id="total-usuarios">-</span>
+                        <span class="stat-label">Usuarios Normales</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"></div>
+                    <div class="stat-content">
+                        <span class="stat-number" id="ultimo-admin">-</span>
+                        <span class="stat-label">Último Registrado</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contenedor principal -->
+        <div class="content-grid">
+            <!-- Formulario de registro -->
+            <section class="form-section">
+                <div class="form-container-modern">
+                    <div class="form-header">
+                        <h2 class="form-title">Registrar Nuevo Administrador</h2>
+                        <p class="form-subtitle">Completa los datos para crear un nuevo administrador</p>
+                    </div>
+
+                    <form id="formRegistro" class="form-modern">
+                        <div class="input-group">
+                            <label for="nombre" class="input-label">Nombre Completo</label>
+                            <input type="text" id="nombre" name="nombre" class="input-modern" required>
+                            <div class="input-helper">Nombre y apellidos del administrador</div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="correo" class="input-label">Correo Electrónico</label>
+                            <input type="email" id="correo" name="correo" class="input-modern" required>
+                            <div class="input-helper">Correo para acceso al sistema</div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="contraseña" class="input-label">Contraseña</label>
+                            <input type="password" id="contraseña" name="contraseña" class="input-modern" required>
+                            <div class="input-helper">Mínimo 6 caracteres</div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="rol" class="input-label">Rol del Usuario</label>
+                            <select id="rol" name="rol" class="select-modern" required>
+                                <option value="">Seleccionar rol</option>
+                                <option value="superadmin">Super Administrador</option>
+                                <option value="admin">Administrador</option>
+                                <option value="usuario">Usuario</option>
+                            </select>
+                            <div class="input-helper">Nivel de permisos en el sistema</div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                Registrar Administrador
+                            </button>
+                            <button type="reset" class="btn btn-secondary">
+                                Limpiar
+                            </button>
+                        </div>
+                        
+                        <div id="respuesta" class="form-message"></div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Lista de administradores -->
+            <section class="data-section">
+                <div class="section-header">
+                    <h2 class="section-title">Administradores Registrados</h2>
+                    
+                    <!-- Filtros -->
+                    <div class="filters-section">
+                        <div class="filters-grid">
+                            <div class="filter-group">
+                                <label for="filtro-rol" class="filter-label">Rol</label>
+                                <select id="filtro-rol" class="filter-select">
+                                    <option value="">Todos los roles</option>
+            <option value="superadmin">Super Admin</option>
+            <option value="admin">Admin</option>
+            <option value="usuario">Usuario</option>
+          </select>
+                            </div>
+                            
+                            <div class="filter-group">
+                                <label for="filtro-buscar" class="filter-label">Buscar</label>
+                                <input type="text" id="filtro-buscar" class="filter-input" placeholder="Nombre o correo...">
+    </div>
+
+                            <div class="filters-actions">
+                                <button class="btn btn-info" onclick="limpiarFiltros()">Limpiar</button>
+                            </div>
+                        </div>
+    </div>
+  </div>
+
+                <div class="data-container">
+                    <div id="tabla-admins" class="table-content">
+                        <div class="loading-state">
+                            <div class="loading-spinner"></div>
+                            <p>Cargando administradores...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Modal de edición -->
+  <div id="modalEditar" class="modal">
+    <div class="modal-content">
+            <div class="modal-header">
+                <h3>Editar Administrador</h3>
+                <button class="modal-close" onclick="cerrarModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="formEditar" class="form-modern">
+        <input type="hidden" name="id" id="edit-id">
+                    
+                    <div class="input-group">
+                        <label for="edit-nombre" class="input-label">Nombre Completo</label>
+                        <input type="text" id="edit-nombre" name="nombre" class="input-modern" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="edit-correo" class="input-label">Correo Electrónico</label>
+                        <input type="email" id="edit-correo" name="correo" class="input-modern" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="edit-contraseña" class="input-label">Nueva Contraseña</label>
+                        <input type="password" id="edit-contraseña" name="contraseña" class="input-modern">
+                        <div class="input-helper">Dejar vacío para mantener la actual</div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="edit-rol" class="input-label">Rol del Usuario</label>
+                        <select id="edit-rol" name="rol" class="select-modern" required>
+                            <option value="superadmin">Super Administrador</option>
+                            <option value="admin">Administrador</option>
+            <option value="usuario">Usuario</option>
+          </select>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                        <button type="button" class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button>
+                    </div>
+      </form>
+            </div>
+    </div>
+  </div>
+
+    
+  <script>
+        // Configuración específica para administradores
+        const GESTION_CONFIG = {
+            tipo: 'admin',
+            endpoints: {
+                insertar: '../../src/api/admins/crear.php',
+                listar: '../../src/api/admins/listar.php',
+                editar: '../../src/api/admins/editar.php',
+                eliminar: '../../src/api/admins/eliminar.php',
+                obtener: '../../src/api/admins/obtener.php',
+                estadisticas: '../../src/api/admins/estadisticas_todos.php'
+            }
+        };
+
+        // Inicialización de la página
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarEstadisticas();
+            cargarAdmins();
+            configurarFiltros();
+            configurarFormularios();
+        });
+
+        // Cargar estadísticas
+        function cargarEstadisticas() {
+            fetch(GESTION_CONFIG.endpoints.estadisticas)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('total-admins').textContent = data.total_admins || '0';
+                    document.getElementById('total-superadmins').textContent = data.total_superadmins || '0';
+                    document.getElementById('total-usuarios').textContent = data.total_usuarios || '0';
+                    document.getElementById('ultimo-admin').textContent = data.ultimo_admin || 'Ninguno';
+                })
+                .catch(error => {
+                    console.error('Error cargando estadísticas:', error);
+                    mostrarAlerta('Error al cargar estadísticas', 'error');
+                });
+        }
+
+        // Cargar lista de administradores
+        function cargarAdmins() {
+            const tableContent = document.getElementById('tabla-admins');
+            tableContent.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div><p>Cargando administradores...</p></div>';
+
+            fetch(GESTION_CONFIG.endpoints.listar)
+                .then(response => response.text())
+                .then(data => {
+                    tableContent.innerHTML = data;
+                })
+                .catch(error => {
+                    console.error('Error cargando administradores:', error);
+                    tableContent.innerHTML = '<div class="error-state"><p>Error al cargar administradores</p></div>';
+                });
+        }
+
+        // Configurar formularios
+        function configurarFormularios() {
+            // Formulario de registro
+            document.getElementById('formRegistro').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+
+                fetch(GESTION_CONFIG.endpoints.insertar, {
+                    method: 'POST',
+                    body: formData
+      })
+      .then(response => response.text())
+      .then(data => {
+                    const esError = data.toLowerCase().includes('error');
+                    document.getElementById('respuesta').textContent = data;
+                    document.getElementById('respuesta').className = esError ? 'form-message error' : 'form-message success';
+                    
+                    if (!esError) {
+                        this.reset();
+        cargarAdmins();
+                        cargarEstadisticas();
+                    }
+      })
+      .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('respuesta').textContent = 'Error en la solicitud';
+                    document.getElementById('respuesta').className = 'form-message error';
+      });
+    });
+
+            // Formulario de edición
+            document.getElementById('formEditar').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+
+                fetch(GESTION_CONFIG.endpoints.editar, {
+                    method: 'POST',
+                    body: formData
+                })
+        .then(response => response.text())
+        .then(data => {
+                    alert(data);
+                    cerrarModal();
+                    cargarAdmins();
+                    cargarEstadisticas();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al editar administrador');
+                });
+            });
+        }
+
+        // Configurar filtros
+        function configurarFiltros() {
+            const filtroRol = document.getElementById('filtro-rol');
+            const filtroBuscar = document.getElementById('filtro-buscar');
+
+            filtroRol.addEventListener('change', aplicarFiltros);
+            filtroBuscar.addEventListener('input', debounce(aplicarFiltros, 300));
+        }
+
+        // Aplicar filtros
+        function aplicarFiltros() {
+            const rol = document.getElementById('filtro-rol').value.toLowerCase();
+            const buscar = document.getElementById('filtro-buscar').value.toLowerCase();
+            const filas = document.querySelectorAll('#tabla-admins tr');
+
+            filas.forEach(fila => {
+                if (fila.querySelector('th')) return; // Skip header
+
+                const celdas = fila.querySelectorAll('td');
+                if (celdas.length === 0) return;
+
+                const nombre = celdas[0]?.textContent.toLowerCase() || '';
+                const correo = celdas[1]?.textContent.toLowerCase() || '';
+                const rolAdmin = celdas[2]?.textContent.toLowerCase() || '';
+
+                const coincideRol = !rol || rolAdmin.includes(rol);
+                const coincideBuscar = !buscar || nombre.includes(buscar) || correo.includes(buscar);
+
+                fila.style.display = (coincideRol && coincideBuscar) ? '' : 'none';
+            });
+        }
+
+        // Limpiar filtros
+        function limpiarFiltros() {
+            document.getElementById('filtro-rol').value = '';
+            document.getElementById('filtro-buscar').value = '';
+            aplicarFiltros();
+        }
+
+        // Editar administrador
+        function editarAdmin(id) {
+            fetch(`${GESTION_CONFIG.endpoints.obtener}?id=${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('edit-id').value = data.id;
+                    document.getElementById('edit-nombre').value = data.nombre;
+                    document.getElementById('edit-correo').value = data.correo;
+                    document.getElementById('edit-contraseña').value = '';
+                    document.getElementById('edit-rol').value = data.rol;
+                    
+                    document.getElementById('modalEditar').style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al cargar datos del administrador');
+                });
+        }
+
+        // Eliminar administrador
+    function eliminarAdmin(id) {
+            if (confirm('¿Estás seguro de que deseas eliminar este administrador?')) {
+        const formData = new FormData();
+                formData.append('id', id);
+
+                fetch(GESTION_CONFIG.endpoints.eliminar, {
+                    method: 'POST',
+          body: formData
+        })
+        .then(response => response.text())
+        .then(data => {
+          alert(data);
+          cargarAdmins();
+                    cargarEstadisticas();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al eliminar administrador');
+        });
+      }
+    }
+
+        // Cerrar modal
+        function cerrarModal() {
+            document.getElementById('modalEditar').style.display = 'none';
+        }
+
+        // Actualizar datos
+        function actualizarDatos() {
+            cargarEstadisticas();
+            cargarAdmins();
+            document.getElementById('respuesta').textContent = 'Datos actualizados';
+            document.getElementById('respuesta').className = 'form-message success';
+        }
+
+        // Exportar administradores
+        function exportarAdmins() {
+            window.open('../../src/api/admins/exportar.php', '_blank');
+        }
+
+        // Utility function para debounce
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Validación de sesión
+    fetch('../../src/helpers/validar_sesion.php')
+      .then(res => res.text())
+      .then(data => {
+        if (data !== "ok") {
+          window.location.href = "login.html";
+        }
+      });
+  </script>
+</body>
+</html>

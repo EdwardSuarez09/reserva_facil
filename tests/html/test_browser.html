@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test de Comunicación</title>
+</head>
+<body>
+    <h1>Test de Comunicación PHP - Mesas Disponibles</h1>
+    <button onclick="testPHP()">Probar Búsqueda de Mesas</button>
+    <div id="result"></div>
+
+    <script>
+        function testPHP() {
+            // Generar fecha de mañana
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const dateStr = tomorrow.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+            
+            const url = `../../src/api/mesas/disponibilidad_clean.php?restaurante=Calipollo&fecha=${dateStr}&hora=20:00&personas=2`;
+            
+            console.log('Intentando conectar a:', url);
+            
+            fetch(url)
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Success:', data);
+                    if (data.success) {
+                        document.getElementById('result').innerHTML = `
+                            <h3>✅ ÉXITO</h3>
+                            <p><strong>Restaurante:</strong> ${data.restaurante.nombre}</p>
+                            <p><strong>Fecha:</strong> ${data.fecha}</p>
+                            <p><strong>Hora:</strong> ${data.hora}</p>
+                            <p><strong>Personas:</strong> ${data.personas}</p>
+                            <p><strong>Mesas Disponibles:</strong> ${data.mesas_disponibles.length}</p>
+                            <p><strong>Debug:</strong> Total: ${data.debug.total_mesas}, Ocupadas: ${data.debug.mesas_ocupadas}, Disponibles: ${data.debug.mesas_disponibles}</p>
+                            <h4>Mesas:</h4>
+                            <ul>
+                                ${data.mesas_disponibles.map(mesa => `<li>Mesa ${mesa.numero_mesa} (Capacidad: ${mesa.capacidad})</li>`).join('')}
+                            </ul>
+                        `;
+                    } else {
+                        document.getElementById('result').innerHTML = `
+                            <h3>❌ ERROR</h3>
+                            <p>${data.error}</p>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('result').innerHTML = `
+                        <h3>❌ ERROR</h3>
+                        <p>${error.message}</p>
+                    `;
+                });
+        }
+    </script>
+</body>
+</html> 

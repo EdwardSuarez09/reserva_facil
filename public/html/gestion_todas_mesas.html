@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Todas las Mesas - ReservaFácil</title>
+  <link rel="stylesheet" href="../assets/css/estilos_principal.css">
+  <link rel="stylesheet" href="../assets/css/panel_superadmin.css">
+  <link rel="stylesheet" href="../assets/css/gestion_moderna.css">
+</head>
+<body>
+  <!-- Navegación lateral -->
+  <nav class="sidebar-nav">
+    <div class="nav-header">
+      <img src="../assets/img/Imagenes/DALL·E 2024-11-06 21.54.50 - An elegant logo for a restaurant, featuring a stylized fork and knife crossed over a plate with subtle decorative elements. The background should be s.webp" alt="Logo ReservaFácil" class="nav-logo">
+      <h3 class="nav-title">Panel SuperAdmin</h3>
+      <p class="nav-subtitle">Control Total del Sistema</p>
+    </div>
+    
+    <div class="nav-menu">
+      <a href="../index_superadmin.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Inicio</span>
+      </a>
+      <a href="gestion_admin.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Administradores</span>
+      </a>
+      <a href="gestion_restaurantes.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Restaurantes</span>
+      </a>
+      <a href="ver_todas_reservas.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Reservas</span>
+      </a>
+      <a href="gestion_todas_categorias.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Categorías</span>
+      </a>
+      <a href="gestion_todos_platos.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Platos</span>
+      </a>
+      <a href="gestion_todas_mesas.html" class="nav-link active">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Mesas</span>
+      </a>
+      <a href="../index_cliente.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Catálogo Público</span>
+      </a>
+    </div>
+    
+    <div class="nav-footer">
+      <a href="login.html" class="nav-link logout">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Cerrar Sesión</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Contenido principal -->
+  <main class="main-content">
+    <!-- Header de la página -->
+    <header class="page-header">
+      <div class="header-content">
+        <div class="header-text">
+          <h1 class="page-title">Gestión de Todas las Mesas</h1>
+          <p class="page-subtitle">Administra todas las mesas de todos los restaurantes del sistema</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-export" onclick="exportarDatos()">
+            Exportar Datos
+          </button>
+          <button class="btn btn-refresh" onclick="actualizarLista()">
+            Actualizar
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Filtros avanzados -->
+    <section class="filters-section">
+      <div class="filters-container">
+        <h3 class="filters-title">Filtros Avanzados</h3>
+        <div class="filters-grid">
+          <div class="filter-group">
+            <label for="filtro-restaurante">Restaurante:</label>
+            <select id="filtro-restaurante" class="filter-select">
+              <option value="">Todos los restaurantes</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="filtro-capacidad">Capacidad:</label>
+            <select id="filtro-capacidad" class="filter-select">
+              <option value="">Todas las capacidades</option>
+              <option value="1-2">1-2 personas</option>
+              <option value="3-4">3-4 personas</option>
+              <option value="5-6">5-6 personas</option>
+              <option value="7+">7+ personas</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="filtro-estado">Estado:</label>
+            <select id="filtro-estado" class="filter-select">
+              <option value="">Todos los estados</option>
+              <option value="disponible">Disponible</option>
+              <option value="ocupada">Ocupada</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="buscar-mesa">Buscar mesa:</label>
+            <input type="text" id="buscar-mesa" placeholder="Número de mesa..." class="filter-input">
+          </div>
+        </div>
+        <div class="filters-actions">
+          <button class="btn btn-primary" onclick="aplicarFiltros()">Aplicar Filtros</button>
+          <button class="btn btn-secondary" onclick="limpiarFiltros()">Limpiar</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Estadísticas rápidas -->
+    <section class="stats-section">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon"></div>
+          <div class="stat-content">
+            <span class="stat-number" id="total-mesas-stats">-</span>
+            <span class="stat-label">Total Mesas</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"></div>
+          <div class="stat-content">
+            <span class="stat-number" id="mesas-ocupadas">-</span>
+            <span class="stat-label">Mesas Ocupadas</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"></div>
+          <div class="stat-content">
+            <span class="stat-number" id="capacidad-total">-</span>
+            <span class="stat-label">Capacidad Total</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"></div>
+          <div class="stat-content">
+            <span class="stat-number" id="restaurantes-con-mesas">-</span>
+            <span class="stat-label">Restaurantes con Mesas</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Lista de mesas -->
+    <section class="data-section">
+      <div class="section-header">
+        <h2 class="section-title">Listado de Mesas</h2>
+        <div class="section-actions">
+          <div class="view-options">
+            <button class="view-btn active" data-view="table">Tabla</button>
+            <button class="view-btn" data-view="cards">Tarjetas</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="data-container" id="mesas-container">
+        <div class="loading-state">
+          <div class="loading-spinner"></div>
+          <p>Cargando mesas del sistema...</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal para detalles de la mesa -->
+  <div id="modal-detalle-mesa" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Detalles de la Mesa</h3>
+        <button class="modal-close" onclick="cerrarModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="detalle-mesa-content">
+        <!-- Contenido dinámico -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para reservas de la mesa -->
+  <div id="modal-reservas-mesa" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Reservas de la Mesa</h3>
+        <button class="modal-close" onclick="cerrarModalReservas()">&times;</button>
+      </div>
+      <div class="modal-body" id="reservas-mesa-content">
+        <!-- Contenido dinámico -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Variables globales
+    let currentView = 'table';
+    let currentFilters = {};
+
+    // Inicialización
+    document.addEventListener('DOMContentLoaded', function() {
+      cargarDatos();
+      cargarFiltros();
+      configurarEventos();
+    });
+
+    function cargarDatos() {
+      fetch('../../src/api/mesas/listar_todas.php')
+        .then(response => response.text())
+        .then(html => {
+          document.getElementById('mesas-container').innerHTML = html;
+          cargarEstadisticas();
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          document.getElementById('mesas-container').innerHTML = 
+            '<div class="error-message">Error al cargar las mesas.</div>';
+        });
+    }
+
+    function cargarFiltros() {
+      // Cargar restaurantes para filtro
+      fetch('../../src/api/restaurantes/listar_json.php')
+        .then(response => response.json())
+        .then(restaurantes => {
+          const select = document.getElementById('filtro-restaurante');
+          restaurantes.forEach(rest => {
+            const option = new Option(rest.nombre, rest.id);
+            select.add(option);
+          });
+        });
+    }
+
+    function cargarEstadisticas() {
+      console.log('🔄 Cargando estadísticas de mesas...');
+      
+      // Cargar estadísticas reales desde el servidor (con timestamp para evitar cache)
+      const timestamp = new Date().getTime();
+      fetch(`../../src/api/mesas/estadisticas.php?t=${timestamp}`)
+        .then(response => {
+          console.log('📊 Respuesta recibida:', response.status);
+          return response.json();
+        })
+        .then(stats => {
+          console.log('📊 Estadísticas recibidas:', stats);
+          document.getElementById('total-mesas-stats').textContent = stats.total_mesas || '0';
+          document.getElementById('mesas-ocupadas').textContent = stats.mesas_ocupadas || '0';
+          document.getElementById('capacidad-total').textContent = stats.capacidad_total || '0';
+          
+          // Para restaurantes con mesas, necesitamos una consulta adicional
+          fetch(`../../src/api/restaurantes/estadisticas.php?t=${timestamp}`)
+            .then(response => response.json())
+            .then(restStats => {
+              console.log('🏪 Estadísticas de restaurantes:', restStats);
+              document.getElementById('restaurantes-con-mesas').textContent = restStats.total_restaurantes || '0';
+            })
+            .catch(error => {
+              console.error('❌ Error cargando estadísticas de restaurantes:', error);
+              document.getElementById('restaurantes-con-mesas').textContent = '0';
+            });
+        })
+        .catch(error => {
+          console.error('❌ Error cargando estadísticas de mesas:', error);
+          // Valores por defecto en caso de error
+          document.getElementById('total-mesas-stats').textContent = '0';
+          document.getElementById('mesas-ocupadas').textContent = '0';
+          document.getElementById('capacidad-total').textContent = '0';
+          document.getElementById('restaurantes-con-mesas').textContent = '0';
+        });
+    }
+
+    function configurarEventos() {
+      // Configurar cambio de vista
+      document.querySelectorAll('.view-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          currentView = this.dataset.view;
+          cambiarVista();
+        });
+      });
+    }
+
+    function cambiarVista() {
+      const container = document.getElementById('mesas-container');
+      if (currentView === 'cards') {
+        container.classList.add('cards-view');
+      } else {
+        container.classList.remove('cards-view');
+      }
+    }
+
+    function aplicarFiltros() {
+      console.log('Aplicando filtros...');
+      cargarDatos();
+    }
+
+    function limpiarFiltros() {
+      document.getElementById('filtro-restaurante').value = '';
+      document.getElementById('filtro-capacidad').value = '';
+      document.getElementById('filtro-estado').value = '';
+      document.getElementById('buscar-mesa').value = '';
+      cargarDatos();
+    }
+
+    function actualizarLista() {
+      cargarDatos();
+    }
+
+    function exportarDatos() {
+      alert('Función de exportación en desarrollo');
+    }
+
+    function verDetalleMesa(id) {
+      document.getElementById('modal-detalle-mesa').style.display = 'block';
+      console.log('Mostrando detalles de la mesa:', id);
+    }
+
+    function verReservasMesa(id) {
+      document.getElementById('modal-reservas-mesa').style.display = 'block';
+      console.log('Mostrando reservas de la mesa:', id);
+    }
+
+    function cerrarModal() {
+      document.getElementById('modal-detalle-mesa').style.display = 'none';
+    }
+
+    function cerrarModalReservas() {
+      document.getElementById('modal-reservas-mesa').style.display = 'none';
+    }
+
+    // Cerrar modales al hacer clic fuera
+    document.addEventListener('click', function(event) {
+      const modalDetalle = document.getElementById('modal-detalle-mesa');
+      const modalReservas = document.getElementById('modal-reservas-mesa');
+      
+      if (event.target === modalDetalle) {
+        modalDetalle.style.display = 'none';
+      }
+      if (event.target === modalReservas) {
+        modalReservas.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html> 

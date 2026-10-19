@@ -1,0 +1,386 @@
+/* Estilos para Gestión de Reservas */
+
+.descripcion-gestion {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  color: #666;
+  margin-bottom: 20px;
+  border-left: 4px solid #007bff;
+}
+
+.estado-pendiente { 
+  background: #fff3cd; 
+  color: #856404; 
+  padding: 4px 8px; 
+  border-radius: 12px; 
+  font-size: 0.9em; 
+  font-weight: 500; 
+}
+
+.estado-confirmada { 
+  background: #d4edda; 
+  color: #155724; 
+  padding: 4px 8px; 
+  border-radius: 12px; 
+  font-size: 0.9em; 
+  font-weight: 500; 
+}
+
+.estado-completada { 
+  background: #d1ecf1; 
+  color: #0c5460; 
+  padding: 4px 8px; 
+  border-radius: 12px; 
+  font-size: 0.9em; 
+  font-weight: 500; 
+}
+
+.estado-cancelada { 
+  background: #f8d7da; 
+  color: #721c24; 
+  padding: 4px 8px; 
+  border-radius: 12px; 
+  font-size: 0.9em; 
+  font-weight: 500; 
+}
+
+.tabla-datos { 
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.tabla-datos th { 
+  background: #2c3e50; 
+  color: white; 
+  padding: 12px; 
+  text-align: left; 
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.9em;
+  letter-spacing: 0.5px;
+}
+
+.tabla-datos td { 
+  padding: 10px; 
+  border-bottom: 1px solid #eee; 
+  vertical-align: middle;
+}
+
+.tabla-datos tr:hover { 
+  background: #f8f9fa; 
+}
+
+.tabla-datos tr:last-child td {
+  border-bottom: none;
+}
+
+.acciones {
+  text-align: center;
+  white-space: nowrap;
+}
+
+.acciones button { 
+  margin: 0 2px; 
+  padding: 6px 12px; 
+  border: none; 
+  border-radius: 4px; 
+  cursor: pointer; 
+  font-size: 0.9em;
+  transition: all 0.3s ease;
+}
+
+.btn-editar { 
+  background: #007bff; 
+  color: white; 
+}
+
+.btn-editar:hover {
+  background: #0056b3;
+  transform: translateY(-1px);
+}
+
+.btn-eliminar { 
+  background: #dc3545; 
+  color: white; 
+}
+
+.btn-eliminar:hover {
+  background: #c82333;
+  transform: translateY(-1px);
+}
+
+.paginacion { 
+  text-align: center; 
+  margin: 20px 0; 
+}
+
+.btn-paginacion { 
+  padding: 8px 12px; 
+  margin: 0 2px; 
+  text-decoration: none; 
+  border: 1px solid #ddd; 
+  color: #007bff; 
+  border-radius: 4px; 
+  transition: all 0.3s ease;
+}
+
+.btn-paginacion:hover {
+  background: #f8f9fa;
+  border-color: #007bff;
+}
+
+.btn-paginacion.active { 
+  background: #007bff; 
+  color: white; 
+  border-color: #007bff;
+}
+
+.mensaje-vacio { 
+  text-align: center; 
+  color: #666; 
+  font-style: italic; 
+  margin: 20px 0; 
+  padding: 40px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.campo-doble {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.campo-triple {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+/* Estilo específico para campos de duración */
+.duracion-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.duracion-container input {
+  width: 80px;
+}
+
+.duracion-container span {
+  color: #666;
+  font-size: 0.9em;
+}
+
+/* Contenedor de información del cliente */
+.cliente-info {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border-left: 4px solid #007bff;
+}
+
+.cliente-info h4 {
+  margin: 0 0 10px 0;
+  color: #2c3e50;
+  font-size: 1.1em;
+}
+
+.cliente-info .cliente-datos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+  font-size: 0.9em;
+}
+
+.cliente-info .cliente-datos span {
+  color: #666;
+}
+
+.cliente-info .cliente-datos strong {
+  color: #333;
+}
+
+/* Indicadores de estado visual */
+.estado-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.estado-indicator::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.estado-pendiente::before {
+  background: #ffc107;
+}
+
+.estado-confirmada::before {
+  background: #28a745;
+}
+
+.estado-completada::before {
+  background: #17a2b8;
+}
+
+.estado-cancelada::before {
+  background: #dc3545;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .campo-doble,
+  .campo-triple {
+    grid-template-columns: 1fr;
+  }
+  
+  .tabla-datos {
+    font-size: 0.9em;
+  }
+  
+  .tabla-datos th,
+  .tabla-datos td {
+    padding: 8px 4px;
+  }
+  
+  .cliente-info .cliente-datos {
+    grid-template-columns: 1fr;
+  }
+  
+  .acciones {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .acciones button {
+    font-size: 0.8em;
+    padding: 4px 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tabla-datos {
+    font-size: 0.8em;
+  }
+  
+  .tabla-datos th,
+  .tabla-datos td {
+    padding: 6px 2px;
+  }
+  
+  .estado-pendiente,
+  .estado-confirmada,
+  .estado-completada,
+  .estado-cancelada {
+    font-size: 0.8em;
+    padding: 2px 6px;
+  }
+}
+
+/* Animaciones */
+@keyframes slideIn {
+  from { 
+    transform: translateX(100%); 
+    opacity: 0; 
+  }
+  to { 
+    transform: translateX(0); 
+    opacity: 1; 
+  }
+}
+
+@keyframes slideOut {
+  from { 
+    transform: translateX(0); 
+    opacity: 1; 
+  }
+  to { 
+    transform: translateX(100%); 
+    opacity: 0; 
+  }
+}
+
+/* Alertas personalizadas */
+.alerta-personalizada {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 15px 20px;
+  border-radius: 8px;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 10000;
+  max-width: 400px;
+  animation: slideIn 0.3s ease;
+}
+
+.alerta-exito {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.alerta-error {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+/* Mejoras en la tabla para mejor legibilidad */
+.tabla-datos tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.tabla-datos tbody tr:nth-child(even):hover {
+  background-color: #f1f1f1;
+}
+
+/* Estilo para campos obligatorios */
+.campo-obligatorio label::after {
+  content: " *";
+  color: #dc3545;
+  font-weight: bold;
+}
+
+/* Estilo para tooltips */
+.tooltip {
+  position: relative;
+  cursor: help;
+}
+
+.tooltip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 0.8em;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.tooltip:hover::after {
+  opacity: 1;
+} 

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Superadministración - ReservaFácil</title>
+  <link rel="stylesheet" href="assets/css/estilos_principal.css">
+  <link rel="stylesheet" href="assets/css/panel_superadmin.css">
+</head>
+<body>
+  <!-- Navegación lateral -->
+  <nav class="sidebar-nav">
+    <div class="nav-header">
+      <img src="assets/img/Imagenes/DALL·E 2024-11-06 21.54.50 - An elegant logo for a restaurant, featuring a stylized fork and knife crossed over a plate with subtle decorative elements. The background should be s.webp" alt="Logo ReservaFácil" class="nav-logo">
+      <h3 class="nav-title">Panel SuperAdmin</h3>
+      <p class="nav-subtitle">Control Total del Sistema</p>
+    </div>
+    
+    <div class="nav-menu">
+      <a href="index_superadmin.html" class="nav-link active">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Inicio</span>
+      </a>
+      <a href="html/gestion_admin.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Administradores</span>
+      </a>
+      <a href="html/gestion_restaurantes.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Restaurantes</span>
+      </a>
+      <a href="html/ver_todas_reservas.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Ver Todas las Reservas</span>
+      </a>
+      <a href="html/gestion_todas_categorias.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Categorías</span>
+      </a>
+      <a href="html/gestion_todos_platos.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Platos</span>
+      </a>
+      <a href="html/gestion_todas_mesas.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Mesas</span>
+      </a>
+      <a href="index_cliente.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Catálogo Público</span>
+      </a>
+    </div>
+    
+    <div class="nav-footer">
+      <a href="src/api/auth/logout.php" class="nav-link logout">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Cerrar Sesión</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Contenido principal -->
+  <main class="main-content">
+    <!-- Header del panel -->
+    <header class="dashboard-header">
+      <div class="header-content">
+        <h1 class="page-title">Dashboard de Superadministración</h1>
+        <p class="page-subtitle">Control completo del sistema ReservaFácil</p>
+      </div>
+      <div class="header-stats">
+        <div class="stat-card superadmin">
+          <span class="stat-number" id="total-restaurantes">-</span>
+          <span class="stat-label">Restaurantes</span>
+        </div>
+        <div class="stat-card superadmin">
+          <span class="stat-number" id="total-admins">-</span>
+          <span class="stat-label">Administradores</span>
+        </div>
+        <div class="stat-card superadmin">
+          <span class="stat-number" id="total-reservas-sistema">-</span>
+          <span class="stat-label">Reservas Totales</span>
+        </div>
+        <div class="stat-card superadmin">
+          <span class="stat-number" id="total-mesas-sistema">-</span>
+          <span class="stat-label">Mesas en Sistema</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Sección de acciones rápidas -->
+    <section class="quick-actions">
+      <h2 class="section-title">Acciones de Superadministrador</h2>
+      <div class="actions-grid">
+        <a href="html/gestion_admin.html" class="action-card superadmin">
+          <div class="action-icon"></div>
+          <h3>Gestionar Administradores</h3>
+          <p>Registra nuevos administradores y asigna restaurantes</p>
+        </a>
+        <a href="html/gestion_restaurantes.html" class="action-card superadmin">
+          <div class="action-icon"></div>
+          <h3>Gestionar Restaurantes</h3>
+          <p>Añade, edita y administra todos los restaurantes</p>
+        </a>
+        <a href="html/ver_todas_reservas.html" class="action-card superadmin">
+          <div class="action-icon"></div>
+          <h3>Ver Todas las Reservas</h3>
+          <p>Monitorea todas las reservas del sistema</p>
+        </a>
+        <a href="index_cliente.html" class="action-card superadmin">
+          <div class="action-icon"></div>
+          <h3>Catálogo Público</h3>
+          <p>Ve el catálogo como lo ven los clientes</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- Resumen del sistema -->
+    <section class="system-overview">
+      <h2 class="section-title">Resumen del Sistema</h2>
+      <div class="overview-grid">
+        <div class="overview-card">
+          <h3>Actividad Reciente</h3>
+          <div class="activity-list" id="recent-activity">
+            <div class="loading-message">Cargando actividad reciente...</div>
+          </div>
+        </div>
+        <div class="overview-card">
+          <h3>Estadísticas Generales</h3>
+          <div class="stats-breakdown">
+            <div class="breakdown-item">
+              <span class="breakdown-label">Reservas Hoy:</span>
+              <span class="breakdown-value" id="reservas-hoy">-</span>
+            </div>
+            <div class="breakdown-item">
+              <span class="breakdown-label">Reservas Esta Semana:</span>
+              <span class="breakdown-value" id="reservas-semana">-</span>
+            </div>
+            <div class="breakdown-item">
+              <span class="breakdown-label">Restaurantes Activos:</span>
+              <span class="breakdown-value" id="restaurantes-activos">-</span>
+            </div>
+            <div class="breakdown-item">
+              <span class="breakdown-label">Admins Registrados:</span>
+              <span class="breakdown-value" id="admins-registrados">-</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Vista de todos los restaurantes -->
+    <section class="all-restaurants">
+      <h2 class="section-title">Todos los Restaurantes</h2>
+      <div class="restaurants-container" id="restaurants-container">
+        <div class="loading-message">Cargando restaurantes del sistema...</div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Cargar datos del dashboard
+    document.addEventListener('DOMContentLoaded', function() {
+      cargarEstadisticasSuperadmin();
+      cargarActividadReciente();
+      cargarRestaurantes();
+    });
+
+    function cargarEstadisticasSuperadmin() {
+      // Cargar estadísticas reales desde la base de datos
+      fetch('../src/api/admins/estadisticas_superadmin.php')
+        .then(response => response.json())
+        .then(data => {
+          // Actualizar estadísticas principales
+          document.getElementById('total-restaurantes').textContent = data.total_restaurantes || '0';
+          document.getElementById('total-admins').textContent = data.total_admins || '0';
+          document.getElementById('total-reservas-sistema').textContent = data.total_reservas || '0';
+          document.getElementById('total-mesas-sistema').textContent = data.total_mesas || '0';
+          
+          // Actualizar estadísticas detalladas
+          document.getElementById('reservas-hoy').textContent = data.reservas_hoy || '0';
+          document.getElementById('reservas-semana').textContent = data.reservas_semana || '0';
+          document.getElementById('restaurantes-activos').textContent = data.restaurantes_activos || '0';
+          document.getElementById('admins-registrados').textContent = data.admins_registrados || '0';
+        })
+        .catch(error => {
+          console.error('Error cargando estadísticas:', error);
+          // Mostrar valores por defecto en caso de error
+          document.getElementById('total-restaurantes').textContent = '0';
+          document.getElementById('total-admins').textContent = '0';
+          document.getElementById('total-reservas-sistema').textContent = '0';
+          document.getElementById('total-mesas-sistema').textContent = '0';
+          document.getElementById('reservas-hoy').textContent = '0';
+          document.getElementById('reservas-semana').textContent = '0';
+          document.getElementById('restaurantes-activos').textContent = '0';
+          document.getElementById('admins-registrados').textContent = '0';
+        });
+    }
+
+    function cargarActividadReciente() {
+      // Cargar actividad reciente real desde la base de datos
+      fetch('../src/api/admins/actividad_reciente.php')
+        .then(response => response.text())
+        .then(html => {
+          document.getElementById('recent-activity').innerHTML = html;
+        })
+        .catch(error => {
+          console.error('Error cargando actividad:', error);
+          document.getElementById('recent-activity').innerHTML = 
+            '<div class="activity-item"><span class="activity-time">Error</span><span class="activity-text">No se pudo cargar la actividad reciente</span></div>';
+        });
+    }
+
+    function cargarRestaurantes() {
+      // Cargar todos los restaurantes del sistema
+      fetch('../src/api/restaurantes/listar_catalogo.php')
+        .then(response => response.text())
+        .then(html => {
+          document.getElementById('restaurants-container').innerHTML = html;
+        })
+        .catch(error => {
+          console.error('Error cargando restaurantes:', error);
+          document.getElementById('restaurants-container').innerHTML = 
+            '<div class="error-message">Error al cargar los restaurantes del sistema.</div>';
+        });
+    }
+
+    // Animación de entrada para las tarjetas
+    function animateCards() {
+      const cards = document.querySelectorAll('.action-card, .stat-card, .overview-card');
+      cards.forEach((card, index) => {
+        setTimeout(() => {
+          card.style.opacity = '1';
+          card.style.transform = 'translateY(0)';
+        }, index * 100);
+      });
+    }
+
+    // Ejecutar animaciones después de cargar
+    setTimeout(animateCards, 300);
+  </script>
+</body>
+</html>

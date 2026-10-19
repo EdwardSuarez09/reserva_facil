@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="assets/css/editar_estilos.css">
+</head>
+<body>
+    <nav>
+        <img src="assets/img/Imagenes/DALL·E 2024-11-06 21.54.50 - An elegant logo for a restaurant, featuring a stylized fork and knife crossed over a plate with subtle decorative elements. The background should be s.webp" alt="Logo de la página">
+        <a href="#home">Inicio</a>
+        <a href="#catalogo">Catálogo</a>
+        <a href="#contacto">Contacto</a>
+    </nav>
+
+
+    
+
+    <div id="formulario">
+
+        <form action="styleform">
+    <div id="form-control">
+        <label for="color-fondo">Color de fondo</label>
+        <input type="color" id="color-fondo">
+    </div>
+
+    <div id="form-control">
+        <label for="color-texto"></label>
+        <input type="color" id="color-texto">
+    </div>
+
+    <div id="form-control">
+        <label for="fuente">fuente</label>
+        <select id="fuente">
+            <option value="Arial">Arial</option>
+            <option value="Tahoma">Tahoma</option>
+            <option value="Verdana">Verdana</option>
+            <option value="Georgia">Georgia</option>
+        </select>
+    </div>
+
+    <div id="form-control">
+        <label for="fuente-tamaño">Tamaño de fuente</label>
+        <select id="fuente-tamaño">
+            <option value="16px">16px</option>
+            <option value="18px">28px</option>
+            <option value="20px">20px</option>
+            <option value="24px">24px</option>
+        </select>
+    </div>
+
+    <div id="form-control">
+        <label for="margen">Margen</label>
+        <input type="text" id="margen" placeholder="Ej:20px">
+    </div>
+
+    <div id="form-control">
+         <label for="padding">padding</label>
+         <input type="text" id="padding" placeholder="Ej:10px">
+
+    </div>
+    
+    <div id="form-control">
+        <label for="logo">Subir logo</label>
+        <input type="file" accept="image/*">
+    </div>
+
+    <div id="form-control">
+        <label for="telefono">Numero de telefono</label>
+        <input type="text" id="telefono">
+    </div>
+
+    <div id="form-control">
+        <label for="redes sociales">Redes sociales</label>
+        <textarea id="redes-sociales" rows="4" placeholder='{"facebook": "url", "instagram": "url"}'></textarea>
+    
+    </div>
+
+    <button id="guardar">guardar configuracion</button>
+
+</form>
+    </div>
+
+
+
+</body>
+</html>

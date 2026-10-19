@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Restaurantes - ReservaFácil</title>
+    <link rel="stylesheet" href="../assets/css/gestion_moderna.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      .file-input-hidden {
+        display: none;
+      }
+      
+      .file-input-container {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+      }
+      
+      .file-input-button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        flex-shrink: 0;
+      }
+      
+      .file-input-button:hover {
+        background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+      
+      .file-input-text {
+        color: #6b7280;
+        font-size: 0.9rem;
+        font-style: italic;
+        flex: 1;
+        padding: 8px;
+        background: #f9fafb;
+        border-radius: 6px;
+        border: 1px solid #e5e7eb;
+      }
+    </style>
+</head>
+<body>
+    <!-- Navegación lateral -->
+    <nav class="sidebar-nav">
+        <div class="nav-header">
+            <img src="../assets/img/Imagenes/DALL·E 2024-11-06 21.54.50 - An elegant logo for a restaurant, featuring a stylized fork and knife crossed over a plate with subtle decorative elements. The background should be s.webp" alt="Logo ReservaFácil" class="nav-logo">
+            <h3 class="nav-title">Panel SuperAdmin</h3>
+            <p class="nav-subtitle">Control Total del Sistema</p>
+        </div>
+        
+        <div class="nav-menu">
+            <a href="../index_superadmin.html" class="nav-link">
+                <span class="nav-icon"></span>
+                <span class="nav-text">Inicio</span>
+            </a>
+            <a href="gestion_admin.html" class="nav-link">
+                <span class="nav-icon"></span>
+                <span class="nav-text">Administradores</span>
+            </a>
+            <a href="gestion_restaurantes.html" class="nav-link active">
+                <span class="nav-icon"></span>
+                <span class="nav-text">Restaurantes</span>
+            </a>
+            <a href="gestion_todas_categorias.html" class="nav-link">
+                <span class="nav-icon"></span>
+                <span class="nav-text">Todas las Categorías</span>
+            </a>
+            <a href="gestion_todos_platos.html" class="nav-link">
+                <span class="nav-icon"></span>
+                <span class="nav-text">Todos los Platos</span>
+            </a>
+            <a href="gestion_todas_mesas.html" class="nav-link">
+                <span class="nav-icon"></span>
+                <span class="nav-text">Todas las Mesas</span>
+            </a>
+            <a href="ver_todas_reservas.html" class="nav-link">
+                <span class="nav-icon"></span>
+                <span class="nav-text">Todas las Reservas</span>
+            </a>
+        </div>
+        
+        <div class="nav-footer">
+            <a href="../../src/api/auth/logout.php" class="nav-link logout">
+                <span class="nav-icon"></span>
+                <span class="nav-text">Cerrar Sesión</span>
+            </a>
+        </div>
+  </nav>
+
+    <!-- Contenido principal -->
+    <main class="main-content">
+        <!-- Header de la página -->
+        <header class="page-header">
+            <div class="header-content">
+                <div class="header-text">
+                    <h1 class="page-title">Gestión de Restaurantes</h1>
+                    <p class="page-subtitle">Administra los restaurantes y sus asignaciones de administradores</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-export" onclick="exportarRestaurantes()">
+                        Exportar Lista
+                    </button>
+                    <button class="btn btn-refresh" onclick="actualizarDatos()">
+                        Actualizar
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Sección de estadísticas -->
+        <section class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon"></div>
+                    <div class="stat-content">
+                        <span class="stat-number" id="total-restaurantes">-</span>
+                        <span class="stat-label">Total Restaurantes</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"></div>
+                    <div class="stat-content">
+                        <span class="stat-number" id="restaurantes-activos">-</span>
+                        <span class="stat-label">Restaurantes Activos</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"></div>
+                    <div class="stat-content">
+                        <span class="stat-number" id="con-admin">-</span>
+                        <span class="stat-label">Con Administrador</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"></div>
+                    <div class="stat-content">
+                        <span class="stat-number" id="ultimo-restaurante">-</span>
+                        <span class="stat-label">Último Registrado</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contenedor principal -->
+        <div class="content-grid">
+            <!-- Formulario de registro -->
+            <section class="form-section">
+                <div class="form-container-modern">
+                    <div class="form-header">
+                        <h2 class="form-title">Registrar Nuevo Restaurante</h2>
+                        <p class="form-subtitle">Completa los datos para crear un nuevo restaurante</p>
+                    </div>
+
+                    <form id="formRestaurante" class="form-modern" enctype="multipart/form-data">
+                        <div class="input-group">
+                            <label for="id_admin" class="input-label">Administrador Asignado</label>
+                            <select id="id_admin" name="id_admin" class="select-modern" required>
+                                <option value="">Seleccionar administrador</option>
+          </select>
+                            <div class="input-helper">Administrador responsable del restaurante</div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="nombre" class="input-label">Nombre del Restaurante</label>
+                            <input type="text" id="nombre" name="nombre" class="input-modern" required>
+                            <div class="input-helper">Nombre comercial del restaurante</div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="direccion" class="input-label">Dirección</label>
+                            <input type="text" id="direccion" name="direccion" class="input-modern">
+                            <div class="input-helper">Dirección física del local</div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="descripcion" class="input-label">Descripción</label>
+                            <textarea id="descripcion" name="descripcion" class="textarea-modern" rows="3"></textarea>
+                            <div class="input-helper">Descripción del tipo de cocina y ambiente</div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="horario" class="input-label">Horario de Atención</label>
+                            <input type="text" id="horario" name="horario" class="input-modern" placeholder="Ej: Lun-Dom 11:00-22:00">
+                            <div class="input-helper">Horarios de funcionamiento</div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="telefono" class="input-label">Teléfono</label>
+                            <input type="tel" id="telefono" name="telefono" class="input-modern">
+                            <div class="input-helper">Número de contacto principal</div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="correo" class="input-label">Correo Electrónico</label>
+                            <input type="email" id="correo" name="correo" class="input-modern">
+                            <div class="input-helper">Email de contacto del restaurante</div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="web" class="input-label">Sitio Web</label>
+                            <input type="url" id="web" name="web" class="input-modern" placeholder="https://">
+                            <div class="input-helper">Página web oficial (opcional)</div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="redes_sociales" class="input-label">Redes Sociales</label>
+                            <textarea id="redes_sociales" name="redes_sociales" class="textarea-modern" rows="2" placeholder="Instagram: @restaurante, Facebook: /restaurante"></textarea>
+                            <div class="input-helper">Enlaces a redes sociales</div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="imagen" class="input-label">Imagen del Restaurante</label>
+                            <div class="file-input-container">
+                                <input type="file" id="imagen" name="imagen" class="file-input-hidden" accept="image/*">
+                                <button type="button" class="file-input-button" onclick="document.getElementById('imagen').click()">
+                                    Seleccionar imagen
+                                </button>
+                                <span class="file-input-text" id="imagen-text">No se ha seleccionado ningún archivo</span>
+                            </div>
+                            <div class="input-helper">Foto representativa del restaurante (máx. 2MB)</div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                Registrar Restaurante
+                            </button>
+                            <button type="reset" class="btn btn-secondary">
+                                Limpiar
+          </button>
+        </div>
+                        
+                        <div id="respuesta" class="form-message"></div>
+      </form>
+                </div>
+            </section>
+
+            <!-- Lista de restaurantes -->
+            <section class="data-section">
+                <div class="section-header">
+                    <h2 class="section-title">Restaurantes Registrados</h2>
+                    
+                    <!-- Filtros -->
+                    <div class="filters-section">
+                        <div class="filters-grid">
+                            <div class="filter-group">
+                                <label for="filtro-admin" class="filter-label">Administrador</label>
+                                <select id="filtro-admin" class="filter-select">
+                                    <option value="">Todos los administradores</option>
+                                </select>
+                            </div>
+                            
+                            <div class="filter-group">
+                                <label for="filtro-buscar" class="filter-label">Buscar</label>
+                                <input type="text" id="filtro-buscar" class="filter-input" placeholder="Nombre o dirección...">
+    </div>
+
+                            <div class="filters-actions">
+                                <button class="btn btn-info" onclick="limpiarFiltros()">Limpiar</button>
+                            </div>
+                        </div>
+    </div>
+  </div>
+
+                <div class="data-container">
+                    <div id="tabla-restaurantes" class="table-content">
+                        <div class="loading-state">
+                            <div class="loading-spinner"></div>
+                            <p>Cargando restaurantes...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Modal de edición -->
+  <div id="modalEditarRest" class="modal" style="display: none; align-items: center; justify-content: center;">
+    <div class="modal-content" style="margin: 0; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h3>Editar Restaurante</h3>
+                <button class="modal-close" onclick="cerrarModalRest()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="formEditarRest" class="form-modern" enctype="multipart/form-data">
+        <input type="hidden" name="id" id="edit-id-rest">
+                    
+                    <div class="input-group">
+                        <label for="edit-nombre-rest" class="input-label">Nombre del Restaurante</label>
+                        <input type="text" id="edit-nombre-rest" name="nombre" class="input-modern" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="edit-direccion-rest" class="input-label">Dirección</label>
+                        <input type="text" id="edit-direccion-rest" name="direccion" class="input-modern">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="edit-descripcion-rest" class="input-label">Descripción</label>
+                        <textarea id="edit-descripcion-rest" name="descripcion" class="textarea-modern" rows="3"></textarea>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="edit-horario-rest" class="input-label">Horario de Atención</label>
+                        <input type="text" id="edit-horario-rest" name="horario" class="input-modern">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="edit-telefono-rest" class="input-label">Teléfono</label>
+                        <input type="tel" id="edit-telefono-rest" name="telefono" class="input-modern">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="edit-correo-rest" class="input-label">Correo Electrónico</label>
+                        <input type="email" id="edit-correo-rest" name="correo" class="input-modern">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="edit-web-rest" class="input-label">Sitio Web</label>
+                        <input type="url" id="edit-web-rest" name="web" class="input-modern">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="edit-redes-rest" class="input-label">Redes Sociales</label>
+                        <textarea id="edit-redes-rest" name="redes_sociales" class="textarea-modern" rows="2"></textarea>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="edit-imagen-rest" class="input-label">Nueva Imagen (opcional)</label>
+                        <div class="file-input-container">
+                            <input type="file" id="edit-imagen-rest" name="imagen" class="file-input-hidden" accept="image/*">
+                            <button type="button" class="file-input-button" onclick="document.getElementById('edit-imagen-rest').click()">
+                                Seleccionar nueva imagen
+                            </button>
+                            <span class="file-input-text" id="edit-imagen-text">No se ha seleccionado ningún archivo</span>
+                        </div>
+                        <div class="input-helper">Dejar vacío para mantener la imagen actual</div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                        <button type="button" class="btn btn-secondary" onclick="cerrarModalRest()">Cancelar</button>
+                    </div>
+      </form>
+            </div>
+    </div>
+  </div>
+
+    
+  <script>
+        // Configuración específica para restaurantes
+        const GESTION_CONFIG = {
+            tipo: 'restaurante',
+            endpoints: {
+                insertar: '../../src/api/restaurantes/crear.php',
+                listar: '../../src/api/restaurantes/listar.php',
+                editar: '../../src/api/restaurantes/editar.php',
+                eliminar: '../../src/api/restaurantes/eliminar.php',
+                obtener: '../../src/api/restaurantes/obtener.php',
+                estadisticas: '../../src/api/restaurantes/estadisticas.php',
+                admins: '../../src/api/admins/listar_select.php'
+            }
+        };
+
+        // Inicialización de la página
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarEstadisticas();
+            cargarRestaurantes();
+            cargarAdministradores();
+            configurarFiltros();
+            configurarFormularios();
+            configurarFileInputs();
+        });
+
+        // Cargar estadísticas
+        function cargarEstadisticas() {
+            fetch(GESTION_CONFIG.endpoints.estadisticas)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('total-restaurantes').textContent = data.total_restaurantes || '0';
+                    document.getElementById('restaurantes-activos').textContent = data.restaurantes_activos || '0';
+                    document.getElementById('con-admin').textContent = data.con_admin || '0';
+                    document.getElementById('ultimo-restaurante').textContent = data.ultimo_restaurante || 'Ninguno';
+                })
+                .catch(error => {
+                    console.error('Error cargando estadísticas:', error);
+                });
+        }
+
+        // Cargar lista de restaurantes
+        function cargarRestaurantes() {
+            const tableContent = document.getElementById('tabla-restaurantes');
+            tableContent.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div><p>Cargando restaurantes...</p></div>';
+
+            fetch(GESTION_CONFIG.endpoints.listar)
+                .then(response => response.text())
+                .then(data => {
+                    tableContent.innerHTML = data;
+                })
+                .catch(error => {
+                    console.error('Error cargando restaurantes:', error);
+                    tableContent.innerHTML = '<div class="error-state"><p>Error al cargar restaurantes</p></div>';
+                });
+        }
+
+        // Cargar administradores para los selectores
+        function cargarAdministradores() {
+            fetch(GESTION_CONFIG.endpoints.admins)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('id_admin').innerHTML = '<option value="">Seleccionar administrador</option>' + data;
+                    document.getElementById('filtro-admin').innerHTML = '<option value="">Todos los administradores</option>' + data;
+                })
+                .catch(error => {
+                    console.error('Error cargando administradores:', error);
+                });
+        }
+
+        // Configurar formularios
+        function configurarFormularios() {
+            // Formulario de registro
+            document.getElementById('formRestaurante').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+
+                fetch(GESTION_CONFIG.endpoints.insertar, {
+                    method: 'POST',
+                    body: formData
+  })
+  .then(response => response.text())
+  .then(data => {
+                    const esError = data.toLowerCase().includes('error') || data.toLowerCase().includes('obligatorio');
+                    document.getElementById('respuesta').textContent = data;
+                    document.getElementById('respuesta').className = esError ? 'form-message error' : 'form-message success';
+                    
+    if (!esError) {
+      this.reset();
+                        resetFileInputs();
+                        cargarRestaurantes();
+                        cargarEstadisticas();
+    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('respuesta').textContent = 'Error en la solicitud';
+                    document.getElementById('respuesta').className = 'form-message error';
+  });
+});
+
+            // Formulario de edición
+            document.getElementById('formEditarRest').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+
+                fetch(GESTION_CONFIG.endpoints.editar, {
+                    method: 'POST',
+                    body: formData
+                })
+    .then(response => response.text())
+    .then(data => {
+                    alert(data);
+                    cerrarModalRest();
+                    cargarRestaurantes();
+                    cargarEstadisticas();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al editar restaurante');
+                });
+            });
+        }
+
+        // Configurar inputs de archivo
+        function configurarFileInputs() {
+            // Configurar input principal
+            const inputImagen = document.getElementById('imagen');
+            if (inputImagen) {
+                inputImagen.addEventListener('change', function() {
+                    const textElement = document.getElementById('imagen-text');
+                    if (this.files.length > 0) {
+                        textElement.textContent = this.files[0].name;
+                        textElement.style.color = '#10b981';
+                    } else {
+                        textElement.textContent = 'No se ha seleccionado ningún archivo';
+                        textElement.style.color = '#6b7280';
+                    }
+                });
+            }
+
+            // Configurar input del modal de edición
+            const inputEditImagen = document.getElementById('edit-imagen-rest');
+            if (inputEditImagen) {
+                inputEditImagen.addEventListener('change', function() {
+                    const textElement = document.getElementById('edit-imagen-text');
+                    if (this.files.length > 0) {
+                        textElement.textContent = this.files[0].name;
+                        textElement.style.color = '#10b981';
+                    } else {
+                        textElement.textContent = 'No se ha seleccionado ningún archivo';
+                        textElement.style.color = '#6b7280';
+                    }
+                });
+            }
+        }
+
+        // Reset file inputs
+        function resetFileInputs() {
+            const inputImagen = document.getElementById('imagen');
+            const textElement = document.getElementById('imagen-text');
+            
+            if (inputImagen) {
+                inputImagen.value = '';
+            }
+            if (textElement) {
+                textElement.textContent = 'No se ha seleccionado ningún archivo';
+                textElement.style.color = '#6b7280';
+            }
+        }
+
+        // Configurar filtros
+        function configurarFiltros() {
+            const filtroAdmin = document.getElementById('filtro-admin');
+            const filtroBuscar = document.getElementById('filtro-buscar');
+
+            filtroAdmin.addEventListener('change', aplicarFiltros);
+            filtroBuscar.addEventListener('input', debounce(aplicarFiltros, 300));
+        }
+
+        // Aplicar filtros
+        function aplicarFiltros() {
+            const admin = document.getElementById('filtro-admin').value.toLowerCase();
+            const buscar = document.getElementById('filtro-buscar').value.toLowerCase();
+            const filas = document.querySelectorAll('#tabla-restaurantes tr');
+
+            filas.forEach(fila => {
+                if (fila.querySelector('th')) return; // Skip header
+
+                const celdas = fila.querySelectorAll('td');
+                if (celdas.length === 0) return;
+
+                const nombre = celdas[0]?.textContent.toLowerCase() || '';
+                const direccion = celdas[1]?.textContent.toLowerCase() || '';
+                const adminRest = celdas[2]?.textContent.toLowerCase() || '';
+
+                const coincideAdmin = !admin || adminRest.includes(admin);
+                const coincideBuscar = !buscar || nombre.includes(buscar) || direccion.includes(buscar);
+
+                fila.style.display = (coincideAdmin && coincideBuscar) ? '' : 'none';
+            });
+        }
+
+        // Limpiar filtros
+        function limpiarFiltros() {
+            document.getElementById('filtro-admin').value = '';
+            document.getElementById('filtro-buscar').value = '';
+            aplicarFiltros();
+        }
+
+        // Editar restaurante
+        function editarRest(id) {
+            fetch(`${GESTION_CONFIG.endpoints.obtener}?id=${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('edit-id-rest').value = data.id;
+                    document.getElementById('edit-nombre-rest').value = data.nombre;
+                    document.getElementById('edit-direccion-rest').value = data.direccion || '';
+                    document.getElementById('edit-descripcion-rest').value = data.descripcion || '';
+                    document.getElementById('edit-horario-rest').value = data.horario || '';
+                    document.getElementById('edit-telefono-rest').value = data.telefono || '';
+                    document.getElementById('edit-correo-rest').value = data.correo || '';
+                    document.getElementById('edit-web-rest').value = data.web || '';
+                    document.getElementById('edit-redes-rest').value = data.redes_sociales || '';
+                    
+                    // Resetear el input de archivo del modal
+                    const editImagenText = document.getElementById('edit-imagen-text');
+                    if (editImagenText) {
+                        editImagenText.textContent = 'No se ha seleccionado ningún archivo';
+                        editImagenText.style.color = '#6b7280';
+                    }
+                    
+                    document.getElementById('modalEditarRest').style.display = 'flex';
+                    document.getElementById('modalEditarRest').classList.add('show');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al cargar datos del restaurante');
+                });
+        }
+
+        // Eliminar restaurante
+function eliminarRest(id) {
+            if (confirm('¿Estás seguro de que deseas eliminar este restaurante?')) {
+    const formData = new FormData();
+                formData.append('id', id);
+
+                fetch(GESTION_CONFIG.endpoints.eliminar, {
+                    method: 'POST',
+      body: formData
+    })
+                .then(response => response.text())
+    .then(data => {
+                    alert(data);
+                    cargarRestaurantes();
+                    cargarEstadisticas();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al eliminar restaurante');
+    });
+  }
+}
+
+        // Cerrar modal
+        function cerrarModalRest() {
+            const modal = document.getElementById('modalEditarRest');
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
+        }
+
+        // Actualizar datos
+        function actualizarDatos() {
+            cargarEstadisticas();
+            cargarRestaurantes();
+            cargarAdministradores();
+            document.getElementById('respuesta').textContent = 'Datos actualizados';
+            document.getElementById('respuesta').className = 'form-message success';
+        }
+
+        // Exportar restaurantes
+        function exportarRestaurantes() {
+            window.open('../../src/api/restaurantes/exportar.php', '_blank');
+        }
+
+        // Utility function para debounce
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Validación de sesión
+fetch('../../src/helpers/validar_sesion.php')
+  .then(res => res.text())
+  .then(data => {
+    if (data !== "ok") {
+      window.location.href = "login.html";
+    }
+  });
+  </script>
+</body>
+</html>

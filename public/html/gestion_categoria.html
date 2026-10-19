@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Categorías - ReservaFácil</title>
+  <link rel="stylesheet" href="../assets/css/estilos_principal.css">
+  <link rel="stylesheet" href="../assets/css/panel_admin.css">
+  <link rel="stylesheet" href="../assets/css/gestion_moderna.css">
+  
+  <!-- 🛡️ PROTECCIÓN CRÍTICA ANTI-MODAL 🛡️ -->
+  <style>
+    /* Corrección crítica del modal */
+    .modal {
+      display: none !important;
+      position: fixed !important;
+      z-index: 1000 !important;
+      left: 0 !important;
+      top: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      background: rgba(0,0,0,0.5) !important;
+      backdrop-filter: blur(5px) !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 20px !important;
+    }
+    
+    .modal.show {
+      display: flex !important;
+    }
+    
+    .modal-content {
+      background: white !important;
+      width: 100% !important;
+      max-width: 600px !important;
+      max-height: 90vh !important;
+      border-radius: 12px !important;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3) !important;
+      overflow-y: auto !important;
+      position: relative !important;
+      margin: 0 auto !important;
+    }
+  </style>
+  
+  <!-- ⚡ PROTECCIÓN SIMPLE ⚡ -->
+  <script>
+    // Protección simple solo durante carga inicial
+    (function() {
+      console.log('🛡️ PROTECCIÓN SIMPLE INICIADA PARA CATEGORÍAS');
+      
+      // Función simple para cerrar modales solo durante la carga
+      function cerrarModalesIniciales() {
+        const modalCat = document.getElementById('modal-editar-categoria');
+        if (modalCat) {
+          modalCat.style.display = 'none';
+          modalCat.style.visibility = 'hidden';
+          modalCat.style.opacity = '0';
+        }
+      }
+      
+      // Ejecutar solo durante los primeros 2 segundos
+      cerrarModalesIniciales();
+      setTimeout(cerrarModalesIniciales, 100);
+      setTimeout(cerrarModalesIniciales, 500);
+      setTimeout(cerrarModalesIniciales, 1000);
+      setTimeout(cerrarModalesIniciales, 2000);
+      
+      // Después de 2 segundos, dejar que funcione normalmente
+      setTimeout(() => {
+        console.log('🛡️ PROTECCIÓN SIMPLE FINALIZADA PARA CATEGORÍAS');
+      }, 2000);
+    })();
+  </script>
+</head>
+<body>
+  <!-- Navegación lateral -->
+  <nav class="sidebar-nav">
+    <div class="nav-header">
+      <img src="../assets/img/Imagenes/DALL·E 2024-11-06 21.54.50 - An elegant logo for a restaurant, featuring a stylized fork and knife crossed over a plate with subtle decorative elements. The background should be s.webp" alt="Logo ReservaFácil" class="nav-logo">
+      <h3 class="nav-title">Panel Admin</h3>
+      <p class="nav-subtitle">Gestión de Restaurante</p>
+    </div>
+    
+    <div class="nav-menu">
+      <a href="../index_admin.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Inicio</span>
+      </a>
+      <a href="../index_cliente.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Catálogo</span>
+      </a>
+      <a href="gestion_categoria.html" class="nav-link active">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Gestión Categorías</span>
+      </a>
+      <a href="gestion_plato.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Gestión de Menú</span>
+      </a>
+      <a href="gestion_mesas.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Gestión de Mesas</span>
+      </a>
+      <a href="gestion_reservas.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Gestión de Reservas</span>
+      </a>
+    </div>
+    
+    <div class="nav-footer">
+      <a href="login.html" class="nav-link logout">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Cerrar Sesión</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Contenido principal -->
+  <main class="main-content">
+    <!-- Header de la página -->
+    <header class="page-header">
+      <div class="header-content">
+        <div class="header-text">
+          <h1 class="page-title">Gestión de Categorías</h1>
+          <p class="page-subtitle">Administra las categorías de menú de tu restaurante</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-export" onclick="exportarCategorias()">
+            Exportar Lista
+          </button>
+          <button class="btn btn-refresh" onclick="actualizarLista()">
+            Actualizar
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Sección del formulario -->
+    <section class="form-section">
+      <div class="form-container-modern">
+        <div class="form-header">
+          <h2 class="form-title">Registrar Nueva Categoría</h2>
+          <p class="form-subtitle">Agrega una nueva categoría para organizar tu menú</p>
+        </div>
+        
+        <form id="formCategoria" class="form-modern">
+          <div class="input-group">
+            <label for="nombre-categoria" class="input-label">Nombre de la Categoría</label>
+            <input type="text" name="nombre" id="nombre-categoria" class="input-modern" 
+                   placeholder="Ej: Entradas, Platos principales, Postres..." required>
+            <div class="input-helper">Ingresa un nombre descriptivo para la categoría</div>
+          </div>
+          
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+              Registrar Categoría
+            </button>
+            <button type="reset" class="btn btn-secondary">
+              Limpiar Formulario
+            </button>
+          </div>
+          
+          <div id="respuesta" class="form-message"></div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Sección de estadísticas -->
+    <section class="stats-section">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon"></div>
+          <div class="stat-content">
+            <span class="stat-number" id="total-categorias">-</span>
+            <span class="stat-label">Total Categorías</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"></div>
+          <div class="stat-content">
+            <span class="stat-number" id="categorias-activas">-</span>
+            <span class="stat-label">Con Platos</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"></div>
+          <div class="stat-content">
+            <span class="stat-number" id="categorias-vacias">-</span>
+            <span class="stat-label">Vacías</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"></div>
+          <div class="stat-content">
+            <span class="stat-number" id="ultima-categoria">-</span>
+            <span class="stat-label">Última Creada</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Lista de categorías -->
+    <section class="data-section">
+      <div class="section-header">
+        <h2 class="section-title">Categorías Registradas</h2>
+        <div class="section-actions">
+          <div class="view-options">
+            <button class="view-btn active" data-view="table">Tabla</button>
+            <button class="view-btn" data-view="cards">Tarjetas</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="data-container" id="categorias-container">
+        <div class="loading-state">
+          <div class="loading-spinner"></div>
+          <p>Cargando categorías...</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal para editar categoría -->
+  <div id="modal-editar-categoria" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Editar Categoría</h3>
+        <button class="modal-close" onclick="cerrarModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="formEditar" class="form-modern">
+          <input type="hidden" name="id" id="edit-id">
+          
+          <div class="input-group">
+            <label for="edit-nombre" class="input-label">Nombre de la Categoría</label>
+            <input type="text" name="nombre" id="edit-nombre" class="input-modern" required>
+            <div class="input-helper">Modifica el nombre de la categoría</div>
+          </div>
+          
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+            <button type="button" class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Variables globales
+    let currentView = 'table';
+    let modalAbierto = false;
+
+    // Inicialización - con protección contra apertura automática de modales
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('Iniciando gestión de categorías...');
+      
+      // Asegurar que el modal esté cerrado al cargar
+      const modal = document.getElementById("modal-editar-categoria");
+      if (modal) {
+        modal.style.display = "none";
+        modalAbierto = false;
+      }
+      
+      // Cargar datos
+      cargarCategorias();
+      cargarEstadisticas();
+      configurarEventos();
+      validarSesion();
+      
+      console.log('Gestión de categorías iniciada correctamente');
+    });
+
+    // Configurar eventos
+    function configurarEventos() {
+      // Configurar cambio de vista
+      document.querySelectorAll('.view-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          currentView = this.dataset.view;
+          cambiarVista();
+        });
+      });
+      
+      // Event listener para cerrar modal con ESC
+      document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape' && modalAbierto) {
+          cerrarModal();
+        }
+      });
+    }
+
+    // Cambiar vista entre tabla y tarjetas
+    function cambiarVista() {
+      const container = document.getElementById('categorias-container');
+      if (currentView === 'cards') {
+        container.classList.add('cards-view');
+      } else {
+        container.classList.remove('cards-view');
+      }
+    }
+
+    // Insertar categoría
+    document.getElementById("formCategoria").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const datos = new FormData(this);
+      const respuestaDiv = document.getElementById("respuesta");
+
+      fetch("../../src/api/categorias/crear.php", {
+        method: "POST",
+        body: datos
+      })
+      .then(res => res.text())
+      .then(msg => {
+        mostrarMensaje(msg, respuestaDiv);
+        if (!msg.toLowerCase().includes('error')) {
+          this.reset();
+          cargarCategorias();
+          cargarEstadisticas();
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        mostrarMensaje('Error al registrar la categoría', respuestaDiv, 'error');
+      });
+    });
+
+    // Cargar categorías
+    function cargarCategorias() {
+      fetch("../../src/api/categorias/listar.php")
+        .then(res => res.text())
+        .then(html => {
+          document.getElementById("categorias-container").innerHTML = html;
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          document.getElementById("categorias-container").innerHTML = 
+            '<div class="error-message">Error al cargar las categorías.</div>';
+        });
+    }
+
+    // Cargar estadísticas
+    function cargarEstadisticas() {
+      fetch("../../src/api/categorias/estadisticas.php")
+        .then(res => res.json())
+        .then(data => {
+          if (data.error) {
+            console.error('Error al cargar estadísticas:', data.error);
+            return;
+          }
+          
+          document.getElementById('total-categorias').textContent = data.total_categorias || '0';
+          document.getElementById('categorias-activas').textContent = data.categorias_con_platos || '0';
+          document.getElementById('categorias-vacias').textContent = data.categorias_vacias || '0';
+          document.getElementById('ultima-categoria').textContent = data.ultima_categoria || '-';
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          // Mantener valores por defecto en caso de error
+          document.getElementById('total-categorias').textContent = '0';
+          document.getElementById('categorias-activas').textContent = '0';
+          document.getElementById('categorias-vacias').textContent = '0';
+          document.getElementById('ultima-categoria').textContent = '-';
+        });
+    }
+
+    // Editar categoría - función mejorada con protección
+    function editarCategoria(id) {
+      console.log('Función editarCategoria llamada con ID:', id);
+      
+      if (!id || isNaN(id)) {
+        alert('ID de categoría inválido');
+        return;
+      }
+
+      // Prevenir múltiples aperturas
+      if (modalAbierto) {
+        console.log('Modal ya está abierto, ignorando nueva solicitud');
+        return;
+      }
+
+      fetch(`../../src/api/categorias/obtener.php?id=${id}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.error) {
+            alert('Error: ' + data.error);
+            return;
+          }
+          
+          console.log('Datos de categoría recibidos:', data);
+          
+          // Llenar el formulario
+          const elementos = {
+            'edit-id': data.id,
+            'edit-nombre': data.nombre
+          };
+          
+          // Asignar valores a los campos
+          Object.keys(elementos).forEach(id => {
+            const elemento = document.getElementById(id);
+            if (elemento) {
+              elemento.value = elementos[id];
+            }
+          });
+          
+          // Abrir modal
+          abrirModal();
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          mostrarAlertaPersonalizada('Error al cargar los datos de la categoría');
+        });
+    }
+
+    // Función para abrir el modal de manera controlada
+    function abrirModal() {
+      console.log('Abriendo modal...');
+      const modal = document.getElementById("modal-editar-categoria");
+      if (modal) {
+        // Establecer que el modal está siendo abierto intencionalmente
+        modalAbierto = true;
+        
+        // Mostrar modal con estilos seguros
+        modal.style.display = "flex";
+        modal.style.visibility = "visible";
+        modal.style.opacity = "1";
+        modal.classList.add("show");
+        
+        // Scroll al principio del modal
+        setTimeout(() => {
+          modal.scrollTop = 0;
+          const modalContent = modal.querySelector('.modal-content');
+          if (modalContent) {
+            modalContent.scrollTop = 0;
+          }
+        }, 100);
+        
+        console.log('Modal abierto correctamente');
+      }
+    }
+
+    // Cerrar modal - función mejorada
+    function cerrarModal() {
+      console.log('Cerrando modal...');
+      const modal = document.getElementById("modal-editar-categoria");
+      if (modal) {
+        // Ocultar modal completamente
+        modal.style.display = "none";
+        modal.style.visibility = "hidden";
+        modal.style.opacity = "0";
+        modal.classList.remove("show");
+        modalAbierto = false;
+        
+        // Limpiar formulario
+        const form = document.getElementById("formEditar");
+        if (form) {
+          form.reset();
+        }
+        
+        console.log('Modal cerrado correctamente');
+      }
+    }
+
+    // Actualizar categoría
+    document.getElementById("formEditar").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const datos = new FormData(this);
+
+      fetch("../../src/api/categorias/editar.php", {
+        method: "POST",
+        body: datos
+      })
+      .then(res => res.text())
+      .then(msg => {
+        mostrarAlertaPersonalizada(msg);
+        if (!msg.toLowerCase().includes('error')) {
+          cerrarModal();
+          cargarCategorias();
+          cargarEstadisticas();
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        mostrarAlertaPersonalizada('Error al actualizar la categoría');
+      });
+    });
+
+    // Eliminar categoría
+    function eliminarCategoria(id) {
+      if (!confirm('¿Está seguro de que desea eliminar esta categoría? Esta acción no se puede deshacer.')) {
+        return;
+      }
+      
+      const formData = new FormData();
+      formData.append('id', id);
+      
+      fetch('../../src/api/categorias/eliminar.php', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.text())
+      .then(result => {
+        mostrarAlertaPersonalizada(result);
+        if (!result.toLowerCase().includes('error')) {
+          cargarCategorias();
+          cargarEstadisticas();
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        mostrarAlertaPersonalizada('Error al eliminar la categoría');
+      });
+    }
+
+    // Funciones auxiliares
+    function mostrarMensaje(mensaje, elemento, tipo = 'success') {
+      elemento.className = `form-message ${tipo}`;
+      elemento.textContent = mensaje;
+      setTimeout(() => {
+        elemento.textContent = '';
+        elemento.className = 'form-message';
+      }, 5000);
+    }
+
+    function mostrarAlertaPersonalizada(mensaje) {
+      const alerta = document.createElement('div');
+      alerta.className = `alerta-personalizada ${mensaje.toLowerCase().includes('error') ? 'alerta-error' : 'alerta-exito'}`;
+      alerta.textContent = mensaje;
+      alerta.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 20px;
+        border-radius: 4px;
+        color: white;
+        font-weight: bold;
+        z-index: 10000;
+        animation: slideIn 0.3s ease forwards;
+      `;
+      
+      if (mensaje.toLowerCase().includes('error')) {
+        alerta.style.backgroundColor = '#dc3545';
+      } else {
+        alerta.style.backgroundColor = '#28a745';
+      }
+      
+      document.body.appendChild(alerta);
+      
+      setTimeout(() => {
+        alerta.style.animation = 'slideOut 0.3s ease forwards';
+        setTimeout(() => alerta.remove(), 300);
+      }, 4000);
+    }
+
+    function actualizarLista() {
+      cargarCategorias();
+      cargarEstadisticas();
+    }
+
+    function exportarCategorias() {
+      alert('Función de exportación en desarrollo');
+    }
+
+    function validarSesion() {
+      fetch('../../src/helpers/validar_sesion.php')
+        .then(res => res.text())
+        .then(data => {
+          if (data !== "ok") {
+            window.location.href = "login.html";
+          }
+        })
+        .catch(error => {
+          console.error('Error validando sesión:', error);
+        });
+    }
+
+    // Cerrar modal al hacer clic fuera - mejorado
+    document.addEventListener('click', function(event) {
+      const modal = document.getElementById('modal-editar-categoria');
+      if (event.target === modal && modalAbierto) {
+        cerrarModal();
+      }
+    });
+
+    // Prevenir que se abra el modal automáticamente por errores de JavaScript
+    window.addEventListener('error', function(event) {
+      console.error('Error de JavaScript detectado:', event.error);
+      // Si hay algún error y el modal se abre inadvertidamente, cerrarlo
+      if (modalAbierto && !event.filename.includes('editarCategoria')) {
+        console.log('Cerrando modal debido a error inesperado');
+        cerrarModal();
+      }
+    });
+  </script>
+</body>
+</html>

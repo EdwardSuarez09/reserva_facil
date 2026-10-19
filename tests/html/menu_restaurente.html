@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menú del Restaurante</title>
+  <link rel="stylesheet" href="../../public/assets/css/estilos_vista_restaurante.css">
+  <style>
+    .categoria-bloque {
+      margin-bottom: 40px;
+    }
+
+    .categoria-bloque h3 {
+      margin-bottom: 10px;
+      color: #2c2c2c;
+    }
+
+    .carrusel-platos {
+      display: flex;
+      overflow-x: auto;
+      gap: 15px;
+      scroll-snap-type: x mandatory;
+      padding-bottom: 10px;
+    }
+
+    .plato-card {
+      min-width: 250px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 10px;
+      scroll-snap-align: start;
+      flex-shrink: 0;
+      text-align: center;
+    }
+
+    .plato-img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+
+    .precio {
+      display: block;
+      margin-top: 8px;
+      font-weight: bold;
+      color: #f39c12;
+    }
+  </style>
+</head>
+<body>
+  <div class="contenido-principal">
+    <section id="menu">
+      <h2 class="titulo-seccion">Nuestro Menú</h2>
+      <div id="contenedor-categorias">
+        <!-- Aquí se cargan los carruseles por categoría desde JS -->
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const restaurante = params.get("restaurante");
+
+    if (!restaurante) {
+      alert("No se especificó restaurante.");
+      window.location.href = "../../public/index_cliente.html";
+    }
+
+    fetch(`../../src/api/platos/listar_por_categoria.php?restaurante=${encodeURIComponent(restaurante)}`)
+      .then(res => res.json())
+      .then(data => {
+        const contenedor = document.getElementById('contenedor-categorias');
+        data.forEach(categoria => {
+          const bloque = document.createElement('div');
+          bloque.className = 'categoria-bloque';
+
+          const titulo = document.createElement('h3');
+          titulo.textContent = categoria.nombre_categoria;
+          bloque.appendChild(titulo);
+
+          const carrusel = document.createElement('div');
+          carrusel.className = 'carrusel-platos';
+
+          categoria.platos.forEach(plato => {
+            const card = document.createElement('div');
+            card.className = 'plato-card';
+
+            const img = document.createElement('img');
+            img.className = 'plato-img';
+            img.src = plato.imagen
+              ? `data:image/jpeg;base64,${plato.imagen}`
+              : '../../public/assets/img/Imagenes/sin_imagen.png';
+            img.alt = 'Plato';
+
+            const nombre = document.createElement('h4');
+            nombre.textContent = plato.nombre;
+
+            const descripcion = document.createElement('p');
+            descripcion.textContent = plato.descripcion;
+
+            const precio = document.createElement('span');
+            precio.className = 'precio';
+            precio.textContent = `$ ${parseInt(plato.precio).toLocaleString('es-CO')}`;
+
+            card.appendChild(img);
+            card.appendChild(nombre);
+            card.appendChild(descripcion);
+            card.appendChild(precio);
+            carrusel.appendChild(card);
+          });
+
+          bloque.appendChild(carrusel);
+          contenedor.appendChild(bloque);
+        });
+      });
+  </script>
+</body>
+</html>

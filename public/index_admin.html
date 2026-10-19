@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Administración - ReservaFácil</title>
+  <link rel="stylesheet" href="assets/css/estilos_principal.css">
+  <link rel="stylesheet" href="assets/css/panel_admin.css">
+</head>
+<body>
+  <!-- Navegación lateral -->
+  <nav class="sidebar-nav">
+    <div class="nav-header">
+      <img src="assets/img/Imagenes/DALL·E 2024-11-06 21.54.50 - An elegant logo for a restaurant, featuring a stylized fork and knife crossed over a plate with subtle decorative elements. The background should be s.webp" alt="Logo ReservaFácil" class="nav-logo">
+      <h3 class="nav-title">Panel Admin</h3>
+      <p class="nav-subtitle">Gestión de Restaurante</p>
+    </div>
+    
+    <div class="nav-menu">
+      <a href="index_admin.html" class="nav-link active">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Inicio</span>
+      </a>
+      <a href="html/gestion_categoria.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Gestión Categorías</span>
+      </a>
+      <a href="html/gestion_plato.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Gestión de Menú</span>
+      </a>
+      <a href="html/gestion_mesas.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Gestión de Mesas</span>
+      </a>
+      <a href="html/gestion_reservas.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Gestión de Reservas</span>
+      </a>
+    </div>
+    
+    <div class="nav-footer">
+      <a href="src/api/auth/logout.php" class="nav-link logout">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Cerrar Sesión</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Contenido principal -->
+  <main class="main-content">
+    <!-- Header del panel -->
+    <header class="dashboard-header">
+      <div class="header-content">
+        <h1 class="page-title">Dashboard de Administración</h1>
+        <p class="page-subtitle">Gestiona tu restaurante de manera eficiente</p>
+      </div>
+      <div class="header-stats">
+        <div class="stat-card">
+          <span class="stat-number" id="total-categorias">-</span>
+          <span class="stat-label">Categorías</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number" id="total-platos">-</span>
+          <span class="stat-label">Platos</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number" id="total-mesas">-</span>
+          <span class="stat-label">Mesas</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number" id="total-reservas">-</span>
+          <span class="stat-label">Reservas</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Sección de acciones rápidas -->
+    <section class="quick-actions">
+      <h2 class="section-title">Acciones Rápidas</h2>
+      <div class="actions-grid">
+        <a href="html/gestion_categoria.html" class="action-card">
+          <div class="action-icon"></div>
+          <h3>Gestionar Categorías</h3>
+          <p>Organiza el menú de tu restaurante</p>
+        </a>
+        <a href="html/gestion_plato.html" class="action-card">
+          <div class="action-icon"></div>
+          <h3>Gestionar Menú</h3>
+          <p>Añade y edita los platos disponibles</p>
+        </a>
+        <a href="html/gestion_mesas.html" class="action-card">
+          <div class="action-icon"></div>
+          <h3>Gestionar Mesas</h3>
+          <p>Configura las mesas de tu restaurante</p>
+        </a>
+        <a href="html/gestion_reservas.html" class="action-card">
+          <div class="action-icon"></div>
+          <h3>Ver Reservas</h3>
+          <p>Administra las reservas de los clientes</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- Información del restaurante -->
+    <section class="restaurant-info">
+      <h2 class="section-title">Tu Restaurante</h2>
+      <div class="restaurant-preview" id="restaurant-preview">
+        <div class="loading-message">Cargando información del restaurante...</div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Cargar estadísticas y datos del dashboard
+    document.addEventListener('DOMContentLoaded', function() {
+      cargarEstadisticas();
+      cargarRestauranteInfo();
+    });
+
+    function cargarEstadisticas() {
+      // Cargar estadísticas reales desde la base de datos
+      fetch('../src/api/admins/estadisticas.php')
+        .then(response => response.json())
+        .then(data => {
+          if (data.error) {
+            console.error('Error:', data.error);
+            return;
+          }
+          
+          // Actualizar las estadísticas con datos reales
+          document.getElementById('total-categorias').textContent = data.total_categorias || '0';
+          document.getElementById('total-platos').textContent = data.total_platos || '0';
+          document.getElementById('total-mesas').textContent = data.total_mesas || '0';
+          document.getElementById('total-reservas').textContent = data.total_reservas || '0';
+        })
+        .catch(error => {
+          console.error('Error cargando estadísticas:', error);
+          // Mostrar valores por defecto en caso de error
+          document.getElementById('total-categorias').textContent = '0';
+          document.getElementById('total-platos').textContent = '0';
+          document.getElementById('total-mesas').textContent = '0';
+          document.getElementById('total-reservas').textContent = '0';
+        });
+    }
+
+    function cargarRestauranteInfo() {
+      // Cargar información del restaurante asociado al admin
+      fetch('../src/api/restaurantes/listar_catalogo.php')
+        .then(response => response.text())
+        .then(html => {
+          document.getElementById('restaurant-preview').innerHTML = html;
+        })
+        .catch(error => {
+          console.error('Error cargando información:', error);
+          document.getElementById('restaurant-preview').innerHTML = 
+            '<div class="error-message">Error al cargar la información del restaurante.</div>';
+        });
+    }
+
+    // Animación de entrada para las tarjetas
+    function animateCards() {
+      const cards = document.querySelectorAll('.action-card, .stat-card');
+      cards.forEach((card, index) => {
+        setTimeout(() => {
+          card.style.opacity = '1';
+          card.style.transform = 'translateY(0)';
+        }, index * 100);
+      });
+    }
+
+    // Ejecutar animaciones después de cargar
+    setTimeout(animateCards, 200);
+  </script>
+</body>
+</html>

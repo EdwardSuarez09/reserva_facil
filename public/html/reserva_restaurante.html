@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hacer Reserva - ReservaFácil</title>
+    <link rel="stylesheet" href="../assets/css/estilos_vista_restaurante.css">
+    <style>
+        .container-reserva {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: #f8f9fa;
+            min-height: 100vh;
+        }
+        
+        .header-reserva {
+            text-align: center;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 60px 40px;
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header-reserva h1 {
+            font-size: 2.5rem;
+            margin: 0 0 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .header-reserva .restaurante-nombre {
+            font-size: 1.3rem;
+            color: #f39c12;
+            margin: 0;
+            font-weight: 300;
+        }
+        
+        .form-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .navegacion-reserva {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .btn-volver {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            margin-right: 15px;
+        }
+        
+        .btn-volver:hover {
+            background: linear-gradient(135deg, #495057 0%, #343a40 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(108, 117, 125, 0.3);
+        }
+        
+        .btn-catalogo {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+        
+        .btn-catalogo:hover {
+            background: linear-gradient(135deg, #138496 0%, #117a8b 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(23, 162, 184, 0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .container-reserva {
+                padding: 20px 10px;
+            }
+            
+            .header-reserva {
+                padding: 40px 20px;
+            }
+            
+            .header-reserva h1 {
+                font-size: 2rem;
+            }
+            
+            .form-container {
+                padding: 30px 20px;
+            }
+            
+            .navegacion-reserva {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .btn-volver {
+                margin-right: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-reserva">
+        <div class="header-reserva">
+            <h1>Hacer Reserva</h1>
+            <p class="restaurante-nombre" id="nombre-restaurante-header">Cargando...</p>
+        </div>
+        
+        <div class="navegacion-reserva">
+            <a href="#" id="btn-volver-restaurante" class="btn-volver">Volver al Restaurante</a>
+            <a href="../index_cliente.html" class="btn-catalogo">Volver al Catálogo</a>
+        </div>
+        
+        <div class="form-container">
+            <div id="formulario-reserva-contenido">Cargando formulario de reserva...</div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const params = new URLSearchParams(window.location.search);
+            const restaurante = params.get('restaurante');
+            
+            if (!restaurante) {
+                document.getElementById('formulario-reserva-contenido').innerHTML = 
+                    '<p style="color: red; text-align: center;">Error: No se especificó el restaurante.</p>';
+                return;
+            }
+            
+            // Actualizar el nombre del restaurante en el header
+            document.getElementById('nombre-restaurante-header').textContent = restaurante;
+            
+            // Configurar el botón de volver
+            document.getElementById('btn-volver-restaurante').href = 
+                `../../src/api/restaurantes/obtener_vista.php?restaurante=${encodeURIComponent(restaurante)}`;
+            
+            // Cargar el formulario de reserva
+            fetch(`../../src/api/reservas/formulario.php?restaurante=${encodeURIComponent(restaurante)}`)
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('formulario-reserva-contenido').innerHTML = html;
+                })
+                .catch(error => {
+                    console.error('Error cargando formulario:', error);
+                    document.getElementById('formulario-reserva-contenido').innerHTML = 
+                        '<p style="color: red; text-align: center;">Error al cargar el formulario de reserva.</p>';
+                });
+        });
+    </script>
+</body>
+</html> 

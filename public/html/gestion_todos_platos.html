@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Todos los Platos - ReservaFácil</title>
+  <link rel="stylesheet" href="../assets/css/estilos_principal.css">
+  <link rel="stylesheet" href="../assets/css/panel_superadmin.css">
+  <link rel="stylesheet" href="../assets/css/gestion_moderna.css">
+</head>
+<body>
+  <!-- Navegación lateral -->
+  <nav class="sidebar-nav">
+    <div class="nav-header">
+      <img src="../assets/img/Imagenes/DALL·E 2024-11-06 21.54.50 - An elegant logo for a restaurant, featuring a stylized fork and knife crossed over a plate with subtle decorative elements. The background should be s.webp" alt="Logo ReservaFácil" class="nav-logo">
+      <h3 class="nav-title">Panel SuperAdmin</h3>
+      <p class="nav-subtitle">Control Total del Sistema</p>
+    </div>
+    
+    <div class="nav-menu">
+      <a href="../index_superadmin.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Inicio</span>
+      </a>
+      <a href="gestion_admin.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Administradores</span>
+      </a>
+      <a href="gestion_restaurantes.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Restaurantes</span>
+      </a>
+      <a href="ver_todas_reservas.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Reservas</span>
+      </a>
+      <a href="gestion_todas_categorias.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Categorías</span>
+      </a>
+      <a href="gestion_todos_platos.html" class="nav-link active">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Platos</span>
+      </a>
+      <a href="gestion_todas_mesas.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Mesas</span>
+      </a>
+      <a href="../index_cliente.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Catálogo Público</span>
+      </a>
+    </div>
+    
+    <div class="nav-footer">
+      <a href="login.html" class="nav-link logout">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Cerrar Sesión</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Contenido principal -->
+  <main class="main-content">
+    <!-- Header de la página -->
+    <header class="page-header">
+      <div class="header-content">
+        <div class="header-text">
+          <h1 class="page-title">Gestión de Todos los Platos</h1>
+          <p class="page-subtitle">Administra todos los platos de todos los restaurantes del sistema</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-export" onclick="exportarDatos()">
+            Exportar Datos
+          </button>
+          <button class="btn btn-refresh" onclick="actualizarLista()">
+            Actualizar
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Filtros avanzados -->
+    <section class="filters-section">
+      <div class="filters-container">
+        <h3 class="filters-title">Filtros Avanzados</h3>
+        <div class="filters-grid">
+          <div class="filter-group">
+            <label for="filtro-restaurante">Restaurante:</label>
+            <select id="filtro-restaurante" class="filter-select">
+              <option value="">Todos los restaurantes</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="filtro-categoria">Categoría:</label>
+            <select id="filtro-categoria" class="filter-select">
+              <option value="">Todas las categorías</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="filtro-precio">Rango de precio:</label>
+            <select id="filtro-precio" class="filter-select">
+              <option value="">Todos los precios</option>
+              <option value="0-10000">$0 - $10,000</option>
+              <option value="10000-25000">$10,000 - $25,000</option>
+              <option value="25000-50000">$25,000 - $50,000</option>
+              <option value="50000+">$50,000+</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="buscar-plato">Buscar plato:</label>
+            <input type="text" id="buscar-plato" placeholder="Nombre del plato..." class="filter-input">
+          </div>
+        </div>
+        <div class="filters-actions">
+          <button class="btn btn-primary" onclick="aplicarFiltros()">Aplicar Filtros</button>
+          <button class="btn btn-secondary" onclick="limpiarFiltros()">Limpiar</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Estadísticas rápidas -->
+    <section class="stats-section">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon"></div>
+          <div class="stat-content">
+            <span class="stat-number" id="total-platos-stats">-</span>
+            <span class="stat-label">Total Platos</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"></div>
+          <div class="stat-content">
+            <span class="stat-number" id="restaurantes-con-platos">-</span>
+            <span class="stat-label">Restaurantes con Platos</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"></div>
+          <div class="stat-content">
+            <span class="stat-number" id="precio-promedio">-</span>
+            <span class="stat-label">Precio Promedio</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"></div>
+          <div class="stat-content">
+            <span class="stat-number" id="categorias-activas">-</span>
+            <span class="stat-label">Categorías Activas</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Lista de platos -->
+    <section class="data-section">
+      <div class="section-header">
+        <h2 class="section-title">Listado de Platos</h2>
+        <div class="section-actions">
+          <div class="view-options">
+            <button class="view-btn active" data-view="table">Tabla</button>
+            <button class="view-btn" data-view="cards">Tarjetas</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="data-container" id="platos-container">
+        <div class="loading-state">
+          <div class="loading-spinner"></div>
+          <p>Cargando platos del sistema...</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal para detalles del plato -->
+  <div id="modal-detalle-plato" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Detalles del Plato</h3>
+        <button class="modal-close" onclick="cerrarModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="detalle-plato-content">
+        <!-- Contenido dinámico -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Variables globales
+    let currentView = 'table';
+    let currentFilters = {};
+
+    // Inicialización
+    document.addEventListener('DOMContentLoaded', function() {
+      cargarDatos();
+      cargarFiltros();
+      configurarEventos();
+    });
+
+    function cargarDatos() {
+      fetch('../../src/api/platos/listar_todos.php')
+        .then(response => response.text())
+        .then(html => {
+          document.getElementById('platos-container').innerHTML = html;
+          cargarEstadisticas();
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          document.getElementById('platos-container').innerHTML = 
+            '<div class="error-message">Error al cargar los platos.</div>';
+        });
+    }
+
+    function cargarFiltros() {
+      // Cargar restaurantes para filtro
+      fetch('../../src/api/restaurantes/listar_json.php')
+        .then(response => response.json())
+        .then(restaurantes => {
+          const select = document.getElementById('filtro-restaurante');
+          restaurantes.forEach(rest => {
+            const option = new Option(rest.nombre, rest.id);
+            select.add(option);
+          });
+        });
+
+      // Cargar categorías para filtro (todas las categorías del sistema)
+      fetch('../../src/api/categorias/listar_todas_json.php')
+        .then(response => response.json())
+        .then(categorias => {
+          const select = document.getElementById('filtro-categoria');
+          categorias.forEach(cat => {
+            const option = new Option(cat.nombre, cat.id);
+            select.add(option);
+          });
+        })
+        .catch(error => console.error('Error cargando categorías:', error));
+    }
+
+    function cargarEstadisticas() {
+      // Cargar estadísticas reales desde el servidor
+      fetch('../../src/api/platos/estadisticas.php')
+        .then(response => response.json())
+        .then(stats => {
+          document.getElementById('total-platos-stats').textContent = stats.total_platos || '0';
+          document.getElementById('precio-promedio').textContent = stats.precio_promedio || '$0';
+          
+          // Para restaurantes con platos y categorías activas, necesitamos consultas adicionales
+          fetch('../../src/api/restaurantes/estadisticas.php')
+            .then(response => response.json())
+            .then(restStats => {
+              document.getElementById('restaurantes-con-platos').textContent = restStats.total_restaurantes || '0';
+            })
+            .catch(error => {
+              console.error('Error cargando estadísticas de restaurantes:', error);
+              document.getElementById('restaurantes-con-platos').textContent = '0';
+            });
+            
+          fetch('../../src/api/categorias/estadisticas.php')
+            .then(response => response.json())
+            .then(catStats => {
+              document.getElementById('categorias-activas').textContent = catStats.categorias_con_platos || '0';
+            })
+            .catch(error => {
+              console.error('Error cargando estadísticas de categorías:', error);
+              document.getElementById('categorias-activas').textContent = '0';
+            });
+        })
+        .catch(error => {
+          console.error('Error cargando estadísticas:', error);
+          // Valores por defecto en caso de error
+          document.getElementById('total-platos-stats').textContent = '0';
+          document.getElementById('restaurantes-con-platos').textContent = '0';
+          document.getElementById('precio-promedio').textContent = '$0';
+          document.getElementById('categorias-activas').textContent = '0';
+        });
+    }
+
+    function configurarEventos() {
+      // Configurar cambio de vista
+      document.querySelectorAll('.view-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          currentView = this.dataset.view;
+          cambiarVista();
+        });
+      });
+    }
+
+    function cambiarVista() {
+      const container = document.getElementById('platos-container');
+      if (currentView === 'cards') {
+        container.classList.add('cards-view');
+      } else {
+        container.classList.remove('cards-view');
+      }
+    }
+
+    function aplicarFiltros() {
+      // Implementar lógica de filtros
+      console.log('Aplicando filtros...');
+      cargarDatos();
+    }
+
+    function limpiarFiltros() {
+      document.getElementById('filtro-restaurante').value = '';
+      document.getElementById('filtro-categoria').value = '';
+      document.getElementById('filtro-precio').value = '';
+      document.getElementById('buscar-plato').value = '';
+      cargarDatos();
+    }
+
+    function actualizarLista() {
+      cargarDatos();
+    }
+
+    function exportarDatos() {
+      alert('Función de exportación en desarrollo');
+    }
+
+    function verDetallePlato(id) {
+      // Mostrar modal con detalles del plato
+      document.getElementById('modal-detalle-plato').style.display = 'block';
+      // Cargar detalles específicos del plato
+      console.log('Mostrando detalles del plato:', id);
+    }
+
+    function cerrarModal() {
+      document.getElementById('modal-detalle-plato').style.display = 'none';
+    }
+
+    // Cerrar modales al hacer clic fuera
+    document.addEventListener('click', function(event) {
+      const modalDetalle = document.getElementById('modal-detalle-plato');
+      const modalMenu = document.getElementById('modal-menu-plato');
+      
+      if (event.target === modalDetalle) {
+        modalDetalle.style.display = 'none';
+      }
+      if (event.target === modalMenu) {
+        modalMenu.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html> 

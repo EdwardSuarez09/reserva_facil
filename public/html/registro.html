@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registro de Usuario - Reserva Fácil</title>
+  <link rel="stylesheet" href="../assets/css/estilos_login.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings:
+        'FILL' 0,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 48;
+    }
+
+    .icono-campana {
+      font-size: 60px;
+      color: #f39c12;
+      display: block;
+      margin: 0 auto 10px auto;
+    }
+
+    .logo-superior h1 {
+      color: #f39c12;
+      font-size: 24px;
+      margin: 0;
+    }
+
+    .logo-superior {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .registro-link {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .registro-link a {
+      color: #f39c12;
+      text-decoration: none;
+    }
+
+    .registro-link a:hover {
+      text-decoration: underline;
+    }
+
+    .success-msg {
+      color: #27ae60;
+      text-align: center;
+      margin: 10px 0;
+      font-weight: 500;
+    }
+
+    .info-text {
+      text-align: center;
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="fondo"></div>
+
+  <div class="login-container">
+    <div class="logo-superior">
+      <span class="material-symbols-outlined icono-campana">room_service</span>
+      <h1>RESERVA FÁCIL</h1>
+      <p style="color: #666; font-size: 16px; margin: 5px 0;">Crear Nueva Cuenta</p>
+    </div>
+
+    <div class="info-text">
+      <p>Crea tu cuenta para hacer reservas en nuestros restaurantes</p>
+    </div>
+
+    <form id="formRegistro">
+      <div class="input-group">
+        <span class="material-symbols-outlined">person</span>
+        <input type="text" name="nombre" placeholder="Nombre completo" required>
+      </div>
+      
+      <div class="input-group">
+        <span class="material-symbols-outlined">email</span>
+        <input type="email" name="correo" placeholder="Correo electrónico" required>
+      </div>
+      
+      <div class="input-group">
+        <span class="material-symbols-outlined">phone</span>
+        <input type="tel" name="telefono" placeholder="Teléfono (opcional)">
+      </div>
+      
+      <div class="input-group">
+        <span class="material-symbols-outlined">lock</span>
+        <input type="password" name="contrasena" placeholder="Contraseña" required minlength="6">
+      </div>
+      
+      <div class="input-group">
+        <span class="material-symbols-outlined">lock</span>
+        <input type="password" name="confirmar_contrasena" placeholder="Confirmar contraseña" required minlength="6">
+      </div>
+      
+      <button type="submit">Crear Cuenta</button>
+    </form>
+
+    <p id="mensaje" class="error-msg"></p>
+    <p id="mensajeExito" class="success-msg" style="display: none;"></p>
+    
+    <!-- Enlace de vuelta al login -->
+    <div class="registro-link">
+      <p>¿Ya tienes cuenta? <a href="login.html">Inicia sesión aquí</a></p>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("formRegistro").addEventListener("submit", function(e) {
+      e.preventDefault();
+      
+      // Validar que las contraseñas coincidan
+      const contrasena = document.querySelector('input[name="contrasena"]').value;
+      const confirmarContrasena = document.querySelector('input[name="confirmar_contrasena"]').value;
+      
+      if (contrasena !== confirmarContrasena) {
+        document.getElementById("mensaje").innerText = "Las contraseñas no coinciden";
+        return;
+      }
+      
+      const datos = new FormData(this);
+
+      fetch("../../src/api/auth/registro_auto.php", {
+        method: "POST",
+        body: datos
+      })
+      .then(res => res.text())
+      .then(data => {
+        if (data.includes("exitosamente")) {
+          document.getElementById("mensajeExito").innerText = data;
+          document.getElementById("mensajeExito").style.display = "block";
+          document.getElementById("mensaje").innerText = "";
+          
+          // Redirigir al login después de 2 segundos
+          setTimeout(() => {
+            window.location.href = "login.html";
+          }, 2000);
+        } else {
+          document.getElementById("mensaje").innerText = data;
+          document.getElementById("mensajeExito").style.display = "none";
+        }
+      })
+      .catch(error => {
+        document.getElementById("mensaje").innerText = "Error al procesar la solicitud.";
+        console.error(error);
+      });
+    });
+  </script>
+</body>
+</html> 

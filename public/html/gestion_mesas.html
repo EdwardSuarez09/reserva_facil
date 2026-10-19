@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Mesas - ReservaFácil</title>
+  <link rel="stylesheet" href="../assets/css/estilos_principal.css">
+  <link rel="stylesheet" href="../assets/css/panel_admin.css">
+  <link rel="stylesheet" href="../assets/css/gestion_moderna.css">
+  
+  <!-- 🛡️ PROTECCIÓN CRÍTICA ANTI-MODAL 🛡️ -->
+  <style>
+    /* Corrección crítica del modal */
+    .modal {
+      display: none !important;
+      position: fixed !important;
+      z-index: 1000 !important;
+      left: 0 !important;
+      top: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      background: rgba(0,0,0,0.5) !important;
+      backdrop-filter: blur(5px) !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 20px !important;
+    }
+    
+    .modal.show {
+      display: flex !important;
+    }
+    
+    .modal-content {
+      background: white !important;
+      width: 100% !important;
+      max-width: 600px !important;
+      max-height: 90vh !important;
+      border-radius: 12px !important;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3) !important;
+      overflow-y: auto !important;
+      position: relative !important;
+      margin: 0 auto !important;
+    }
+  </style>
+  
+  <!-- ⚡ PROTECCIÓN INMEDIATA ⚡ -->
+  <script>
+    // Protección simple solo durante carga inicial
+    (function() {
+      console.log('🛡️ PROTECCIÓN SIMPLE INICIADA PARA MESAS');
+      
+      // Función simple para cerrar modales solo durante la carga
+      function cerrarModalesIniciales() {
+        const modalMesa = document.getElementById('modal-editar-mesa');
+        if (modalMesa) {
+          modalMesa.style.display = 'none';
+          modalMesa.style.visibility = 'hidden';
+          modalMesa.style.opacity = '0';
+        }
+      }
+      
+      // Ejecutar solo durante los primeros 2 segundos
+      cerrarModalesIniciales();
+      setTimeout(cerrarModalesIniciales, 100);
+      setTimeout(cerrarModalesIniciales, 500);
+      setTimeout(cerrarModalesIniciales, 1000);
+      setTimeout(cerrarModalesIniciales, 2000);
+      
+      // Después de 2 segundos, dejar que funcione normalmente
+      setTimeout(() => {
+        console.log('🛡️ PROTECCIÓN SIMPLE FINALIZADA PARA MESAS');
+      }, 2000);
+    })();
+  </script>
+</head>
+<body>
+  <!-- Navegación lateral -->
+  <nav class="sidebar-nav">
+    <div class="nav-header">
+      <img src="../assets/img/Imagenes/DALL·E 2024-11-06 21.54.50 - An elegant logo for a restaurant, featuring a stylized fork and knife crossed over a plate with subtle decorative elements. The background should be s.webp" alt="Logo ReservaFácil" class="nav-logo">
+      <h3 class="nav-title">Panel Admin</h3>
+      <p class="nav-subtitle">Gestión de Restaurante</p>
+    </div>
+    
+    <div class="nav-menu">
+      <a href="../index_admin.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Inicio</span>
+      </a>
+      <a href="../index_cliente.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Catálogo</span>
+      </a>
+      <a href="gestion_categoria.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Gestión Categorías</span>
+      </a>
+      <a href="gestion_plato.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Gestión de Menú</span>
+      </a>
+      <a href="gestion_mesas.html" class="nav-link active">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Gestión de Mesas</span>
+      </a>
+      <a href="gestion_reservas.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Gestión de Reservas</span>
+      </a>
+    </div>
+    
+    <div class="nav-footer">
+      <a href="login.html" class="nav-link logout">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Cerrar Sesión</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Contenido principal -->
+  <main class="main-content">
+    <!-- Header de la página -->
+    <header class="page-header">
+      <div class="header-content">
+        <div class="header-text">
+          <h1 class="page-title">Gestión de Mesas</h1>
+          <p class="page-subtitle">Administra las mesas y distribución de tu restaurante</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-export" onclick="exportarMesas()">
+            Exportar Distribución
+          </button>
+          <button class="btn btn-refresh" onclick="actualizarLista()">
+            Actualizar
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Sección del formulario -->
+    <section class="form-section">
+      <div class="form-container-modern">
+        <div class="form-header">
+          <h2 class="form-title">Registrar Nueva Mesa</h2>
+          <p class="form-subtitle">Agrega una nueva mesa a la distribución de tu restaurante</p>
+        </div>
+        
+        <form id="formRegistroMesa" class="form-modern" enctype="multipart/form-data">
+          <div class="form-grid">
+            <div class="input-group">
+              <label for="numero-mesa" class="input-label">Número de Mesa</label>
+              <input type="number" name="numero_mesa" id="numero-mesa" class="input-modern" 
+                     placeholder="Ej: 1, 2, 3..." min="1" required>
+              <div class="input-helper">Número único identificador de la mesa</div>
+            </div>
+
+            <div class="input-group">
+              <label for="capacidad-mesa" class="input-label">Capacidad</label>
+              <select name="capacidad" id="capacidad-mesa" class="select-modern" required>
+                <option value="">Selecciona la capacidad</option>
+                <option value="2">2 personas</option>
+                <option value="4">4 personas</option>
+                <option value="6">6 personas</option>
+                <option value="8">8 personas</option>
+                <option value="10">10 personas</option>
+                <option value="12">12 personas</option>
+              </select>
+              <div class="input-helper">Número máximo de comensales</div>
+            </div>
+
+            <div class="input-group full-width">
+              <label for="imagen-mesa" class="input-label">Imagen de la Mesa</label>
+              <input type="file" name="imagen" id="imagen-mesa" class="file-input" accept="image/*" required>
+              <div class="input-helper">Foto de la mesa o su ubicación. Formato JPG, PNG o WebP</div>
+            </div>
+          </div>
+          
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+              Registrar Mesa
+            </button>
+            <button type="reset" class="btn btn-secondary">
+              Limpiar Formulario
+            </button>
+          </div>
+          
+          <div id="respuesta" class="form-message"></div>
+      </form>
+    </div>
+    </section>
+
+    <!-- Sección de estadísticas -->
+    <section class="stats-section">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon"></div>
+          <div class="stat-content">
+            <span class="stat-number" id="total-mesas">-</span>
+            <span class="stat-label">Total Mesas</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"></div>
+          <div class="stat-content">
+            <span class="stat-number" id="mesas-disponibles">-</span>
+            <span class="stat-label">Disponibles</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"></div>
+          <div class="stat-content">
+            <span class="stat-number" id="mesas-ocupadas">-</span>
+            <span class="stat-label">Ocupadas</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"></div>
+          <div class="stat-content">
+            <span class="stat-number" id="capacidad-total">-</span>
+            <span class="stat-label">Capacidad Total</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Filtros -->
+    <section class="filters-section">
+      <div class="filters-container">
+        <h3 class="filters-title">Filtros de Búsqueda</h3>
+        <div class="filters-grid">
+          <div class="filter-group">
+            <label for="filtro-capacidad">Capacidad:</label>
+            <select id="filtro-capacidad" class="filter-select">
+              <option value="">Todas las capacidades</option>
+              <option value="2">2 personas</option>
+              <option value="4">4 personas</option>
+              <option value="6">6 personas</option>
+              <option value="8">8 personas</option>
+              <option value="10+">10+ personas</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="filtro-estado">Estado:</label>
+            <select id="filtro-estado" class="filter-select">
+              <option value="">Todos los estados</option>
+              <option value="disponible">Disponible</option>
+              <option value="ocupada">Ocupada</option>
+              <option value="reservada">Reservada</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="buscar-mesa">Buscar mesa:</label>
+            <input type="text" id="buscar-mesa" placeholder="Número de mesa..." class="filter-input">
+          </div>
+        </div>
+        <div class="filters-actions">
+          <button class="btn btn-primary" onclick="aplicarFiltros()">Aplicar Filtros</button>
+          <button class="btn btn-secondary" onclick="limpiarFiltros()">Limpiar</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Lista de mesas -->
+    <section class="data-section">
+      <div class="section-header">
+        <h2 class="section-title">Mesas del Restaurante</h2>
+        <div class="section-actions">
+          <div class="view-options">
+            <button class="view-btn active" data-view="table">Tabla</button>
+            <button class="view-btn" data-view="cards">Tarjetas</button>
+          </div>
+    </div>
+  </div>
+
+      <div class="data-container" id="mesas-container">
+        <div class="loading-state">
+          <div class="loading-spinner"></div>
+          <p>Cargando mesas del restaurante...</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal para editar mesa -->
+  <div id="modal-editar-mesa" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Editar Mesa</h3>
+        <button class="modal-close" onclick="cerrarModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="formEditarMesa" class="form-modern" enctype="multipart/form-data">
+        <input type="hidden" name="id" id="edit-id-mesa">
+          
+          <div class="form-grid">
+            <div class="input-group">
+              <label for="edit-numero-mesa" class="input-label">Número de Mesa</label>
+              <input type="number" name="numero_mesa" id="edit-numero-mesa" class="input-modern" required>
+            </div>
+
+            <div class="input-group">
+              <label for="edit-capacidad" class="input-label">Capacidad</label>
+              <select name="capacidad" id="edit-capacidad" class="select-modern" required>
+                <option value="2">2 personas</option>
+                <option value="4">4 personas</option>
+                <option value="6">6 personas</option>
+                <option value="8">8 personas</option>
+                <option value="10">10 personas</option>
+                <option value="12">12 personas</option>
+              </select>
+            </div>
+
+            <div class="input-group full-width">
+              <label for="edit-imagen" class="input-label">Nueva Imagen (opcional)</label>
+              <input type="file" name="imagen" id="edit-imagen" class="file-input" accept="image/*">
+              <div class="input-helper">Deja vacío para mantener la imagen actual</div>
+            </div>
+          </div>
+          
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+            <button type="button" class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button>
+          </div>
+      </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Variables globales
+    let currentView = 'table';
+    let modalAbierto = false;
+
+    // Inicialización - con protección contra apertura automática de modales
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('Iniciando gestión de mesas...');
+      
+      // Asegurar que el modal esté cerrado al cargar
+      const modal = document.getElementById("modal-editar-mesa");
+      if (modal) {
+        modal.style.display = "none";
+        modalAbierto = false;
+      }
+      
+      // Cargar datos
+      cargarMesas();
+      cargarEstadisticas();
+      configurarEventos();
+      validarSesion();
+      
+      console.log('Gestión de mesas iniciada correctamente');
+    });
+
+    // Configurar eventos
+    function configurarEventos() {
+      // Configurar cambio de vista
+      document.querySelectorAll('.view-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          currentView = this.dataset.view;
+          cambiarVista();
+        });
+      });
+      
+      // Event listener para cerrar modal con ESC
+      document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape' && modalAbierto) {
+          cerrarModal();
+        }
+      });
+    }
+
+    // Cambiar vista entre tabla y tarjetas
+    function cambiarVista() {
+      const container = document.getElementById('mesas-container');
+      if (currentView === 'cards') {
+        container.classList.add('cards-view');
+      } else {
+        container.classList.remove('cards-view');
+      }
+    }
+
+    // Cargar mesas
+    function cargarMesas() {
+      fetch("../../src/api/mesas/listar.php")
+        .then(res => {
+          if (!res.ok) {
+            throw new Error("Error HTTP: " + res.status);
+          }
+          return res.text();
+        })
+        .then(html => {
+          document.getElementById("mesas-container").innerHTML = html;
+        })
+        .catch(error => {
+          console.error("Error cargando mesas:", error);
+          document.getElementById("mesas-container").innerHTML = 
+            '<div class="error-message">Error al cargar las mesas.</div>';
+        });
+    }
+
+    // Cargar estadísticas
+    function cargarEstadisticas() {
+      fetch("../../src/api/mesas/estadisticas.php")
+        .then(res => res.json())
+        .then(data => {
+          if (data.error) {
+            console.error('Error al cargar estadísticas:', data.error);
+            return;
+          }
+          
+          document.getElementById('total-mesas').textContent = data.total_mesas || '0';
+          document.getElementById('mesas-disponibles').textContent = data.mesas_disponibles || '0';
+          document.getElementById('mesas-ocupadas').textContent = data.mesas_ocupadas || '0';
+          document.getElementById('capacidad-total').textContent = data.capacidad_total || '0';
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          // Mantener valores por defecto en caso de error
+          document.getElementById('total-mesas').textContent = '0';
+          document.getElementById('mesas-disponibles').textContent = '0';
+          document.getElementById('mesas-ocupadas').textContent = '0';
+          document.getElementById('capacidad-total').textContent = '0';
+        });
+    }
+
+    // Registrar mesa
+    document.getElementById("formRegistroMesa").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const datos = new FormData(this);
+      const respuestaDiv = document.getElementById("respuesta");
+
+      fetch("../../src/api/mesas/crear.php", {
+        method: "POST",
+        body: datos
+      })
+      .then(res => res.text())
+      .then(msg => {
+        mostrarMensaje(msg, respuestaDiv);
+        if (!msg.toLowerCase().includes('error')) {
+          this.reset();
+          cargarMesas();
+          cargarEstadisticas();
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        mostrarMensaje('Error al registrar la mesa', respuestaDiv, 'error');
+      });
+    });
+
+    // Editar mesa - función mejorada con protección
+    function editarMesa(id) {
+      console.log('Función editarMesa llamada con ID:', id);
+      
+      if (!id || isNaN(id)) {
+        alert('ID de mesa inválido');
+        return;
+      }
+
+      // Prevenir múltiples aperturas
+      if (modalAbierto) {
+        console.log('Modal ya está abierto, ignorando nueva solicitud');
+        return;
+      }
+
+      fetch(`../../src/api/mesas/obtener.php?id=${id}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.error) {
+            alert('Error: ' + data.error);
+            return;
+          }
+          
+          console.log('Datos de mesa recibidos:', data);
+          
+          // Llenar el formulario
+          const elementos = {
+            'edit-id-mesa': data.id,
+            'edit-numero-mesa': data.numero_mesa,
+            'edit-capacidad': data.capacidad
+          };
+          
+          // Asignar valores a los campos
+          Object.keys(elementos).forEach(id => {
+            const elemento = document.getElementById(id);
+            if (elemento) {
+              elemento.value = elementos[id];
+            }
+          });
+          
+          // Abrir modal
+          abrirModal();
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          mostrarAlertaPersonalizada('Error al cargar los datos de la mesa');
+        });
+    }
+
+    // Función para abrir el modal de manera controlada
+    function abrirModal() {
+      console.log('Abriendo modal de mesa...');
+      const modal = document.getElementById("modal-editar-mesa");
+      if (modal) {
+        // Establecer que el modal está siendo abierto intencionalmente
+        modalAbierto = true;
+        
+        // Mostrar modal con estilos seguros
+        modal.style.display = "flex";
+        modal.style.visibility = "visible";
+        modal.style.opacity = "1";
+        modal.classList.add("show");
+        
+        // Scroll al principio del modal
+        setTimeout(() => {
+          modal.scrollTop = 0;
+          const modalContent = modal.querySelector('.modal-content');
+          if (modalContent) {
+            modalContent.scrollTop = 0;
+          }
+        }, 100);
+        
+        console.log('Modal de mesa abierto correctamente');
+      }
+    }
+
+    // Cerrar modal - función mejorada
+    function cerrarModal() {
+      console.log('Cerrando modal de mesa...');
+      const modal = document.getElementById("modal-editar-mesa");
+      if (modal) {
+        // Ocultar modal completamente
+        modal.style.display = "none";
+        modal.style.visibility = "hidden";
+        modal.style.opacity = "0";
+        modal.classList.remove("show");
+        modalAbierto = false;
+        
+        // Limpiar formulario
+        const form = document.getElementById("formEditarMesa");
+        if (form) {
+          form.reset();
+        }
+        
+        console.log('Modal de mesa cerrado correctamente');
+      }
+    }
+
+    // Actualizar mesa
+    document.getElementById("formEditarMesa").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const datos = new FormData(this);
+
+      fetch("../../src/api/mesas/editar.php", {
+        method: "POST",
+        body: datos
+      })
+      .then(res => res.text())
+      .then(msg => {
+        mostrarAlertaPersonalizada(msg);
+        if (!msg.toLowerCase().includes('error')) {
+          cerrarModal();
+          cargarMesas();
+          cargarEstadisticas();
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        mostrarAlertaPersonalizada('Error al actualizar la mesa');
+      });
+    });
+
+    // Eliminar mesa
+    function eliminarMesa(id) {
+      if (!confirm("¿Está seguro de que desea eliminar esta mesa? Esta acción no se puede deshacer.")) {
+        return;
+      }
+      
+      const datos = new FormData();
+      datos.append("id", id);
+
+      fetch("../../src/api/mesas/eliminar.php", {
+        method: "POST",
+        body: datos
+      })
+      .then(res => res.text())
+      .then(msg => {
+        mostrarAlertaPersonalizada(msg);
+        if (!msg.toLowerCase().includes('error')) {
+          cargarMesas();
+          cargarEstadisticas();
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        mostrarAlertaPersonalizada('Error al eliminar la mesa');
+      });
+    }
+  
+    // Filtros
+    function aplicarFiltros() {
+      cargarMesas();
+    }
+
+    function limpiarFiltros() {
+      document.getElementById('filtro-capacidad').value = '';
+      document.getElementById('filtro-estado').value = '';
+      document.getElementById('buscar-mesa').value = '';
+      cargarMesas();
+    }
+
+    // Funciones auxiliares
+    function mostrarMensaje(mensaje, elemento, tipo = 'success') {
+      elemento.className = `form-message ${tipo}`;
+      elemento.textContent = mensaje;
+      setTimeout(() => {
+        elemento.textContent = '';
+        elemento.className = 'form-message';
+      }, 5000);
+    }
+
+    function mostrarAlertaPersonalizada(mensaje) {
+      const alerta = document.createElement('div');
+      alerta.className = `alerta-personalizada ${mensaje.toLowerCase().includes('error') ? 'alerta-error' : 'alerta-exito'}`;
+      alerta.textContent = mensaje;
+      alerta.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 20px;
+        border-radius: 4px;
+        color: white;
+        font-weight: bold;
+        z-index: 10000;
+        animation: slideIn 0.3s ease forwards;
+      `;
+      
+      if (mensaje.toLowerCase().includes('error')) {
+        alerta.style.backgroundColor = '#dc3545';
+      } else {
+        alerta.style.backgroundColor = '#28a745';
+      }
+      
+      document.body.appendChild(alerta);
+      
+      setTimeout(() => {
+        alerta.style.animation = 'slideOut 0.3s ease forwards';
+        setTimeout(() => alerta.remove(), 300);
+      }, 4000);
+    }
+
+    function actualizarLista() {
+      cargarMesas();
+      cargarEstadisticas();
+    }
+
+    function exportarMesas() {
+      alert('Función de exportación en desarrollo');
+    }
+
+    function validarSesion() {
+      fetch('../../src/helpers/validar_sesion.php')
+        .then(res => res.text())
+        .then(data => {
+          if (data !== "ok") {
+            window.location.href = "login.html";
+          }
+        })
+        .catch(error => {
+          console.error('Error validando sesión:', error);
+        });
+    }
+
+    // Cerrar modal al hacer clic fuera - mejorado
+    document.addEventListener('click', function(event) {
+      const modal = document.getElementById('modal-editar-mesa');
+      if (event.target === modal && modalAbierto) {
+        cerrarModal();
+      }
+    });
+
+    // Prevenir que se abra el modal automáticamente por errores de JavaScript
+    window.addEventListener('error', function(event) {
+      console.error('Error de JavaScript detectado:', event.error);
+      // Si hay algún error y el modal se abre inadvertidamente, cerrarlo
+      if (modalAbierto && !event.filename.includes('editarMesa')) {
+        console.log('Cerrando modal debido a error inesperado');
+        cerrarModal();
+      }
+    });
+  </script>
+</body>
+</html>

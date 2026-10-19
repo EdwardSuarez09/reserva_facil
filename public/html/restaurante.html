@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detalles del Restaurante</title>
+  <link rel="stylesheet" href="../assets/css/estilos_vista_restaurante.css">
+  <style>
+  </style>
+</head>
+<body>
+  <div class="main-container">
+    <nav class="sidebar">
+      <div id="logo-restaurante" class="logo-nav"></div>
+      <a href="#inicio" class="nav-link active">Inicio</a>
+      <a href="#menu" class="nav-link">Especialidades</a>
+      <a href="#" id="menu-completo-link" class="nav-link">Menú Completo</a>
+      <a href="#reservas" class="nav-link">Reservas</a>
+      <a href="../index_cliente.html" class="nav-link">Volver al catálogo</a>
+    </nav>
+
+    <div class="contenido-principal">
+      <section id="inicio">
+        <div id="info-restaurante">Cargando información...</div>
+      </section>
+
+      <section id="menu">
+        <h2>Menú del Restaurante</h2>
+        <div id="menu-restaurante">Cargando menú...</div>
+      </section>
+
+      <section id="reservas">
+        <h2>Reservas</h2>
+        
+        <!-- Botón para hacer reserva -->
+        <div style="text-align: center; margin-bottom: 40px; padding: 40px; background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%); border-radius: 20px; color: white;">
+          <h3 style="margin-bottom: 20px; font-size: 2rem; font-weight: 300;">¿Quieres hacer una reserva?</h3>
+          <p style="margin-bottom: 30px; font-size: 1.2rem; opacity: 0.9;">Completa el formulario para reservar tu mesa de forma fácil y rápida</p>
+          <button onclick="irAHacerReserva()" style="
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            border: none;
+            padding: 18px 45px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.3);
+            position: relative;
+            overflow: hidden;
+          " onmouseover="
+            this.style.transform='translateY(-3px)'; 
+            this.style.boxShadow='0 12px 35px rgba(231, 76, 60, 0.4)';
+            this.style.background='linear-gradient(135deg, #c0392b 0%, #a93226 100%)';
+          " onmouseout="
+            this.style.transform='translateY(0)'; 
+            this.style.boxShadow='0 8px 25px rgba(231, 76, 60, 0.3)';
+            this.style.background='linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)';
+          " onclick="
+            this.style.transform='scale(0.98)';
+            setTimeout(() => { this.style.transform='translateY(0)'; }, 150);
+          ">
+            HACER RESERVA AHORA
+          </button>
+        </div>
+        
+        <div id="mesas-galeria">Cargando mesas disponibles...</div>
+        <div id="platos-reservas">Cargando platos especiales...</div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Footer directo en HTML -->
+  <footer class="footer-restaurante" id="main-footer">
+    <div class="footer-contenido">
+      <div class="footer-main">
+        <h1 class="footer-nombre" id="footer-nombre-dinamico">Restaurante</h1>
+        <div class="footer-descripcion">El mejor ambiente gastronómico</div>
+        <div class="footer-info-detalle">
+          <div class="footer-direccion" id="footer-direccion"><strong>Dirección:</strong> Cargando...</div>
+          <div class="footer-horario" id="footer-horario"><strong>Horario:</strong> Cargando...</div>
+          <div class="footer-telefonos" id="footer-contacto"><strong>Contacto:</strong> Cargando...</div>
+          <div class="footer-web" id="footer-web"><strong>Web:</strong> <a href="#" target="_blank" id="footer-web-link">Cargando...</a></div>
+        </div>
+      </div>
+      
+      <nav class="footer-nav">
+        <a href="#inicio" class="footer-nav-link">INICIO</a>
+        <a href="#menu" class="footer-nav-link">MENÚ</a>
+        <a href="#reservas" class="footer-nav-link">RESERVAS</a>
+        <a href="../index_cliente.html" class="footer-nav-link">CATÁLOGO</a>
+      </nav>
+      
+      <div class="footer-social">
+        <a href="#" class="social-icon" title="Sitio Web" id="footer-social-web">🌐</a>
+        <a href="#" class="social-icon" title="Facebook">📘</a>
+        <a href="#" class="social-icon" title="Instagram">📷</a>
+        <a href="#" class="social-icon" title="Twitter">🐦</a>
+      </div>
+      
+      <div class="footer-bottom">
+        <div class="footer-award">
+          <div class="award-circle">
+            <span class="award-year">2025</span>
+            <span class="award-text">MEJOR<br>RESTAURANTE</span>
+            <span class="award-location">LOCAL</span>
+          </div>
+        </div>
+        
+        <div class="footer-copyright">
+          <span>&copy; 2025 <span id="footer-copyright-nombre">Restaurante</span> - Todos los derechos reservados</span>
+          <span class="footer-credits">Diseño web por <strong>ReservaFácil</strong></span>
+        </div>
+        
+        <div class="footer-redes" id="footer-redes">
+          <span><strong>Redes sociales:</strong> <span id="footer-redes-value">Cargando...</span></span>
+        </div>
+      </div>
+      
+      <!-- Indicador de estado del footer -->
+      <div style="text-align: center; padding: 10px; font-size: 12px; color: #666; border-top: 1px solid #333;">
+        Footer activo - <span id="footer-timestamp"></span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Función global para redirección al menú completo
+    function irAMenuCompleto() {
+      const params = new URLSearchParams(window.location.search);
+      const nombre = params.get("restaurante");
+      
+      if (nombre) {
+        const menuUrl = `menu_restaurante.html?restaurante=${encodeURIComponent(nombre)}`;
+        console.log('Redirigiendo a menú completo:', menuUrl);
+        window.location.href = menuUrl;
+      } else {
+        alert('Error: No se puede acceder al menú completo.');
+      }
+    }
+
+    // Función global para redirección a hacer reserva
+    function irAHacerReserva() {
+      const params = new URLSearchParams(window.location.search);
+      const nombre = params.get("restaurante");
+      
+      if (nombre) {
+        const reservaUrl = `hacer_reserva.html?restaurante=${encodeURIComponent(nombre)}`;
+        console.log('Redirigiendo a hacer reserva:', reservaUrl);
+        window.location.href = reservaUrl;
+      } else {
+        alert('Error: No se puede acceder al sistema de reservas.');
+      }
+    }
+
+    // Función global para actualizar el footer desde los datos del restaurante
+    window.actualizarFooterDesdeRestaurante = function() {
+      if (!window.restauranteInfo) {
+        console.log('❌ window.restauranteInfo no disponible');
+        return false;
+      }
+      
+      const info = window.restauranteInfo;
+      console.log('🔄 Actualizando footer con datos globales:', info);
+      
+      // Verificar que los elementos existan
+      const footerDireccion = document.getElementById('footer-direccion');
+      const footerHorario = document.getElementById('footer-horario');
+      const footerContacto = document.getElementById('footer-contacto');
+      const footerWeb = document.getElementById('footer-web');
+      const footerRedes = document.getElementById('footer-redes-value');
+      
+      if (!footerDireccion) {
+        console.log('❌ Elementos del footer no encontrados');
+        return false;
+      }
+      
+      console.log('✅ Elementos del footer encontrados, actualizando...');
+      
+      // Actualizar dirección
+      if (info.direccion) {
+        footerDireccion.innerHTML = '<strong>Dirección:</strong> ' + info.direccion;
+        console.log('✅ Dirección actualizada:', info.direccion);
+      }
+      
+      // Actualizar horario
+      if (info.horario) {
+        footerHorario.innerHTML = '<strong>Horario:</strong> ' + info.horario;
+        console.log('✅ Horario actualizado:', info.horario);
+      }
+      
+      // Actualizar contacto
+      let contacto = '<strong>Contacto:</strong> ';
+      if (info.telefono && info.correo) {
+        contacto += info.telefono + ' | ' + info.correo;
+      } else if (info.telefono) {
+        contacto += info.telefono;
+      } else if (info.correo) {
+        contacto += info.correo;
+      } else {
+        contacto += 'No disponible';
+      }
+      footerContacto.innerHTML = contacto;
+      console.log('✅ Contacto actualizado:', contacto);
+      
+      // Actualizar web
+      if (info.web && info.web.trim() !== '') {
+        footerWeb.innerHTML = '<strong>Web:</strong> <a href="' + info.web + '" target="_blank">' + info.web + '</a>';
+        console.log('✅ Web actualizada:', info.web);
+      } else {
+        footerWeb.innerHTML = '<strong>Web:</strong> No disponible';
+        console.log('⚠️ Web no disponible');
+      }
+      
+      // Actualizar redes sociales
+      if (footerRedes) {
+        if (info.redes && info.redes.trim() !== '') {
+          footerRedes.textContent = info.redes;
+          console.log('✅ Redes actualizadas:', info.redes);
+        } else {
+          footerRedes.textContent = 'No disponible';
+          console.log('⚠️ Redes no disponibles');
+        }
+      }
+      
+      console.log('🎉 Footer actualizado completamente desde función global!');
+      return true;
+    };
+
+    // Función para actualizar el footer con datos dinámicos
+    function actualizarFooterDinamico() {
+      console.log('🔍 Iniciando actualización del footer...');
+      console.log('🔍 Verificando window.restauranteInfo:', window.restauranteInfo);
+      
+      if (window.restauranteInfo) {
+        return window.actualizarFooterDesdeRestaurante();
+      } else {
+        console.log('❌ window.restauranteInfo no está disponible aún');
+        return false;
+      }
+    }
+    
+    // Hacer la función globalmente disponible
+    window.actualizarFooterDinamico = actualizarFooterDinamico;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      const nombre = params.get("restaurante");
+  
+      if (!nombre) {
+        document.getElementById("info-restaurante").innerHTML = "<p style='color:red;'>Restaurante no especificado.</p>";
+        return;
+      }
+
+      // Actualizar el nombre del restaurante en el footer (nombre básico inicial)
+      document.getElementById("footer-nombre-dinamico").textContent = nombre;
+      document.getElementById("footer-copyright-nombre").textContent = nombre;
+
+      // Configurar enlace al menú completo
+      const menuCompletoLink = document.getElementById("menu-completo-link");
+      if (menuCompletoLink) {
+        const menuUrl = `menu_restaurante.html?restaurante=${encodeURIComponent(nombre)}`;
+        menuCompletoLink.href = menuUrl;
+        console.log('Enlace menú completo configurado:', menuUrl);
+      }
+
+      // Proteger el footer de ser removido
+      const footer = document.querySelector('.footer-restaurante');
+      if (footer) {
+        footer.style.cssText += 'display: block !important; visibility: visible !important; opacity: 1 !important;';
+        
+        // Observer para detectar si el footer es removido
+        const observer = new MutationObserver((mutations) => {
+          mutations.forEach((mutation) => {
+            if (mutation.type === 'childList') {
+              const footerExists = document.querySelector('.footer-restaurante');
+              if (!footerExists) {
+                console.warn('Footer fue removido, restaurando...');
+                document.body.appendChild(footer);
+              }
+            }
+          });
+        });
+        
+        observer.observe(document.body, {
+          childList: true,
+          subtree: true
+        });
+      }
+  
+      // Cargar la información principal del restaurante
+      fetch(`../../src/api/restaurantes/modulos.php?restaurante=${encodeURIComponent(nombre)}`)
+        .then(res => res.text())
+        .then(html => {
+          document.getElementById("info-restaurante").innerHTML = html;
+  
+          const logo = document.querySelector("#info-restaurante img");
+          if (logo) {
+            const logoClon = logo.cloneNode(true);
+            document.getElementById("logo-restaurante").appendChild(logoClon);
+          }
+          
+          // Observer para detectar cuando se agregue el script con los datos del restaurante
+          const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+              mutation.addedNodes.forEach((node) => {
+                if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'SCRIPT') {
+                  // Si se agregó un script, verificar si contiene restauranteInfo
+                  setTimeout(() => {
+                    if (window.restauranteInfo) {
+                      console.log('🎯 Script detectado! Actualizando footer con:', window.restauranteInfo);
+                      actualizarFooterConDatos(window.restauranteInfo);
+                      observer.disconnect(); // Desconectar el observer una vez que encontramos los datos
+                    }
+                  }, 100);
+                }
+              });
+            });
+          });
+          
+          // Observar cambios en info-restaurante
+          observer.observe(document.getElementById("info-restaurante"), {
+            childList: true,
+            subtree: true
+          });
+          
+          // También intentar con timeout como respaldo
+          setTimeout(() => {
+            if (window.restauranteInfo) {
+              console.log('🔄 Timeout: Actualizando footer con:', window.restauranteInfo);
+              actualizarFooterConDatos(window.restauranteInfo);
+            } else {
+              console.log('❌ Timeout: Datos aún no disponibles');
+            }
+          }, 2000);
+        })
+        .catch(error => {
+          console.error("Error al cargar información del restaurante:", error);
+        });
+  
+      // Función para actualizar footer con los datos del restaurante
+      function actualizarFooterConDatos(info) {
+        console.log('📝 Actualizando footer con:', info);
+        
+        // Actualizar dirección
+        if (info.direccion) {
+          const footerDireccion = document.getElementById("footer-direccion");
+          if (footerDireccion) {
+            footerDireccion.innerHTML = `<strong>Dirección:</strong> ${info.direccion}`;
+            console.log('✅ Dirección:', info.direccion);
+          }
+        }
+        
+        // Actualizar horario
+        if (info.horario) {
+          const footerHorario = document.getElementById("footer-horario");
+          if (footerHorario) {
+            footerHorario.innerHTML = `<strong>Horario:</strong> ${info.horario}`;
+            console.log('✅ Horario:', info.horario);
+          }
+        }
+        
+        // Actualizar contacto
+        let contactoText = '<strong>Contacto:</strong> ';
+        if (info.telefono && info.correo) {
+          contactoText += `${info.telefono} | ${info.correo}`;
+        } else if (info.telefono) {
+          contactoText += info.telefono;
+        } else if (info.correo) {
+          contactoText += info.correo;
+        } else {
+          contactoText += 'No disponible';
+        }
+        
+        const footerContacto = document.getElementById("footer-contacto");
+        if (footerContacto) {
+          footerContacto.innerHTML = contactoText;
+          console.log('✅ Contacto:', contactoText);
+        }
+        
+        // Actualizar web
+        if (info.web && info.web.trim() !== '') {
+          const footerWeb = document.getElementById("footer-web");
+          if (footerWeb) {
+            footerWeb.innerHTML = `<strong>Web:</strong> <a href="${info.web}" target="_blank">${info.web}</a>`;
+            console.log('✅ Web:', info.web);
+          }
+        } else {
+          const footerWeb = document.getElementById("footer-web");
+          if (footerWeb) {
+            footerWeb.innerHTML = `<strong>Web:</strong> No disponible`;
+            console.log('⚠️ Web no disponible');
+          }
+        }
+        
+        // Actualizar redes sociales
+        if (info.redes && info.redes.trim() !== '') {
+          const footerRedesValue = document.getElementById("footer-redes-value");
+          if (footerRedesValue) {
+            footerRedesValue.textContent = info.redes;
+            console.log('✅ Redes:', info.redes);
+          }
+        } else {
+          const footerRedesValue = document.getElementById("footer-redes-value");
+          if (footerRedesValue) {
+            footerRedesValue.textContent = 'No disponible';
+            console.log('⚠️ Redes no disponibles');
+          }
+        }
+        
+        console.log('🎉 Footer completamente actualizado!');
+      }
+  
+      // Cargar menú
+      fetch(`../../src/api/restaurantes/menu.php?restaurante=${encodeURIComponent(nombre)}`)
+        .then(res => res.text())
+        .then(html => document.getElementById("menu-restaurante").innerHTML = html)
+        .catch(error => {
+          console.error("Error al cargar el menú:", error);
+          document.getElementById("menu-restaurante").innerHTML = "<p>Error al cargar el menú</p>";
+        });
+  
+      // Cargar galería de mesas
+      fetch(`../../src/api/mesas/listar_restaurante.php?restaurante=${encodeURIComponent(nombre)}`)
+        .then(res => res.text())
+        .then(html => document.getElementById("mesas-galeria").innerHTML = html)
+        .catch(error => {
+          console.error("Error al cargar las mesas:", error);
+          document.getElementById("mesas-galeria").innerHTML = "<p>Error al cargar las mesas</p>";
+        });
+
+      // Cargar platos especiales para reservas
+      fetch(`../../src/api/platos/listar_para_reserva.php?restaurante=${encodeURIComponent(nombre)}`)
+        .then(res => res.text())
+        .then(html => document.getElementById("platos-reservas").innerHTML = html)
+        .catch(error => {
+          console.error("Error al cargar los platos:", error);
+          document.getElementById("platos-reservas").innerHTML = "<p>Error al cargar los platos especiales</p>";
+        });
+
+      // Verificar footer cada 2 segundos para asegurar que esté visible
+      setInterval(() => {
+        const footerCheck = document.querySelector('.footer-restaurante');
+        if (footerCheck) {
+          footerCheck.style.display = 'block';
+          footerCheck.style.visibility = 'visible';
+          footerCheck.style.opacity = '1';
+          
+          // Actualizar timestamp
+          const timestamp = document.getElementById('footer-timestamp');
+          if (timestamp) {
+            timestamp.textContent = new Date().toLocaleTimeString();
+          }
+          
+          // Verificar si los datos del restaurante están disponibles y el footer aún muestra "Cargando..."
+          if (window.restauranteInfo) {
+            const footerDireccion = document.getElementById('footer-direccion');
+            if (footerDireccion && footerDireccion.innerHTML.includes('Cargando')) {
+              console.log('🔄 Detectados datos del restaurante, actualizando footer desde setInterval...');
+              if (window.actualizarFooterDesdeRestaurante) {
+                window.actualizarFooterDesdeRestaurante();
+              } else {
+                actualizarFooterDinamico();
+              }
+            }
+          }
+        } else {
+          console.error('¡FOOTER PERDIDO! No se encuentra en el DOM');
+        }
+      }, 2000);
+
+      // Mensaje inicial
+      console.log('Footer inicializado correctamente');
+      const initialTimestamp = document.getElementById('footer-timestamp');
+      if (initialTimestamp) {
+        initialTimestamp.textContent = new Date().toLocaleTimeString();
+      }
+
+      // FUNCIONALIDAD DE BOTONES Y NAVEGACIÓN
+      setupNavigation();
+      setupSmoothScrolling();
+      
+      // Hacer la función disponible globalmente
+      window.restauranteActual = nombre;
+    });
+
+    // Función para configurar la navegación
+    function setupNavigation() {
+      // Navegación del sidebar
+      document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+          const href = this.getAttribute('href');
+          
+          // Solo aplicar smooth scroll a enlaces internos
+          if (href && href.startsWith('#')) {
+            e.preventDefault();
+            const targetId = href.substring(1);
+            const targetElement = document.getElementById(targetId);
+            
+            if (targetElement) {
+              // Actualizar navegación activa
+              document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+              this.classList.add('active');
+              
+              // Scroll suave
+              targetElement.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+              });
+            }
+          }
+        });
+      });
+
+      // Navegación del footer
+      document.querySelectorAll('.footer-nav-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+          const href = this.getAttribute('href');
+          
+          if (href && href.startsWith('#')) {
+            e.preventDefault();
+            const targetId = href.substring(1);
+            const targetElement = document.getElementById(targetId);
+            
+            if (targetElement) {
+              // Actualizar navegación activa en sidebar
+              document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+              const correspondingNavLink = document.querySelector(`.nav-link[href="${href}"]`);
+              if (correspondingNavLink) {
+                correspondingNavLink.classList.add('active');
+              }
+              
+              // Scroll suave
+              targetElement.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+              });
+            }
+          }
+        });
+      });
+    }
+
+    // Función para configurar smooth scrolling automático en botones hero
+    function setupSmoothScrolling() {
+      // Agregar event listener para cuando se carguen los botones del hero
+      const observer = new MutationObserver(() => {
+        // Botones hero (se cargan dinámicamente)
+        document.querySelectorAll('.btn-hero').forEach(btn => {
+          if (!btn.classList.contains('scroll-configured')) {
+            btn.classList.add('scroll-configured');
+            btn.addEventListener('click', function(e) {
+              const href = this.getAttribute('href');
+              
+              if (href && href.startsWith('#')) {
+                e.preventDefault();
+                const targetId = href.substring(1);
+                const targetElement = document.getElementById(targetId);
+                
+                if (targetElement) {
+                  // Actualizar navegación activa
+                  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                  const correspondingNavLink = document.querySelector(`.nav-link[href="${href}"]`);
+                  if (correspondingNavLink) {
+                    correspondingNavLink.classList.add('active');
+                  }
+                  
+                  // Scroll suave con efecto especial
+                  targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                  });
+                  
+                  // Efecto visual temporal
+                  setTimeout(() => {
+                    targetElement.style.transition = 'all 0.3s ease';
+                    targetElement.style.transform = 'scale(1.01)';
+                    setTimeout(() => {
+                      targetElement.style.transform = 'scale(1)';
+                    }, 300);
+                  }, 500);
+                }
+              }
+            });
+          }
+        });
+      });
+
+      // Observar cambios en el DOM para botones que se cargan dinámicamente
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true
+      });
+    }
+
+    // Función global para scroll suave (usada por botones de mesas y platos)
+    window.smoothScrollTo = function(targetSelector) {
+      const target = document.querySelector(targetSelector);
+      if (target) {
+        target.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+        
+        // Actualizar navegación si es una sección principal
+        if (targetSelector.includes('reservas')) {
+          document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+          document.querySelector('.nav-link[href="#reservas"]')?.classList.add('active');
+        } else if (targetSelector.includes('menu')) {
+          document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+          document.querySelector('.nav-link[href="#menu"]')?.classList.add('active');
+        }
+      }
+    };
+
+    // Detectar scroll para actualizar navegación automáticamente
+    window.addEventListener('scroll', () => {
+      const sections = ['inicio', 'menu', 'reservas'];
+      const scrollPosition = window.scrollY + 100;
+      
+      sections.forEach(sectionId => {
+        const section = document.getElementById(sectionId);
+        if (section) {
+          const sectionTop = section.offsetTop;
+          const sectionHeight = section.offsetHeight;
+          
+          if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.querySelector(`.nav-link[href="#${sectionId}"]`)?.classList.add('active');
+          }
+        }
+      });
+    });
+
+    // Hacer la función disponible globalmente
+    window.irAReservaHero = irAReservaHero;
+  </script>
+  
+  <!-- Script para manejo dinámico del footer -->
+  <script src="../assets/js/footer-dinamico.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hacer una Reserva - ReservaFácil</title>
+  <link rel="stylesheet" href="../assets/css/hacer_reserva.css">
+</head>
+<body>
+  <div class="reserva-container">
+    <!-- Header hermoso -->
+    <header class="reserva-header">
+      <div class="header-content">
+        <div class="logo-container">
+          <img src="../assets/img/Imagenes/DALL·E 2024-11-06 21.54.50 - An elegant logo for a restaurant, featuring a stylized fork and knife crossed over a plate with subtle decorative elements. The background should be s.webp" alt="Logo ReservaFácil" class="logo">
+        </div>
+        <div class="header-text">
+          <h1 class="main-title">Hacer una Reserva</h1>
+          <p class="subtitle" id="restaurante-nombre">Cargando...</p>
+          <div class="decorative-line"></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Navegación -->
+    <nav class="nav-breadcrumb">
+      <a href="../index_cliente.html">Inicio</a>
+      <span class="separator">></span>
+      <a href="#" id="volver-restaurante">Restaurante</a>
+      <span class="separator">></span>
+      <span class="current">Hacer Reserva</span>
+    </nav>
+
+    <!-- Contenido principal -->
+    <main class="main-content">
+      <!-- Paso 1: Selección de fecha y hora -->
+      <section class="step-section active" id="step-1">
+        <div class="step-header">
+          <h2>Paso 1: Selecciona fecha y hora</h2>
+          <p>Elige cuándo quieres visitarnos</p>
+        </div>
+        
+        <div class="form-card">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="fecha-reserva">Fecha</label>
+              <input type="date" id="fecha-reserva" name="fecha-reserva" required>
+              <div class="field-help">Selecciona la fecha de tu visita</div>
+            </div>
+
+            <div class="form-group">
+              <label for="hora-reserva">Hora</label>
+              <input type="time" id="hora-reserva" name="hora-reserva" required>
+              <div class="field-help">Horario de atención: 10:00 AM - 8:00 PM</div>
+            </div>
+
+            <div class="form-group">
+              <label for="personas-reserva">Número de personas</label>
+              <select id="personas-reserva" name="personas-reserva" required>
+                <option value="">Selecciona...</option>
+                <option value="1">1 persona</option>
+                <option value="2">2 personas</option>
+                <option value="3">3 personas</option>
+                <option value="4">4 personas</option>
+                <option value="5">5 personas</option>
+                <option value="6">6 personas</option>
+                <option value="7">7 personas</option>
+                <option value="8">8 personas</option>
+                <option value="9">9 personas</option>
+                <option value="10">10 personas</option>
+                <option value="11">11 personas</option>
+                <option value="12">12 personas</option>
+              </select>
+              <div class="field-help">¿Cuántas personas los acompañarán?</div>
+            </div>
+          </div>
+
+          <div class="button-container">
+            <button type="button" id="btn-buscar-mesas" class="btn-primary">
+              <span class="btn-icon">Buscar</span>
+              Buscar Mesas Disponibles
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Paso 2: Selección de mesa -->
+      <section class="step-section" id="step-2">
+        <div class="step-header">
+          <h2>Paso 2: Selecciona tu mesa</h2>
+          <p>Elige la mesa perfecta para tu ocasión</p>
+        </div>
+
+        <div class="loading-container" id="loading-mesas">
+          <div class="spinner"></div>
+          <p>Buscando mesas disponibles...</p>
+        </div>
+
+        <div class="mesas-container" id="mesas-container" style="display: none;">
+          <div class="mesas-grid" id="mesas-grid"></div>
+        </div>
+
+        <div class="no-mesas" id="no-mesas" style="display: none;">
+          <div class="no-mesas-icon">!</div>
+          <h3>No hay mesas disponibles</h3>
+          <p>Para la fecha y hora seleccionadas no tenemos mesas disponibles. Por favor, intenta con otro horario.</p>
+          <button type="button" class="btn-secondary" onclick="volverPaso1()">
+            <span class="btn-icon">Volver</span>
+            Seleccionar otra fecha/hora
+          </button>
+        </div>
+
+        <div class="step-actions" id="step-2-actions" style="display: none;">
+          <button type="button" class="btn-secondary" onclick="volverPaso1()">
+            <span class="btn-icon">Volver</span>
+            Cambiar fecha/hora
+          </button>
+        </div>
+      </section>
+
+      <!-- Paso 3: Datos del cliente -->
+      <section class="step-section" id="step-3">
+        <div class="step-header">
+          <h2>Paso 3: Tus datos</h2>
+          <p>Completa la información para confirmar tu reserva</p>
+        </div>
+
+        <!-- Resumen de la reserva -->
+        <div class="reservation-summary" id="reservation-summary">
+          <h3>Resumen de tu reserva</h3>
+          <div class="summary-content" id="summary-content">
+            <!-- Se llena dinámicamente -->
+          </div>
+        </div>
+
+        <!-- Formulario de datos -->
+        <div class="form-card">
+          <form id="form-datos-cliente">
+            <div class="form-section">
+              <h4>Información personal</h4>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="nombre-cliente">Nombre completo *</label>
+                  <input type="text" id="nombre-cliente" name="nombre-cliente" required>
+                  <div class="field-help">Tu nombre y apellido</div>
+                </div>
+
+                <div class="form-group">
+                  <label for="telefono-cliente">Teléfono *</label>
+                  <input type="tel" id="telefono-cliente" name="telefono-cliente" required>
+                  <div class="field-help">Para contactarte si es necesario</div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="email-cliente">Email *</label>
+                <input type="email" id="email-cliente" name="email-cliente" required>
+                <div class="field-help">Recibirás la confirmación aquí</div>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <h4>Detalles de la reserva</h4>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="duracion-reserva">Duración estimada</label>
+                  <select id="duracion-reserva" name="duracion-reserva" required>
+                    <option value="60">1 hora</option>
+                    <option value="90">1.5 horas</option>
+                    <option value="120" selected>2 horas</option>
+                    <option value="150">2.5 horas</option>
+                    <option value="180">3 horas</option>
+                  </select>
+                  <div class="field-help">¿Cuánto tiempo planeas estar?</div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="comentarios-cliente">Comentarios adicionales</label>
+                <textarea id="comentarios-cliente" name="comentarios-cliente" rows="4" placeholder="Ocasión especial, alergias, preferencias especiales, etc."></textarea>
+                <div class="field-help">Comparte cualquier detalle especial (opcional)</div>
+              </div>
+
+              <!-- Campo para plato especial seleccionado (se muestra solo si viene desde un plato) -->
+              <div class="form-group" id="plato-seleccionado-container" style="display: none;">
+                <label for="plato-seleccionado">Plato de interés</label>
+                <div class="plato-destacado">
+                  <span id="plato-seleccionado-nombre"></span>
+                  <span class="plato-badge">¡Especial seleccionado!</span>
+                </div>
+                <div class="field-help">Has seleccionado este plato especial para tu visita</div>
+              </div>
+            </div>
+
+            <div class="step-actions">
+              <button type="button" class="btn-secondary" onclick="volverPaso2()">
+                <span class="btn-icon">Volver</span>
+                Cambiar mesa
+              </button>
+              <button type="submit" class="btn-success">
+                <span class="btn-icon">Confirmar</span>
+                Confirmar Reserva
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- Paso 4: Confirmación -->
+      <section class="step-section" id="step-4">
+        <div class="success-container">
+          <div class="success-icon">Confirmado</div>
+          <h2>¡Reserva Confirmada!</h2>
+          <p>Tu reserva ha sido registrada exitosamente</p>
+          
+          <div class="success-details" id="success-details">
+            <!-- Se llena dinámicamente -->
+          </div>
+
+          <div class="success-actions">
+            <button type="button" class="btn-primary" onclick="nuevaReserva()">
+              <span class="btn-icon">Nueva</span>
+              Hacer otra reserva
+            </button>
+            <a href="#" id="volver-restaurante-final" class="btn-secondary">
+              <span class="btn-icon">Volver</span>
+              Volver al restaurante
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Progress bar -->
+    <div class="progress-bar">
+      <div class="progress-steps">
+        <div class="step active" data-step="1">
+          <div class="step-number">1</div>
+          <div class="step-label">Fecha y Hora</div>
+        </div>
+        <div class="step" data-step="2">
+          <div class="step-number">2</div>
+          <div class="step-label">Seleccionar Mesa</div>
+        </div>
+        <div class="step" data-step="3">
+          <div class="step-number">3</div>
+          <div class="step-label">Tus Datos</div>
+        </div>
+        <div class="step" data-step="4">
+          <div class="step-number">4</div>
+          <div class="step-label">Confirmación</div>
+        </div>
+      </div>
+      <div class="progress-line">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Variables ocultas para datos -->
+  <input type="hidden" id="mesa-seleccionada">
+  <input type="hidden" id="fecha-seleccionada">
+  <input type="hidden" id="hora-seleccionada">
+  <input type="hidden" id="personas-seleccionadas">
+  <input type="hidden" id="restaurante-actual">
+
+  <script>
+    // Variables globales
+    let restauranteNombre = '';
+    let platoSeleccionado = '';
+    let currentStep = 1;
+    let horarioRestaurante = null; // Nuevo: almacenar horario del restaurante
+
+    // Configuración inicial
+    document.addEventListener('DOMContentLoaded', function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      restauranteNombre = urlParams.get('restaurante');
+      platoSeleccionado = urlParams.get('plato');
+
+      if (!restauranteNombre) {
+        document.getElementById('restaurante-nombre').innerHTML = '<span style="color: red;">❌ Error: Restaurante no especificado</span>';
+        return;
+      }
+
+      // Mostrar nombre del restaurante
+      document.getElementById('restaurante-nombre').textContent = restauranteNombre;
+      
+      // Configurar enlace de volver al restaurante
+      const volverLink = document.getElementById('volver-restaurante');
+      volverLink.href = `../../src/api/restaurantes/obtener_vista.php?restaurante=${encodeURIComponent(restauranteNombre)}`;
+      volverLink.textContent = restauranteNombre;
+
+      // NUEVO: Cargar horario específico del restaurante
+      cargarHorarioRestaurante();
+
+      // Si hay un plato seleccionado, mostrarlo
+      if (platoSeleccionado) {
+        console.log('🍽️ Plato seleccionado:', platoSeleccionado);
+        document.getElementById('plato-seleccionado-container').style.display = 'block';
+        document.getElementById('plato-seleccionado-nombre').textContent = platoSeleccionado;
+        
+        // Agregar el plato como comentario inicial
+        const comentarios = document.getElementById('comentarios-cliente');
+        comentarios.value = `Interesado en el plato especial: ${platoSeleccionado}`;
+        comentarios.placeholder = `Mencionaste interés en: ${platoSeleccionado}. Puedes agregar más comentarios aquí...`;
+      }
+
+      // La configuración de fecha/hora ahora se hace en configurarFechaHoraPorDefecto()
+      // después de cargar el horario específico del restaurante
+
+      // Event listeners se configuran en configurarFechaHoraPorDefecto()
+    });
+
+    function setupEventListeners() {
+      // Buscar mesas
+      document.getElementById('btn-buscar-mesas').addEventListener('click', buscarMesas);
+      
+      // Formulario de datos
+      document.getElementById('form-datos-cliente').addEventListener('submit', confirmarReserva);
+    }
+
+    function buscarMesas() {
+      const fecha = document.getElementById('fecha-reserva').value;
+      const hora = document.getElementById('hora-reserva').value;
+      const personas = document.getElementById('personas-reserva').value;
+
+      // Validaciones
+      if (!fecha || !hora || !personas) {
+        mostrarError('Por favor completa todos los campos para buscar mesas disponibles');
+        return;
+      }
+
+      // Validar fecha y hora correctamente
+      const fechaSeleccionada = new Date(fecha + 'T00:00:00'); // Crear fecha sin zona horaria
+      const hoy = new Date();
+      const fechaHoy = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate()); // Solo fecha sin hora
+
+      // Validar que no sea una fecha pasada
+      if (fechaSeleccionada < fechaHoy) {
+        mostrarError('No se pueden hacer reservas en fechas pasadas');
+        return;
+      }
+
+      // Validar hora solo si es HOY
+      if (fechaSeleccionada.getTime() === fechaHoy.getTime()) {
+        const ahora = new Date();
+        const horaActual = ahora.getHours() * 60 + ahora.getMinutes(); // Minutos desde medianoche
+        
+        // Convertir hora seleccionada a minutos
+        const partesHora = hora.split(':');
+        const horaSeleccionada = parseInt(partesHora[0]) * 60 + parseInt(partesHora[1]);
+        
+        // Dar 30 minutos de margen
+        if (horaSeleccionada <= horaActual + 30) {
+          mostrarError('Por favor selecciona una hora al menos 30 minutos en el futuro');
+          return;
+        }
+      }
+
+      // Validar horario de atención específico del restaurante
+      const partesHora = hora.split(':');
+      const horaEnMinutos = parseInt(partesHora[0]) * 60 + parseInt(partesHora[1]);
+      
+      if (horarioRestaurante) {
+        const apertura = horarioRestaurante.horario_apertura.split(':');
+        const cierre = horarioRestaurante.horario_cierre.split(':');
+        const horaApertura = parseInt(apertura[0]) * 60 + parseInt(apertura[1]);
+        const horaCierre = parseInt(cierre[0]) * 60 + parseInt(cierre[1]);
+        
+        if (horaEnMinutos < horaApertura || horaEnMinutos > horaCierre) {
+          mostrarError(`Por favor selecciona una hora dentro del horario de atención de ${restauranteNombre}: ${horarioRestaurante.horario_apertura_12h} - ${horarioRestaurante.horario_cierre_12h}`);
+          return;
+        }
+      } else {
+        // Horario por defecto como respaldo
+        const horaApertura = 10 * 60; // 10:00 AM
+        const horaCierre = 20 * 60;   // 8:00 PM
+        
+        if (horaEnMinutos < horaApertura || horaEnMinutos > horaCierre) {
+          mostrarError('Por favor selecciona una hora dentro del horario de atención (10:00 AM - 8:00 PM)');
+          return;
+        }
+      }
+
+      // Guardar datos
+      document.getElementById('fecha-seleccionada').value = fecha;
+      document.getElementById('hora-seleccionada').value = hora;
+      document.getElementById('personas-seleccionadas').value = personas;
+
+      // Ir al paso 2
+      cambiarPaso(2);
+      
+      // Mostrar loading
+      document.getElementById('loading-mesas').style.display = 'block';
+      document.getElementById('mesas-container').style.display = 'none';
+      document.getElementById('no-mesas').style.display = 'none';
+
+      // Hacer petición al archivo PHP real
+      const url = `../../src/api/mesas/disponibilidad_clean.php?restaurante=${encodeURIComponent(restauranteNombre)}&fecha=${fecha}&hora=${hora}&personas=${personas}`;
+      
+      console.log('URL de petición real:', url); // Debug adicional
+      
+      fetch(url)
+        .then(response => {
+          console.log('Response status:', response.status);
+          return response.text();
+        })
+        .then(data => {
+          console.log('Raw response:', data);
+          try {
+            const jsonData = JSON.parse(data);
+            console.log('Parsed JSON:', jsonData);
+            document.getElementById('loading-mesas').style.display = 'none';
+            
+            if (jsonData.success && jsonData.mesas_disponibles && jsonData.mesas_disponibles.length > 0) {
+              // Mostrar las mesas encontradas
+              mostrarMesas(jsonData.mesas_disponibles);
+            } else if (jsonData.error) {
+              // Mostrar error específico
+              if (jsonData.debug) {
+                console.error('Debug del servidor:', jsonData.debug);
+              }
+              mostrarError(jsonData.error);
+              volverPaso1();
+            } else {
+              // No hay mesas disponibles
+              document.getElementById('no-mesas').style.display = 'block';
+            }
+          } catch (e) {
+            console.error('JSON parse error:', e);
+            console.error('Raw data:', data);
+            document.getElementById('loading-mesas').style.display = 'none';
+            mostrarError('Error de comunicación con el servidor. Por favor intenta nuevamente.');
+            volverPaso1();
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          document.getElementById('loading-mesas').style.display = 'none';
+          mostrarError('Error al buscar mesas disponibles. Intenta nuevamente.');
+          volverPaso1();
+        });
+    }
+
+    function mostrarMesas(mesas) {
+      const grid = document.getElementById('mesas-grid');
+      let html = '';
+
+      mesas.forEach(mesa => {
+        html += `
+          <div class="mesa-card" onclick="seleccionarMesa(${mesa.id}, '${mesa.numero_mesa}', ${mesa.capacidad})">
+            <div class="mesa-image">
+              ${mesa.imagen ? 
+                `<img src="data:image/jpeg;base64,${mesa.imagen}" alt="Mesa ${mesa.numero_mesa}">` : 
+                '<div class="mesa-placeholder">Mesa</div>'
+              }
+            </div>
+            <div class="mesa-info">
+              <h3>Mesa ${mesa.numero_mesa}</h3>
+              <p>Capacidad: ${mesa.capacidad} personas</p>
+              <div class="mesa-features">
+                <span class="feature">Disponible</span>
+                <span class="feature">Perfecta para ${mesa.capacidad}</span>
+              </div>
+            </div>
+            <div class="mesa-action">
+              <span class="select-btn">Seleccionar esta mesa</span>
+            </div>
+          </div>
+        `;
+      });
+
+      grid.innerHTML = html;
+      document.getElementById('mesas-container').style.display = 'block';
+      document.getElementById('step-2-actions').style.display = 'block';
+    }
+
+    function seleccionarMesa(idMesa, numeroMesa, capacidad) {
+      // Guardar mesa seleccionada
+      document.getElementById('mesa-seleccionada').value = idMesa;
+      
+      // Crear resumen - Usar formato correcto para la fecha
+      const fechaInput = document.getElementById('fecha-seleccionada').value; // Formato: YYYY-MM-DD
+      const fechaParts = fechaInput.split('-'); // [YYYY, MM, DD]
+      const fechaFormateada = `${fechaParts[2]}/${fechaParts[1]}/${fechaParts[0]}`; // DD/MM/YYYY
+      const hora = document.getElementById('hora-seleccionada').value;
+      const personas = document.getElementById('personas-seleccionadas').value;
+
+      const summaryHTML = `
+        <div class="summary-item">
+          <span class="summary-label">Restaurante:</span>
+          <span class="summary-value">${restauranteNombre}</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-label">Mesa:</span>
+          <span class="summary-value">${numeroMesa} (${capacidad} personas)</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-label">Fecha:</span>
+          <span class="summary-value">${fechaFormateada}</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-label">Hora:</span>
+          <span class="summary-value">${hora}</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-label">Personas:</span>
+          <span class="summary-value">${personas}</span>
+        </div>
+      `;
+
+      document.getElementById('summary-content').innerHTML = summaryHTML;
+      
+      // Ir al paso 3
+      cambiarPaso(3);
+    }
+
+    function confirmarReserva(e) {
+      e.preventDefault();
+      
+      const formData = new FormData();
+      formData.append('restaurante', restauranteNombre);
+      formData.append('id_mesa', document.getElementById('mesa-seleccionada').value);
+      formData.append('fecha', document.getElementById('fecha-seleccionada').value);
+      formData.append('hora', document.getElementById('hora-seleccionada').value);
+      formData.append('personas', document.getElementById('personas-seleccionadas').value);
+      formData.append('nombre_cliente', document.getElementById('nombre-cliente').value);
+      formData.append('telefono_cliente', document.getElementById('telefono-cliente').value);
+      formData.append('email_cliente', document.getElementById('email-cliente').value);
+      formData.append('comentarios', document.getElementById('comentarios-cliente').value);
+      formData.append('duracion', document.getElementById('duracion-reserva').value);
+
+      // Mostrar loading
+      const btnSubmit = e.target.querySelector('button[type="submit"]');
+      const textoOriginal = btnSubmit.innerHTML;
+      btnSubmit.innerHTML = '<span class="btn-icon">...</span>Procesando...';
+      btnSubmit.disabled = true;
+
+      fetch('../../src/api/reservas/procesar_cliente.php', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          mostrarExito(data);
+        } else {
+          mostrarError(data.message);
+          btnSubmit.innerHTML = textoOriginal;
+          btnSubmit.disabled = false;
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        mostrarError('Error al procesar la reserva. Intenta nuevamente.');
+        btnSubmit.innerHTML = textoOriginal;
+        btnSubmit.disabled = false;
+      });
+    }
+
+    function mostrarExito(data) {
+      // Formatear la fecha correctamente
+      const fechaInput = data.detalles.fecha; // Viene en formato YYYY-MM-DD
+      const fechaParts = fechaInput.split('-'); // [YYYY, MM, DD]
+      const fechaFormateada = `${fechaParts[2]}/${fechaParts[1]}/${fechaParts[0]}`; // DD/MM/YYYY
+      
+      const detallesHTML = `
+        <div class="success-info">
+          <div class="success-item">
+            <strong>Cliente:</strong> ${data.detalles.cliente}
+          </div>
+          <div class="success-item">
+            <strong>Restaurante:</strong> ${data.detalles.restaurante}
+          </div>
+          <div class="success-item">
+            <strong>Fecha:</strong> ${fechaFormateada}
+          </div>
+          <div class="success-item">
+            <strong>Hora:</strong> ${data.detalles.hora}
+          </div>
+          <div class="success-item">
+            <strong>Personas:</strong> ${data.detalles.personas}
+          </div>
+          <div class="success-item">
+            <strong>Estado:</strong> Pendiente de confirmación
+          </div>
+        </div>
+        <div class="success-note">
+          <p>Te contactaremos pronto para confirmar tu reserva</p>
+          <p>Revisa tu email y mantén tu teléfono disponible</p>
+        </div>
+      `;
+
+      document.getElementById('success-details').innerHTML = detallesHTML;
+      cambiarPaso(4);
+    }
+
+    // Funciones de navegación
+    function volverPaso1() {
+      cambiarPaso(1);
+    }
+
+    function volverPaso2() {
+      cambiarPaso(2);
+    }
+
+    function nuevaReserva() {
+      // Limpiar formularios
+      document.getElementById('form-datos-cliente').reset();
+      document.getElementById('fecha-reserva').value = new Date().toISOString().split('T')[0];
+      document.getElementById('hora-reserva').value = '';
+      document.getElementById('personas-reserva').value = '';
+      
+      // Limpiar datos ocultos
+      document.getElementById('mesa-seleccionada').value = '';
+      document.getElementById('fecha-seleccionada').value = '';
+      document.getElementById('hora-seleccionada').value = '';
+      document.getElementById('personas-seleccionadas').value = '';
+      
+      // Volver al paso 1
+      cambiarPaso(1);
+    }
+
+    function cambiarPaso(paso) {
+      // Ocultar todas las secciones
+      document.querySelectorAll('.step-section').forEach(section => {
+        section.classList.remove('active');
+      });
+      
+      // Mostrar sección actual
+      document.getElementById(`step-${paso}`).classList.add('active');
+      
+      // Actualizar progress bar
+      document.querySelectorAll('.step').forEach(step => {
+        step.classList.remove('active', 'completed');
+      });
+      
+      for (let i = 1; i <= 4; i++) {
+        const stepElement = document.querySelector(`[data-step="${i}"]`);
+        if (i < paso) {
+          stepElement.classList.add('completed');
+        } else if (i === paso) {
+          stepElement.classList.add('active');
+        }
+      }
+      
+      // Actualizar línea de progreso
+      const progress = ((paso - 1) / 3) * 100;
+      document.getElementById('progress-fill').style.width = progress + '%';
+      
+      currentStep = paso;
+      
+      // Scroll al top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function mostrarError(mensaje) {
+      // Crear un modal de error elegante en lugar de alert
+      const errorModal = document.createElement('div');
+      errorModal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 10000;
+      `;
+      
+      errorModal.innerHTML = `
+        <div style="
+          background: white;
+          padding: 30px;
+          border-radius: 15px;
+          max-width: 400px;
+          margin: 20px;
+          text-align: center;
+          box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        ">
+          <div style="
+            width: 60px;
+            height: 60px;
+            background: #e74c3c;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+          ">!</div>
+          <h3 style="color: #e74c3c; margin-bottom: 15px;">Ups, hay un problema</h3>
+          <p style="color: #666; margin-bottom: 25px; line-height: 1.5;">${mensaje}</p>
+          <button onclick="this.parentNode.parentNode.remove()" style="
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+          " onmouseover="this.style.background='#c0392b'" onmouseout="this.style.background='#e74c3c'">
+            Entendido
+          </button>
+        </div>
+      `;
+      
+      document.body.appendChild(errorModal);
+      
+      // Cerrar con ESC
+      const closeOnEsc = (e) => {
+        if (e.key === 'Escape') {
+          errorModal.remove();
+          document.removeEventListener('keydown', closeOnEsc);
+        }
+      };
+      document.addEventListener('keydown', closeOnEsc);
+      
+      // Cerrar al hacer clic fuera del modal
+      errorModal.addEventListener('click', (e) => {
+        if (e.target === errorModal) {
+          errorModal.remove();
+        }
+      });
+    }
+
+    // NUEVA FUNCIÓN: Cargar horario específico del restaurante
+    function cargarHorarioRestaurante() {
+      fetch(`../../src/api/restaurantes/obtener_horario.php?restaurante=${encodeURIComponent(restauranteNombre)}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            horarioRestaurante = data;
+            console.log('Horario del restaurante cargado:', data);
+            
+            // Actualizar el texto de ayuda con el horario correcto
+            const fieldHelp = document.querySelector('#hora-reserva + .field-help');
+            if (fieldHelp) {
+              fieldHelp.textContent = data.mensaje_horario;
+            }
+            
+            // Configurar fecha y hora por defecto con el horario del restaurante
+            configurarFechaHoraPorDefecto();
+          } else {
+            console.error('Error cargando horario:', data.error);
+            // Usar horario por defecto si hay error
+            horarioRestaurante = {
+              horario_apertura: '10:00:00',
+              horario_cierre: '20:00:00',
+              mensaje_horario: 'Horario de atención: 10:00 AM - 8:00 PM'
+            };
+            configurarFechaHoraPorDefecto();
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          // Usar horario por defecto si hay error
+          horarioRestaurante = {
+            horario_apertura: '10:00:00',
+            horario_cierre: '20:00:00',
+            mensaje_horario: 'Horario de atención: 10:00 AM - 8:00 PM'
+          };
+          configurarFechaHoraPorDefecto();
+        });
+    }
+
+    // FUNCIÓN ACTUALIZADA: Configurar fecha y hora por defecto
+    function configurarFechaHoraPorDefecto() {
+      if (!horarioRestaurante) return;
+      
+      const fechaInput = document.getElementById('fecha-reserva');
+      const horaInput = document.getElementById('hora-reserva');
+      
+      const hoy = new Date();
+      const fechaHoy = hoy.toISOString().split('T')[0];
+      fechaInput.min = fechaHoy;
+      fechaInput.value = fechaHoy;
+      
+      // Obtener horas de apertura y cierre del restaurante
+      const apertura = horarioRestaurante.horario_apertura.split(':');
+      const cierre = horarioRestaurante.horario_cierre.split(':');
+      const horaApertura = parseInt(apertura[0]);
+      const horaCierre = parseInt(cierre[0]);
+      
+      // Configurar hora por defecto
+      const ahora = new Date();
+      const horaActual = ahora.getHours();
+      
+      if (horaActual >= horaCierre - 1) {
+        // Si ya es muy cerca del cierre, usar mañana
+        ahora.setDate(ahora.getDate() + 1);
+        fechaInput.value = ahora.toISOString().split('T')[0];
+        horaInput.value = `${horaApertura.toString().padStart(2, '0')}:00`;
+      } else {
+        // Usar hora actual + 2 horas, pero dentro del horario
+        let horaRecomendada = horaActual + 2;
+        
+        if (horaRecomendada < horaApertura) {
+          horaRecomendada = horaApertura;
+        } else if (horaRecomendada > horaCierre) {
+          horaRecomendada = horaCierre;
+        }
+        
+        horaInput.value = `${horaRecomendada.toString().padStart(2, '0')}:00`;
+      }
+      
+      console.log('Configuración inicial:', {
+        fecha: fechaInput.value,
+        hora: horaInput.value,
+        horario_restaurante: horarioRestaurante,
+        horaActual: horaActual
+      });
+      
+      // Configurar event listeners después de cargar el horario
+      setupEventListeners();
+    }
+  </script>
+</body>
+</html> 

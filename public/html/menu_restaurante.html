@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menú Completo - Restaurante</title>
+  <link rel="stylesheet" href="../assets/css/estilos_vista_restaurante.css">
+  <style>
+    /* Estilos específicos para el menú completo */
+    .menu-header {
+      background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+      color: white;
+      text-align: center;
+      padding: 60px 40px;
+      margin-bottom: 40px;
+    }
+    
+    .menu-header h1 {
+      font-size: 3rem;
+      font-weight: 300;
+      letter-spacing: 2px;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+    }
+    
+    .menu-header p {
+      font-size: 1.2rem;
+      color: #ecf0f1;
+      font-style: italic;
+    }
+    
+    .volver-restaurante {
+      background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+      color: white;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 25px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      text-decoration: none;
+      display: inline-block;
+      margin: 20px 0;
+    }
+    
+    .volver-restaurante:hover {
+      background: linear-gradient(135deg, #7f8c8d 0%, #6c7b7d 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(127, 140, 141, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="main-container">
+    <nav class="sidebar">
+      <div id="logo-restaurante" class="logo-nav"></div>
+      <a href="#" id="volver-inicio" class="nav-link">Inicio</a>
+      <a href="#menu" class="nav-link active">Menú Completo</a>
+      <a href="#" id="volver-reservas" class="nav-link">Reservas</a>
+      <a href="../index_cliente.html" class="nav-link">Volver al catálogo</a>
+    </nav>
+
+    <div class="contenido-principal">
+      <div class="menu-header">
+        <h1 id="nombre-restaurante">Menú Completo</h1>
+        <p>Descubre todos nuestros platos organizados por categorías</p>
+        <a href="#" id="btn-volver-restaurante" class="volver-restaurante">Volver a la página principal</a>
+      </div>
+
+      <section id="menu">
+        <div id="menu-completo">Cargando menú completo...</div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Footer directo en HTML -->
+  <footer class="footer-restaurante" id="main-footer">
+    <div class="footer-contenido">
+      <div class="footer-main">
+        <h1 class="footer-nombre" id="footer-nombre-dinamico">Restaurante</h1>
+        <div class="footer-descripcion">El mejor ambiente gastronómico</div>
+        <div class="footer-info-detalle">
+          <div class="footer-direccion"><strong>Dirección:</strong> Calle 13</div>
+          <div class="footer-horario"><strong>Horario:</strong> 10 am - 9pm</div>
+          <div class="footer-telefonos"><strong>Contacto:</strong> 323445678 | eduar@gmail.com</div>
+          <div class="footer-web"><strong>Web:</strong> <a href="#" target="_blank">www.restaurante.com</a></div>
+        </div>
+      </div>
+      
+      <nav class="footer-nav">
+        <a href="#" class="footer-nav-link" id="footer-inicio">INICIO</a>
+        <a href="#menu" class="footer-nav-link">MENÚ</a>
+        <a href="#" class="footer-nav-link" id="footer-reservas">RESERVAS</a>
+        <a href="../index_cliente.html" class="footer-nav-link">CATÁLOGO</a>
+      </nav>
+      
+      <div class="footer-social">
+        <a href="#" class="social-icon" title="Sitio Web">Web</a>
+        <a href="#" class="social-icon" title="Facebook">Facebook</a>
+        <a href="#" class="social-icon" title="Instagram">Instagram</a>
+        <a href="#" class="social-icon" title="Twitter">Twitter</a>
+      </div>
+      
+      <div class="footer-bottom">
+        <div class="footer-award">
+          <div class="award-circle">
+            <span class="award-year">2025</span>
+            <span class="award-text">MEJOR<br>RESTAURANTE</span>
+            <span class="award-location">LOCAL</span>
+          </div>
+        </div>
+        
+        <div class="footer-copyright">
+          <span>&copy; 2025 <span id="footer-copyright-nombre">Restaurante</span> - Todos los derechos reservados</span>
+          <span class="footer-credits">Diseño web por <strong>ReservaFácil</strong></span>
+        </div>
+        
+        <div class="footer-redes">
+          <span><strong>Redes sociales:</strong> @euasd_sa</span>
+        </div>
+      </div>
+      
+      <!-- Indicador de estado del footer -->
+      <div style="text-align: center; padding: 10px; font-size: 12px; color: #666; border-top: 1px solid #333;">
+        Menú completo - <span id="footer-timestamp"></span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      const nombre = params.get("restaurante");
+  
+      if (!nombre) {
+        document.getElementById("menu-completo").innerHTML = "<p style='color:red;'>Restaurante no especificado.</p>";
+        return;
+      }
+
+      // Actualizar títulos y enlaces
+      document.getElementById("nombre-restaurante").textContent = `Menú de ${nombre}`;
+      document.getElementById("footer-nombre-dinamico").textContent = nombre;
+      document.getElementById("footer-copyright-nombre").textContent = nombre;
+      
+      // URLs para volver al restaurante
+      const restauranteUrl = `../../src/api/restaurantes/obtener_vista.php?restaurante=${encodeURIComponent(nombre)}`;
+      document.getElementById("btn-volver-restaurante").href = restauranteUrl;
+      document.getElementById("volver-inicio").href = restauranteUrl;
+      document.getElementById("volver-reservas").href = restauranteUrl + "#reservas";
+      document.getElementById("footer-inicio").href = restauranteUrl;
+      document.getElementById("footer-reservas").href = restauranteUrl + "#reservas";
+
+      // Cargar el menú completo
+      fetch(`../../src/api/restaurantes/menu_completo.php?restaurante=${encodeURIComponent(nombre)}`)
+        .then(res => res.text())
+        .then(html => {
+          document.getElementById("menu-completo").innerHTML = html;
+        })
+        .catch(error => {
+          console.error("Error al cargar el menú:", error);
+          document.getElementById("menu-completo").innerHTML = "<p>Error al cargar el menú completo</p>";
+        });
+
+      // Cargar el logo correcto del restaurante
+      fetch(`../../src/api/restaurantes/obtener_logo.php?restaurante=${encodeURIComponent(nombre)}`)
+        .then(res => res.text())
+        .then(logoHtml => {
+          if (logoHtml.trim()) {
+            document.getElementById("logo-restaurante").innerHTML = logoHtml;
+          }
+        })
+        .catch(error => {
+          console.error("Error al cargar el logo:", error);
+        });
+
+      // Actualizar timestamp del footer
+      const timestamp = document.getElementById('footer-timestamp');
+      if (timestamp) {
+        timestamp.textContent = new Date().toLocaleTimeString();
+      }
+    });
+  </script>
+</body>
+</html> 

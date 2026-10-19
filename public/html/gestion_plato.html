@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Platos - ReservaFácil</title>
+  <link rel="stylesheet" href="../assets/css/estilos_principal.css">
+  <link rel="stylesheet" href="../assets/css/panel_admin.css">
+  <link rel="stylesheet" href="../assets/css/gestion_moderna.css">
+  
+  <!-- 🛡️ PROTECCIÓN CRÍTICA ANTI-MODAL 🛡️ -->
+  <style>
+    /* Corrección crítica del modal */
+    .modal {
+      display: none !important;
+      position: fixed !important;
+      z-index: 1000 !important;
+      left: 0 !important;
+      top: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      background: rgba(0,0,0,0.5) !important;
+      backdrop-filter: blur(5px) !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 20px !important;
+    }
+    
+    .modal.show {
+      display: flex !important;
+    }
+    
+    .modal-content {
+      background: white !important;
+      width: 100% !important;
+      max-width: 600px !important;
+      max-height: 90vh !important;
+      border-radius: 12px !important;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3) !important;
+      overflow-y: auto !important;
+      position: relative !important;
+      margin: 0 auto !important;
+    }
+  </style>
+  
+  <!-- ⚡ PROTECCIÓN INMEDIATA ⚡ -->
+  <script>
+    // Protección simple solo durante carga inicial
+    (function() {
+      console.log('🛡️ PROTECCIÓN SIMPLE INICIADA PARA PLATOS');
+      
+      // Función simple para cerrar modales solo durante la carga
+      function cerrarModalesIniciales() {
+        const modalPlato = document.getElementById('modal-editar-plato');
+        if (modalPlato) {
+          modalPlato.style.display = 'none';
+          modalPlato.style.visibility = 'hidden';
+          modalPlato.style.opacity = '0';
+        }
+      }
+      
+      // Ejecutar solo durante los primeros 2 segundos
+      cerrarModalesIniciales();
+      setTimeout(cerrarModalesIniciales, 100);
+      setTimeout(cerrarModalesIniciales, 500);
+      setTimeout(cerrarModalesIniciales, 1000);
+      setTimeout(cerrarModalesIniciales, 2000);
+      
+      // Después de 2 segundos, dejar que funcione normalmente
+      setTimeout(() => {
+        console.log('🛡️ PROTECCIÓN SIMPLE FINALIZADA PARA PLATOS');
+      }, 2000);
+    })();
+  </script>
+</head>
+<body>
+  <!-- Navegación lateral -->
+  <nav class="sidebar-nav">
+    <div class="nav-header">
+      <img src="../assets/img/Imagenes/DALL·E 2024-11-06 21.54.50 - An elegant logo for a restaurant, featuring a stylized fork and knife crossed over a plate with subtle decorative elements. The background should be s.webp" alt="Logo ReservaFácil" class="nav-logo">
+      <h3 class="nav-title">Panel Admin</h3>
+      <p class="nav-subtitle">Gestión de Restaurante</p>
+    </div>
+    
+    <div class="nav-menu">
+      <a href="../index_admin.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Inicio</span>
+      </a>
+      <a href="../index_cliente.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Catálogo</span>
+      </a>
+      <a href="gestion_categoria.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Gestión Categorías</span>
+      </a>
+      <a href="gestion_plato.html" class="nav-link active">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Gestión de Menú</span>
+      </a>
+      <a href="gestion_mesas.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Gestión de Mesas</span>
+      </a>
+      <a href="gestion_reservas.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Gestión de Reservas</span>
+      </a>
+    </div>
+    
+    <div class="nav-footer">
+      <a href="login.html" class="nav-link logout">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Cerrar Sesión</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Contenido principal -->
+  <main class="main-content">
+    <!-- Header de la página -->
+    <header class="page-header">
+      <div class="header-content">
+        <div class="header-text">
+          <h1 class="page-title">Gestión de Menú</h1>
+          <p class="page-subtitle">Administra los platos y especialidades de tu restaurante</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-export" onclick="exportarPlatos()">
+            Exportar Menú
+          </button>
+          <button class="btn btn-refresh" onclick="actualizarLista()">
+            Actualizar
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Sección del formulario -->
+    <section class="form-section">
+      <div class="form-container-modern">
+        <div class="form-header">
+          <h2 class="form-title">Registrar Nuevo Plato</h2>
+          <p class="form-subtitle">Agrega un nuevo plato al menú de tu restaurante</p>
+        </div>
+        
+        <form id="formRegistro" class="form-modern" enctype="multipart/form-data">
+          <div class="form-grid">
+            <div class="input-group">
+              <label for="nombre-plato" class="input-label">Nombre del Plato</label>
+              <input type="text" name="nombre" id="nombre-plato" class="input-modern" 
+                     placeholder="Ej: Paella Valenciana, Salmón a la plancha..." required>
+              <div class="input-helper">Ingresa un nombre atractivo y descriptivo</div>
+            </div>
+
+            <div class="input-group">
+              <label for="precio-plato" class="input-label">Precio ($)</label>
+              <input type="number" step="1" name="precio" id="precio-plato" class="input-modern" 
+                     placeholder="0" min="0" required>
+              <div class="input-helper">Precio en pesos colombianos</div>
+            </div>
+
+            <div class="input-group full-width">
+              <label for="descripcion-plato" class="input-label">Descripción</label>
+              <textarea name="descripcion" id="descripcion-plato" class="textarea-modern" 
+                        placeholder="Describe los ingredientes, preparación y características especiales del plato..." required></textarea>
+              <div class="input-helper">Descripción detallada que atraiga a los clientes</div>
+            </div>
+
+            <div class="input-group">
+              <label for="categoria-plato" class="input-label">Categoría</label>
+              <select name="id_categoria" id="select-categorias" class="select-modern" required>
+                <option value="">Cargando categorías...</option>
+              </select>
+              <div class="input-helper">Selecciona la categoría apropiada</div>
+            </div>
+
+            <div class="input-group">
+              <label for="imagen-plato" class="input-label">Imagen del Plato</label>
+              <input type="file" name="imagen" id="imagen-plato" class="file-input" accept="image/*" required>
+              <div class="input-helper">Formato JPG, PNG o WebP. Máximo 5MB</div>
+            </div>
+          </div>
+          
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+              Registrar Plato
+            </button>
+            <button type="reset" class="btn btn-secondary">
+              Limpiar Formulario
+            </button>
+          </div>
+          
+          <div id="respuesta" class="form-message"></div>
+      </form>
+    </div>
+    </section>
+
+    <!-- Sección de estadísticas -->
+    <section class="stats-section">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon"></div>
+          <div class="stat-content">
+            <span class="stat-number" id="total-platos">-</span>
+            <span class="stat-label">Total Platos</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"></div>
+          <div class="stat-content">
+            <span class="stat-number" id="precio-promedio">-</span>
+            <span class="stat-label">Precio Promedio</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"></div>
+          <div class="stat-content">
+            <span class="stat-number" id="platos-populares">-</span>
+            <span class="stat-label">Más Populares</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"></div>
+          <div class="stat-content">
+            <span class="stat-number" id="ultimo-plato">-</span>
+            <span class="stat-label">Último Agregado</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Filtros -->
+    <section class="filters-section">
+      <div class="filters-container">
+        <h3 class="filters-title">Filtros de Búsqueda</h3>
+        <div class="filters-grid">
+          <div class="filter-group">
+            <label for="filtro-categoria">Categoría:</label>
+            <select id="filtro-categoria" class="filter-select">
+              <option value="">Todas las categorías</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="filtro-precio">Rango de Precio:</label>
+            <select id="filtro-precio" class="filter-select">
+              <option value="">Todos los precios</option>
+              <option value="0-15000">$0 - $15.000</option>
+              <option value="15000-30000">$15.000 - $30.000</option>
+              <option value="30000-50000">$30.000 - $50.000</option>
+              <option value="50000+">$50.000+</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="buscar-plato">Buscar plato:</label>
+            <input type="text" id="buscar-plato" placeholder="Nombre del plato..." class="filter-input">
+          </div>
+        </div>
+        <div class="filters-actions">
+          <button class="btn btn-primary" onclick="aplicarFiltros()">Aplicar Filtros</button>
+          <button class="btn btn-secondary" onclick="limpiarFiltros()">Limpiar</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Lista de platos -->
+    <section class="data-section">
+      <div class="section-header">
+        <h2 class="section-title">Platos del Menú</h2>
+        <div class="section-actions">
+          <div class="view-options">
+            <button class="view-btn active" data-view="table">Tabla</button>
+            <button class="view-btn" data-view="cards">Tarjetas</button>
+          </div>
+    </div>
+  </div>
+
+      <div class="data-container" id="platos-container">
+        <div class="loading-state">
+          <div class="loading-spinner"></div>
+          <p>Cargando platos del menú...</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal para editar plato -->
+  <div id="modal-editar-plato" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Editar Plato</h3>
+        <button class="modal-close" onclick="cerrarModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="formEditar" class="form-modern" enctype="multipart/form-data">
+        <input type="hidden" name="id" id="edit-id">
+          
+          <div class="form-grid">
+            <div class="input-group">
+              <label for="edit-nombre" class="input-label">Nombre del Plato</label>
+              <input type="text" name="nombre" id="edit-nombre" class="input-modern" required>
+            </div>
+
+            <div class="input-group">
+              <label for="edit-precio" class="input-label">Precio ($)</label>
+              <input type="number" step="1" name="precio" id="edit-precio" class="input-modern" required>
+            </div>
+
+            <div class="input-group full-width">
+              <label for="edit-descripcion" class="input-label">Descripción</label>
+              <textarea name="descripcion" id="edit-descripcion" class="textarea-modern" required></textarea>
+            </div>
+
+            <div class="input-group">
+              <label for="edit-imagen" class="input-label">Nueva Imagen (opcional)</label>
+              <input type="file" name="imagen" id="edit-imagen" class="file-input" accept="image/*">
+              <div class="input-helper">Deja vacío para mantener la imagen actual</div>
+            </div>
+          </div>
+          
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+            <button type="button" class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button>
+          </div>
+      </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Variables globales
+    let currentView = 'table';
+
+    // Inicialización
+    document.addEventListener('DOMContentLoaded', function() {
+      cargarCategorias();
+      cargarPlatos();
+      cargarEstadisticas();
+      configurarEventos();
+      validarSesion();
+    });
+
+    // Configurar eventos
+    function configurarEventos() {
+      // Configurar cambio de vista
+      document.querySelectorAll('.view-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          currentView = this.dataset.view;
+          cambiarVista();
+        });
+      });
+    }
+
+    // Cambiar vista entre tabla y tarjetas
+    function cambiarVista() {
+      const container = document.getElementById('platos-container');
+      if (currentView === 'cards') {
+        container.classList.add('cards-view');
+      } else {
+        container.classList.remove('cards-view');
+      }
+    }
+
+    // Cargar categorías
+    function cargarCategorias() {
+      fetch("../../src/api/categorias/listar_json.php")
+        .then(res => res.json())
+        .then(data => {
+          const select = document.getElementById("select-categorias");
+          const filtroSelect = document.getElementById("filtro-categoria");
+          
+          select.innerHTML = '<option value="">Seleccione una categoría</option>';
+          filtroSelect.innerHTML = '<option value="">Todas las categorías</option>';
+          
+          data.forEach(cat => {
+            const option1 = new Option(cat.nombre, cat.id);
+            const option2 = new Option(cat.nombre, cat.id);
+            select.add(option1);
+            filtroSelect.add(option2);
+          });
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          document.getElementById("select-categorias").innerHTML = '<option value="">Error al cargar categorías</option>';
+        });
+    }
+
+    // Insertar plato
+    document.getElementById("formRegistro").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const datos = new FormData(this);
+      const respuestaDiv = document.getElementById("respuesta");
+  
+      fetch("../../src/api/platos/crear.php", {
+        method: "POST",
+        body: datos
+      })
+        .then(res => res.text())
+        .then(msg => {
+        mostrarMensaje(msg, respuestaDiv);
+        if (!msg.toLowerCase().includes('error')) {
+          this.reset();
+          cargarPlatos();
+          cargarEstadisticas();
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        mostrarMensaje('Error al registrar el plato', respuestaDiv, 'error');
+        });
+    });
+  
+    // Cargar platos
+    function cargarPlatos() {
+      fetch("../../src/api/platos/listar.php")
+        .then(res => res.text())
+        .then(html => {
+          document.getElementById("platos-container").innerHTML = html;
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          document.getElementById("platos-container").innerHTML = 
+            '<div class="error-message">Error al cargar los platos.</div>';
+        });
+    }
+
+    // Cargar estadísticas
+    function cargarEstadisticas() {
+      fetch("../../src/api/platos/estadisticas.php")
+        .then(res => res.json())
+        .then(data => {
+          if (data.error) {
+            console.error('Error al cargar estadísticas:', data.error);
+            return;
+          }
+          
+          document.getElementById('total-platos').textContent = data.total_platos;
+          document.getElementById('precio-promedio').textContent = data.precio_promedio;
+          document.getElementById('platos-populares').textContent = data.platos_populares;
+          document.getElementById('ultimo-plato').textContent = data.ultimo_plato;
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          // Mantener valores por defecto en caso de error
+          document.getElementById('total-platos').textContent = '-';
+          document.getElementById('precio-promedio').textContent = '$-';
+          document.getElementById('platos-populares').textContent = '-';
+          document.getElementById('ultimo-plato').textContent = '-';
+        });
+    }
+
+    // Editar plato - función mejorada con protección
+    function editarPlato(id) {
+      console.log('Función editarPlato llamada con ID:', id);
+      
+      if (!id || isNaN(id)) {
+        alert('ID de plato inválido');
+        return;
+      }
+
+      // Prevenir múltiples aperturas
+      if (window.modalAbiertoPlato) {
+        console.log('Modal ya está abierto, ignorando nueva solicitud');
+        return;
+      }
+
+      fetch(`../../src/api/platos/obtener.php?id=${id}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.error) {
+            alert('Error: ' + data.error);
+            return;
+          }
+          
+          console.log('Datos de plato recibidos:', data);
+          
+          // Llenar el formulario
+          const elementos = {
+            'edit-id': data.id,
+            'edit-nombre': data.nombre,
+            'edit-descripcion': data.descripcion,
+            'edit-precio': data.precio
+          };
+          
+          // Asignar valores a los campos
+          Object.keys(elementos).forEach(id => {
+            const elemento = document.getElementById(id);
+            if (elemento) {
+              elemento.value = elementos[id];
+            }
+          });
+          
+          // Abrir modal
+          abrirModal();
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          mostrarAlertaPersonalizada('Error al cargar los datos del plato');
+        });
+    }
+
+    // Función para abrir el modal de manera controlada
+    function abrirModal() {
+      console.log('Abriendo modal de plato...');
+      const modal = document.getElementById("modal-editar-plato");
+      if (modal) {
+        // Establecer que el modal está siendo abierto intencionalmente
+        window.modalAbiertoPlato = true;
+        
+        // Mostrar modal con estilos seguros
+        modal.style.display = "flex";
+        modal.style.visibility = "visible";
+        modal.style.opacity = "1";
+        modal.classList.add("show");
+        
+        // Scroll al principio del modal
+        setTimeout(() => {
+          modal.scrollTop = 0;
+          const modalContent = modal.querySelector('.modal-content');
+          if (modalContent) {
+            modalContent.scrollTop = 0;
+          }
+        }, 100);
+        
+        console.log('Modal de plato abierto correctamente');
+      }
+    }
+
+    // Cerrar modal - función mejorada
+    function cerrarModal() {
+      console.log('Cerrando modal de plato...');
+      const modal = document.getElementById("modal-editar-plato");
+      if (modal) {
+        // Ocultar modal completamente
+        modal.style.display = "none";
+        modal.style.visibility = "hidden";
+        modal.style.opacity = "0";
+        modal.classList.remove("show");
+        window.modalAbiertoPlato = false;
+        
+        // Limpiar formulario
+        const form = document.getElementById("formEditar");
+        if (form) {
+          form.reset();
+        }
+        
+        console.log('Modal de plato cerrado correctamente');
+      }
+    }
+  
+    // Actualizar plato
+    document.getElementById("formEditar").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const datos = new FormData(this);
+  
+      fetch("../../src/api/platos/editar.php", {
+        method: "POST",
+        body: datos
+      })
+        .then(res => res.text())
+        .then(msg => {
+        mostrarAlertaPersonalizada(msg);
+        if (!msg.toLowerCase().includes('error')) {
+          cerrarModal();
+          cargarPlatos();
+          cargarEstadisticas();
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        mostrarAlertaPersonalizada('Error al actualizar el plato');
+      });
+    });
+  
+    // Eliminar plato
+    function eliminarPlato(id) {
+      if (!confirm("¿Está seguro de que desea eliminar este plato? Esta acción no se puede deshacer.")) {
+        return;
+      }
+      
+      const datos = new FormData();
+      datos.append("id", id);
+
+      fetch("../../src/api/platos/eliminar.php", {
+        method: "POST",
+        body: datos
+      })
+      .then(res => res.text())
+      .then(msg => {
+        mostrarAlertaPersonalizada(msg);
+        if (!msg.toLowerCase().includes('error')) {
+          cargarPlatos();
+          cargarEstadisticas();
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        mostrarAlertaPersonalizada('Error al eliminar el plato');
+      });
+    }
+  
+    // Filtros
+    function aplicarFiltros() {
+      cargarPlatos();
+    }
+
+    function limpiarFiltros() {
+      document.getElementById('filtro-categoria').value = '';
+      document.getElementById('filtro-precio').value = '';
+      document.getElementById('buscar-plato').value = '';
+      cargarPlatos();
+    }
+
+    // Funciones auxiliares
+    function mostrarMensaje(mensaje, elemento, tipo = 'success') {
+      elemento.className = `form-message ${tipo}`;
+      elemento.textContent = mensaje;
+      setTimeout(() => {
+        elemento.textContent = '';
+        elemento.className = 'form-message';
+      }, 5000);
+    }
+
+    function mostrarAlertaPersonalizada(mensaje) {
+      const alerta = document.createElement('div');
+      alerta.className = `alerta-personalizada ${mensaje.toLowerCase().includes('error') ? 'alerta-error' : 'alerta-exito'}`;
+      alerta.textContent = mensaje;
+      alerta.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 20px;
+        border-radius: 4px;
+        color: white;
+        font-weight: bold;
+        z-index: 10000;
+        animation: slideIn 0.3s ease forwards;
+      `;
+      
+      if (mensaje.toLowerCase().includes('error')) {
+        alerta.style.backgroundColor = '#dc3545';
+      } else {
+        alerta.style.backgroundColor = '#28a745';
+      }
+      
+      document.body.appendChild(alerta);
+      
+      setTimeout(() => {
+        alerta.style.animation = 'slideOut 0.3s ease forwards';
+        setTimeout(() => alerta.remove(), 300);
+      }, 4000);
+    }
+
+    function actualizarLista() {
+      cargarPlatos();
+      cargarEstadisticas();
+    }
+
+    function exportarPlatos() {
+      alert('Función de exportación en desarrollo');
+    }
+
+    function validarSesion() {
+      fetch('../../src/helpers/validar_sesion.php')
+        .then(res => res.text())
+        .then(data => {
+          if (data !== "ok") {
+            window.location.href = "login.html";
+          }
+        })
+        .catch(error => {
+          console.error('Error validando sesión:', error);
+        });
+    }
+
+    // Cerrar modal al hacer clic fuera
+    document.addEventListener('click', function(event) {
+      const modal = document.getElementById('modal-editar-plato');
+      if (event.target === modal) {
+        modal.style.display = 'none';
+      }
+    });
+
+    // ========== PROTECCIÓN ANTI-MODAL AUTOMATICO ==========
+    // Se ejecuta inmediatamente cuando el DOM está listo
+    (function() {
+      console.log('🛡️ INICIANDO PROTECCIÓN ANTI-MODAL PARA PLATOS');
+      
+      // Variable global para control de modales
+      window.modalAbiertoPlato = false;
+      
+      // Función para cerrar todos los modales
+      function cerrarTodosLosModales() {
+        const modales = document.querySelectorAll('.modal, [id*="modal"], [class*="modal"]');
+        let modalescerrados = 0;
+        modales.forEach(modal => {
+          if (modal.style.display !== 'none') {
+            modal.style.display = 'none';
+            modalescerrados++;
+          }
+        });
+        if (modalescerrados > 0) {
+          console.log('🛡️ PROTECCIÓN: Cerrados', modalescerrados, 'modales automáticos');
+        }
+        return modalescerrados;
+      }
+      
+      // Cerrar modales inmediatamente
+      cerrarTodosLosModales();
+      
+      // Repetir el cierre en intervalos rápidos
+      setTimeout(cerrarTodosLosModales, 10);
+      setTimeout(cerrarTodosLosModales, 100);
+      setTimeout(cerrarTodosLosModales, 500);
+      setTimeout(cerrarTodosLosModales, 1000);
+      
+      // Mantener vigilancia por 10 segundos
+      const intervalVigilancia = setInterval(cerrarTodosLosModales, 500);
+      setTimeout(() => {
+        clearInterval(intervalVigilancia);
+        console.log('🛡️ PROTECCIÓN: Vigilancia finalizada');
+      }, 10000);
+      
+      // Sobrescribir función global cerrarModal para asegurar funcionalidad
+      window.cerrarModal = function() {
+        console.log('🛡️ PROTECCIÓN: cerrarModal() llamada');
+        const modal = document.getElementById('modal-editar-plato');
+        if (modal) {
+          modal.style.display = 'none';
+          window.modalAbiertoPlato = false;
+          
+          // Limpiar formulario si existe
+          const form = modal.querySelector('form');
+          if (form) {
+            form.reset();
+          }
+        }
+      };
+      
+      // Protección contra errores de JavaScript que puedan abrir modales
+      window.addEventListener('error', function(event) {
+        console.log('🛡️ PROTECCIÓN: Error JS detectado, cerrando modales');
+        setTimeout(cerrarTodosLosModales, 10);
+      });
+      
+      // Soporte para tecla ESC
+      document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+          cerrarTodosLosModales();
+        }
+      });
+      
+      console.log('🛡️ PROTECCIÓN ANTI-MODAL ACTIVADA COMPLETAMENTE PARA PLATOS');
+    })();
+
+    // ========== PROTECCIÓN ANTI-MODAL AUTOMATICO INTELIGENTE ==========
+    // Se ejecuta inmediatamente cuando el DOM está listo
+    (function() {
+      console.log('🛡️ INICIANDO PROTECCIÓN ANTI-MODAL INTELIGENTE PARA PLATOS');
+      
+      // Variables de control
+      let proteccionActiva = true;
+      let tiempoInicioProteccion = Date.now();
+      
+      // Función para cerrar todos los modales
+      function cerrarTodosLosModales() {
+        // Solo cerrar si la protección está activa Y no hay un modal abierto intencionalmente
+        if (!proteccionActiva || window.modalAbiertoPlato) {
+          return 0;
+        }
+        
+        const modales = document.querySelectorAll('.modal, [id*="modal"], [class*="modal"]');
+        let modalescerrados = 0;
+        modales.forEach(modal => {
+          if (modal.style.display !== 'none' && modal.style.display !== '') {
+            modal.style.display = 'none';
+            modal.style.visibility = 'hidden';
+            modal.style.opacity = '0';
+            modalescerrados++;
+          }
+        });
+        if (modalescerrados > 0) {
+          console.log('🛡️ PROTECCIÓN: Cerrados', modalescerrados, 'modales automáticos');
+        }
+        return modalescerrados;
+      }
+      
+      // Cerrar modales inmediatamente al cargar
+      cerrarTodosLosModales();
+      
+      // Protección ultra-agresiva solo durante los primeros 3 segundos
+      const intervalosRapidos = [1, 5, 10, 25, 50, 100, 200, 500];
+      intervalosRapidos.forEach(tiempo => {
+        setTimeout(() => {
+          if (proteccionActiva) {
+            cerrarTodosLosModales();
+          }
+        }, tiempo);
+      });
+      
+      // Vigilancia menos agresiva por 15 segundos
+      const intervalVigilancia = setInterval(() => {
+        if (Date.now() - tiempoInicioProteccion > 15000) {
+          clearInterval(intervalVigilancia);
+          proteccionActiva = false;
+          console.log('🛡️ PROTECCIÓN: Desactivada después de 15 segundos');
+          return;
+        }
+        cerrarTodosLosModales();
+      }, 100);
+      
+      // Reducir agresividad después de 3 segundos
+      setTimeout(() => {
+        console.log('🛡️ PROTECCIÓN: Reduciendo agresividad');
+        clearInterval(intervalVigilancia);
+        
+        // Vigilancia suave solo si no hay modal abierto intencionalmente
+        const intervalSuave = setInterval(() => {
+          if (Date.now() - tiempoInicioProteccion > 15000) {
+            clearInterval(intervalSuave);
+            proteccionActiva = false;
+            console.log('🛡️ PROTECCIÓN: Completamente desactivada');
+            return;
+          }
+          if (!window.modalAbiertoPlato) {
+            cerrarTodosLosModales();
+          }
+        }, 1000);
+      }, 3000);
+      
+      // Sobrescribir función global cerrarModal para asegurar funcionalidad
+      window.cerrarModal = function() {
+        console.log('🛡️ PROTECCIÓN: cerrarModal() llamada');
+        const modal = document.getElementById('modal-editar-plato');
+        if (modal) {
+          modal.style.display = 'none';
+          modal.style.visibility = 'hidden';
+          modal.style.opacity = '0';
+          window.modalAbiertoPlato = false;
+          
+          // Limpiar formulario si existe
+          const form = modal.querySelector('form');
+          if (form) {
+            form.reset();
+          }
+        }
+      };
+      
+      // Protección contra errores de JavaScript que puedan abrir modales
+      window.addEventListener('error', function(event) {
+        if (proteccionActiva && !window.modalAbiertoPlato) {
+          console.log('🛡️ PROTECCIÓN: Error JS detectado, cerrando modales');
+          setTimeout(cerrarTodosLosModales, 10);
+        }
+      });
+      
+      // Soporte para tecla ESC
+      document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+          cerrarTodosLosModales();
+          window.modalAbiertoPlato = false;
+        }
+      });
+      
+      console.log('🛡️ PROTECCIÓN ANTI-MODAL INTELIGENTE ACTIVADA PARA PLATOS');
+    })();
+  </script>
+</body>
+</html>

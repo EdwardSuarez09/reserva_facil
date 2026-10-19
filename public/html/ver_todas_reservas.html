@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ver Todas las Reservas - ReservaFácil</title>
+  <link rel="stylesheet" href="../assets/css/estilos_principal.css">
+  <link rel="stylesheet" href="../assets/css/panel_superadmin.css">
+  <link rel="stylesheet" href="../assets/css/gestion_moderna.css">
+</head>
+<body>
+  <!-- Navegación lateral -->
+  <nav class="sidebar-nav">
+    <div class="nav-header">
+      <img src="../assets/img/Imagenes/DALL·E 2024-11-06 21.54.50 - An elegant logo for a restaurant, featuring a stylized fork and knife crossed over a plate with subtle decorative elements. The background should be s.webp" alt="Logo ReservaFácil" class="nav-logo">
+      <h3 class="nav-title">Panel SuperAdmin</h3>
+      <p class="nav-subtitle">Control Total del Sistema</p>
+    </div>
+    
+    <div class="nav-menu">
+      <a href="../index_superadmin.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Inicio</span>
+      </a>
+      <a href="gestion_admin.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Administradores</span>
+      </a>
+      <a href="gestion_restaurantes.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Restaurantes</span>
+      </a>
+      <a href="ver_todas_reservas.html" class="nav-link active">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Ver Todas las Reservas</span>
+      </a>
+      <a href="gestion_todas_categorias.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Categorías</span>
+      </a>
+      <a href="gestion_todos_platos.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Platos</span>
+      </a>
+      <a href="gestion_todas_mesas.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Mesas</span>
+      </a>
+      <a href="../index_cliente.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Catálogo Público</span>
+      </a>
+    </div>
+    
+    <div class="nav-footer">
+      <a href="login.html" class="nav-link logout">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Cerrar Sesión</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Contenido principal -->
+  <main class="main-content">
+    <!-- Header de la página -->
+    <header class="page-header">
+      <div class="header-content">
+        <div class="header-text">
+          <h1 class="page-title">Ver Todas las Reservas</h1>
+          <p class="page-subtitle">Monitorea todas las reservas del sistema</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-export" onclick="exportarDatos()">
+            Exportar Datos
+          </button>
+          <button class="btn btn-refresh" onclick="actualizarLista()">
+            Actualizar
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Filtros avanzados -->
+    <section class="filters-section">
+      <div class="filters-container">
+        <h3 class="filters-title">Filtros Avanzados</h3>
+        <div class="filters-grid">
+          <div class="filter-group">
+            <label for="filtro-restaurante">Restaurante:</label>
+            <select id="filtro-restaurante" class="filter-select">
+              <option value="">Todos los restaurantes</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="filtro-estado">Estado:</label>
+            <select id="filtro-estado" class="filter-select">
+              <option value="">Todos los estados</option>
+              <option value="pendiente">Pendiente</option>
+              <option value="confirmada">Confirmada</option>
+              <option value="completada">Completada</option>
+              <option value="cancelada">Cancelada</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="filtro-fecha">Fecha:</label>
+            <select id="filtro-fecha" class="filter-select">
+              <option value="">Todas las fechas</option>
+              <option value="hoy">Hoy</option>
+              <option value="esta-semana">Esta semana</option>
+              <option value="este-mes">Este mes</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="buscar-cliente">Buscar cliente:</label>
+            <input type="text" id="buscar-cliente" placeholder="Nombre del cliente..." class="filter-input">
+          </div>
+        </div>
+        <div class="filters-actions">
+          <button class="btn btn-primary" onclick="aplicarFiltros()">Aplicar Filtros</button>
+          <button class="btn btn-secondary" onclick="limpiarFiltros()">Limpiar</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Estadísticas rápidas -->
+    <section class="stats-section">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon"></div>
+          <div class="stat-content">
+            <span class="stat-number" id="total-reservas-stats">-</span>
+            <span class="stat-label">Total Reservas</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"></div>
+          <div class="stat-content">
+            <span class="stat-number" id="reservas-hoy">-</span>
+            <span class="stat-label">Reservas Hoy</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"></div>
+          <div class="stat-content">
+            <span class="stat-number" id="reservas-pendientes">-</span>
+            <span class="stat-label">Pendientes</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"></div>
+          <div class="stat-content">
+            <span class="stat-number" id="reservas-confirmadas">-</span>
+            <span class="stat-label">Confirmadas</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Lista de reservas -->
+    <section class="data-section">
+      <div class="section-header">
+        <h2 class="section-title">Listado de Reservas</h2>
+        <div class="section-actions">
+          <div class="view-options">
+            <button class="view-btn active" data-view="table">Tabla</button>
+            <button class="view-btn" data-view="cards">Tarjetas</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="data-container" id="reservas-container">
+        <div class="loading-state">
+          <div class="loading-spinner"></div>
+          <p>Cargando reservas del sistema...</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal para detalles de la reserva -->
+  <div id="modal-detalle-reserva" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Detalles de la Reserva</h3>
+        <button class="modal-close" onclick="cerrarModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="detalle-reserva-content">
+        <!-- Contenido dinámico -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Variables globales
+    let currentView = 'table';
+    let currentFilters = {};
+
+    // Inicialización
+    document.addEventListener('DOMContentLoaded', function() {
+      cargarDatos();
+      cargarFiltros();
+      configurarEventos();
+    });
+
+    function cargarDatos() {
+      fetch('../../src/api/reservas/listar.php')
+        .then(response => response.text())
+        .then(html => {
+          document.getElementById('reservas-container').innerHTML = html;
+          cargarEstadisticas();
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          document.getElementById('reservas-container').innerHTML = 
+            '<div class="error-message">Error al cargar las reservas.</div>';
+        });
+    }
+
+    function cargarFiltros() {
+      // Cargar restaurantes para filtro
+      fetch('../../src/api/restaurantes/listar_json.php')
+        .then(response => response.json())
+        .then(restaurantes => {
+          const select = document.getElementById('filtro-restaurante');
+          restaurantes.forEach(rest => {
+            const option = new Option(rest.nombre, rest.id);
+            select.add(option);
+          });
+        });
+    }
+
+    function cargarEstadisticas() {
+      // Cargar estadísticas reales desde el servidor
+      fetch('../../src/api/reservas/estadisticas.php')
+        .then(response => response.json())
+        .then(stats => {
+          document.getElementById('total-reservas-stats').textContent = stats.total_reservas || '0';
+          document.getElementById('reservas-hoy').textContent = stats.reservas_hoy || '0';
+          document.getElementById('reservas-pendientes').textContent = stats.reservas_pendientes || '0';
+          document.getElementById('reservas-confirmadas').textContent = stats.reservas_confirmadas || '0';
+        })
+        .catch(error => {
+          console.error('Error cargando estadísticas:', error);
+          // Valores por defecto en caso de error
+          document.getElementById('total-reservas-stats').textContent = '0';
+          document.getElementById('reservas-hoy').textContent = '0';
+          document.getElementById('reservas-pendientes').textContent = '0';
+          document.getElementById('reservas-confirmadas').textContent = '0';
+        });
+    }
+
+    function configurarEventos() {
+      // Configurar cambio de vista
+      document.querySelectorAll('.view-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          currentView = this.dataset.view;
+          cambiarVista();
+        });
+      });
+    }
+
+    function cambiarVista() {
+      const container = document.getElementById('reservas-container');
+      if (currentView === 'cards') {
+        container.classList.add('cards-view');
+      } else {
+        container.classList.remove('cards-view');
+      }
+    }
+
+    function aplicarFiltros() {
+      console.log('Aplicando filtros...');
+      cargarDatos();
+    }
+
+    function limpiarFiltros() {
+      document.getElementById('filtro-restaurante').value = '';
+      document.getElementById('filtro-estado').value = '';
+      document.getElementById('filtro-fecha').value = '';
+      document.getElementById('buscar-cliente').value = '';
+      cargarDatos();
+    }
+
+    function actualizarLista() {
+      cargarDatos();
+    }
+
+    function exportarDatos() {
+      alert('Función de exportación en desarrollo');
+    }
+
+    function verDetalleReserva(id) {
+      // Mostrar detalles de la reserva en un modal
+      fetch(`../../src/api/reservas/obtener.php?id=${id}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.error) {
+            alert('Error: ' + data.error);
+            return;
+          }
+          
+          // Construir contenido del modal
+          const content = `
+            <div class="detalle-reserva">
+              <p><strong>ID Reserva:</strong> ${data.id}</p>
+              <p><strong>Restaurante:</strong> ${data.restaurante_nombre || 'Sin especificar'}</p>
+              <p><strong>Cliente ID:</strong> ${data.cliente_id || 'Sin especificar'}</p>
+              <p><strong>Fecha:</strong> ${new Date(data.fecha_reserva).toLocaleDateString('es-ES')}</p>
+              <p><strong>Hora:</strong> ${data.hora_reserva}</p>
+              <p><strong>Estado:</strong> <span class="estado-${data.estado}">${data.estado.charAt(0).toUpperCase() + data.estado.slice(1)}</span></p>
+              <p><strong>Duración:</strong> ${data.duracion || '120'} minutos</p>
+              <p><strong>Mesa:</strong> ${data.mesa_id ? 'Mesa ID: ' + data.mesa_id : 'Sin asignar'}</p>
+            </div>
+          `;
+          
+          document.getElementById('detalle-reserva-content').innerHTML = content;
+          document.getElementById('modal-detalle-reserva').style.display = 'block';
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('Error al cargar los detalles de la reserva');
+        });
+    }
+
+    function editarReserva(id) {
+      console.log('Editando reserva:', id);
+      // Aquí se podría abrir un modal de edición
+    }
+
+    function eliminarReserva(id) {
+      if (confirm('¿Está seguro de que desea eliminar esta reserva?')) {
+        const formData = new FormData();
+        formData.append('id', id);
+        
+        fetch('../../src/api/reservas/eliminar.php', {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => response.text())
+        .then(result => {
+          alert(result);
+          if (!result.toLowerCase().includes('error')) {
+            cargarDatos();
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('Error al eliminar la reserva');
+        });
+      }
+    }
+
+    function cerrarModal() {
+      document.getElementById('modal-detalle-reserva').style.display = 'none';
+    }
+
+    // Cerrar modal al hacer clic fuera
+    window.onclick = function(event) {
+      const modal = document.getElementById('modal-detalle-reserva');
+      if (event.target === modal) {
+        modal.style.display = 'none';
+      }
+    }
+  </script>
+</body>
+</html> 

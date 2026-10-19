@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Reservas - ReservaFácil</title>
+  <link rel="stylesheet" href="../assets/css/estilos_principal.css">
+  <link rel="stylesheet" href="../assets/css/panel_admin.css">
+  <link rel="stylesheet" href="../assets/css/gestion_moderna.css">
+  <link rel="stylesheet" href="../assets/css/gestion_reservas.css">
+  <style>
+    /* Estilos específicos para tarjetas de reservas */
+    .reserva-card {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 15px 0;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      border-left: 4px solid #007bff;
+      transition: all 0.3s ease;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .reserva-card:hover {
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      transform: translateY(-2px);
+    }
+    
+    .reserva-info {
+      flex: 1;
+    }
+    
+    .reserva-info h4 {
+      margin: 0 0 10px 0;
+      color: #2c3e50;
+      font-size: 1.2em;
+      font-weight: 600;
+    }
+    
+    .reserva-info p {
+      margin: 5px 0;
+      color: #666;
+      font-size: 0.95em;
+    }
+    
+    .reserva-acciones {
+      display: flex;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    
+    .btn-editar, .btn-eliminar {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9em;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-editar {
+      background: #007bff;
+      color: white;
+    }
+    
+    .btn-editar:hover {
+      background: #0056b3;
+      transform: translateY(-1px);
+    }
+    
+    .btn-eliminar {
+      background: #dc3545;
+      color: white;
+    }
+    
+    .btn-eliminar:hover {
+      background: #c82333;
+      transform: translateY(-1px);
+    }
+    
+    /* Estados de reservas */
+    .estado-pendiente {
+      background: #fff3cd;
+      color: #856404;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.85em;
+      font-weight: 500;
+      text-transform: capitalize;
+    }
+    
+    .estado-confirmada {
+      background: #d4edda;
+      color: #155724;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.85em;
+      font-weight: 500;
+      text-transform: capitalize;
+    }
+    
+    .estado-completada {
+      background: #d1ecf1;
+      color: #0c5460;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.85em;
+      font-weight: 500;
+      text-transform: capitalize;
+    }
+    
+    .estado-cancelada {
+      background: #f8d7da;
+      color: #721c24;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.85em;
+      font-weight: 500;
+      text-transform: capitalize;
+    }
+    
+    .estado-no_asistio {
+      background: #e2e3e5;
+      color: #383d41;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.85em;
+      font-weight: 500;
+      text-transform: capitalize;
+    }
+    
+    /* Contenedor para cuando no hay reservas */
+    .error-message {
+      text-align: center;
+      color: #666;
+      font-style: italic;
+      margin: 40px 0;
+      padding: 40px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border: 2px dashed #ddd;
+    }
+    
+    /* Vista de tarjetas responsive */
+    @media (max-width: 768px) {
+      .reserva-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+      }
+      
+      .reserva-acciones {
+        justify-content: center;
+      }
+    }
+
+    /* Estilos para acciones rápidas */
+    .quick-actions {
+      margin: 20px 0;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border-left: 4px solid #007bff;
+    }
+    
+    .quick-actions h4 {
+      margin: 0 0 10px 0;
+      color: #495057;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    
+    .quick-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 12px;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+    
+    .btn-success {
+      background: #28a745;
+      color: white;
+    }
+    
+    .btn-success:hover {
+      background: #218838;
+    }
+    
+    .btn-warning {
+      background: #ffc107;
+      color: #212529;
+    }
+    
+    .btn-warning:hover {
+      background: #e0a800;
+    }
+    
+    .btn-info {
+      background: #17a2b8;
+      color: white;
+    }
+    
+    .btn-info:hover {
+      background: #138496;
+    }
+    
+    .btn-danger {
+      background: #dc3545;
+      color: white;
+    }
+    
+    .btn-danger:hover {
+      background: #c82333;
+    }
+    
+    .quick-note {
+      color: #6c757d;
+      font-style: italic;
+    }
+    
+    .quick-note small {
+      font-size: 11px;
+    }
+
+    /* Mejoras para el modal */
+    #modal-editar-reserva {
+      display: none !important;
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      background-color: rgba(0,0,0,0.5) !important;
+      z-index: 9999 !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+
+    #modal-editar-reserva.show {
+      display: flex !important;
+    }
+
+    .modal-content {
+      background: white !important;
+      padding: 0 !important;
+      border-radius: 8px !important;
+      width: 90% !important;
+      max-width: 600px !important;
+      max-height: 90vh !important;
+      overflow-y: auto !important;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3) !important;
+    }
+
+    .modal-header {
+      padding: 20px 25px;
+      background: #6f42c1;
+      color: white;
+      border-radius: 8px 8px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .modal-close {
+      background: none !important;
+      border: none !important;
+      color: white !important;
+      font-size: 28px !important;
+      cursor: pointer !important;
+      padding: 0 !important;
+      width: 30px !important;
+      height: 30px !important;
+    }
+
+    .modal-body {
+      padding: 20px 25px;
+    }
+
+    .form-actions {
+      padding: 20px 25px;
+      background: #f8f9fa;
+      border-radius: 0 0 8px 8px;
+      text-align: center;
+      border-top: 1px solid #eee;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .form-field-full {
+      grid-column: 1 / -1;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+      margin: 0 5px;
+    }
+
+    .btn-primary {
+      background: #007bff;
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+
+    .btn-success {
+      background: #28a745;
+      color: white;
+    }
+
+    .btn-warning {
+      background: #ffc107;
+      color: #212529;
+    }
+
+    .btn-danger {
+      background: #dc3545;
+      color: white;
+    }
+
+    .btn-info {
+      background: #17a2b8;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navegación lateral -->
+  <nav class="sidebar-nav">
+    <div class="nav-header">
+      <img src="../assets/img/Imagenes/DALL·E 2024-11-06 21.54.50 - An elegant logo for a restaurant, featuring a stylized fork and knife crossed over a plate with subtle decorative elements. The background should be s.webp" alt="Logo ReservaFácil" class="nav-logo">
+      <h3 class="nav-title">Panel Admin</h3>
+      <p class="nav-subtitle">Gestión de Restaurante</p>
+    </div>
+    
+    <div class="nav-menu">
+      <a href="../index_admin.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Inicio</span>
+      </a>
+      <a href="../index_cliente.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Catálogo</span>
+      </a>
+      <a href="gestion_categoria.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Gestión Categorías</span>
+      </a>
+      <a href="gestion_plato.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Gestión de Menú</span>
+      </a>
+      <a href="gestion_mesas.html" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Gestión de Mesas</span>
+      </a>
+      <a href="gestion_reservas.html" class="nav-link active">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Gestión de Reservas</span>
+      </a>
+    </div>
+    
+    <div class="nav-footer">
+      <a href="login.html" class="nav-link logout">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Cerrar Sesión</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Contenido principal -->
+  <main class="main-content">
+    <!-- Header de la página -->
+    <header class="page-header">
+      <div class="header-content">
+        <div class="header-text">
+          <h1 class="page-title">Gestión de Reservas</h1>
+          <p class="page-subtitle">Administra las reservas de tu restaurante</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-export" onclick="exportarReservas()">
+            Exportar Reservas
+          </button>
+          <button class="btn btn-refresh" onclick="actualizarLista()">
+            Actualizar
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Estadísticas rápidas -->
+    <section class="stats-section">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon"></div>
+          <div class="stat-content">
+            <span class="stat-number" id="total-reservas">-</span>
+            <span class="stat-label">Total Reservas</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"></div>
+          <div class="stat-content">
+            <span class="stat-number" id="reservas-pendientes">-</span>
+            <span class="stat-label">Pendientes</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"></div>
+          <div class="stat-content">
+            <span class="stat-number" id="reservas-confirmadas">-</span>
+            <span class="stat-label">Confirmadas</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"></div>
+          <div class="stat-content">
+            <span class="stat-number" id="reservas-hoy">-</span>
+            <span class="stat-label">Hoy</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Filtros -->
+    <section class="filters-section">
+      <div class="filters-container">
+        <h3 class="filters-title">Filtros de Búsqueda</h3>
+        <div class="filters-grid">
+          <div class="filter-group">
+            <label for="filtro-estado">Estado:</label>
+            <select id="filtro-estado" class="filter-select">
+              <option value="">Todos los estados</option>
+              <option value="pendiente">Pendiente</option>
+              <option value="confirmada">Confirmada</option>
+              <option value="completada">Completada</option>
+              <option value="cancelada">Cancelada</option>
+              <option value="no_asistio">No asistió</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="filtro-fecha">Fecha:</label>
+            <input type="date" id="filtro-fecha" class="filter-input">
+          </div>
+          <div class="filter-group">
+            <label for="buscar-cliente">Buscar cliente:</label>
+            <input type="text" id="buscar-cliente" placeholder="Nombre del cliente..." class="filter-input">
+          </div>
+        </div>
+        <div class="filters-actions">
+          <button class="btn btn-primary" onclick="aplicarFiltros()">Aplicar Filtros</button>
+          <button class="btn btn-secondary" onclick="limpiarFiltros()">Limpiar</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Lista de reservas -->
+    <section class="data-section">
+      <div class="section-header">
+        <h2 class="section-title">Reservas del Restaurante</h2>
+        <div class="section-actions">
+          <div class="view-options">
+            <button class="view-btn active" data-view="table">Tabla</button>
+            <button class="view-btn" data-view="cards">Tarjetas</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="data-container" id="reservas-container">
+        <div class="loading-state">
+          <div class="loading-spinner"></div>
+          <p>Cargando reservas del restaurante...</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal para editar reserva -->
+  <div id="modal-editar-reserva" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Editar Reserva</h3>
+        <button class="modal-close" onclick="cerrarModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="formEditarReserva">
+          <input type="hidden" id="edit-id-reserva" name="id">
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="edit-cliente-nombre">Cliente:</label>
+              <input type="text" id="edit-cliente-nombre" name="cliente_nombre" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="edit-numero-personas">Número de Personas:</label>
+              <input type="number" id="edit-numero-personas" name="numero_personas" min="1" max="12" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="edit-fecha-reserva">Fecha de Reserva:</label>
+              <input type="date" id="edit-fecha-reserva" name="fecha_reserva" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="edit-hora-reserva">Hora de Reserva:</label>
+              <input type="time" id="edit-hora-reserva" name="hora_reserva" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="edit-duracion">Duración (minutos):</label>
+              <input type="number" id="edit-duracion" name="duracion" min="30" max="300" step="15" value="120">
+            </div>
+            
+            <div class="form-group">
+              <label for="edit-estado">Estado:</label>
+              <select id="edit-estado" name="estado" required>
+                <option value="pendiente">Pendiente</option>
+                <option value="confirmada">Confirmada</option>
+                <option value="completada">Completada</option>
+                <option value="cancelada">Cancelada</option>
+                <option value="no_asistio">No Asistió</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="edit-mesa">Mesa:</label>
+              <select id="edit-mesa" name="mesa_id">
+                <option value="">Seleccionar Mesa</option>
+                <option value="1">Mesa 1 (2 personas)</option>
+                <option value="2">Mesa 2 (4 personas)</option>
+                <option value="3">Mesa 3 (6 personas)</option>
+                <option value="4">Mesa 4 (8 personas)</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="form-group form-field-full">
+            <label for="edit-comentarios">Comentarios:</label>
+            <textarea id="edit-comentarios" name="comentarios" rows="3"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button>
+        <button type="button" class="btn btn-primary" onclick="guardarReserva()">Guardar Cambios</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Variables globales
+    let currentView = 'table';
+    let reservas = [];
+    let modalAbierto = false;
+
+    // Inicialización
+    document.addEventListener('DOMContentLoaded', function() {
+      cargarReservas();
+      cargarEstadisticas();
+      configurarEventos();
+      validarSesion();
+    });
+
+    // Configurar eventos
+    function configurarEventos() {
+      // Configurar cambio de vista
+      document.querySelectorAll('.view-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          currentView = this.dataset.view;
+          cambiarVista();
+        });
+      });
+    }
+
+    // Cambiar vista entre tabla y tarjetas
+    function cambiarVista() {
+      const container = document.getElementById('reservas-container');
+      if (currentView === 'cards') {
+        container.classList.add('cards-view');
+      } else {
+        container.classList.remove('cards-view');
+      }
+    }
+
+    // Cargar reservas
+    function cargarReservas() {
+      fetch("../../src/api/reservas/obtener_todas.php")
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            reservas = data.reservas; // Guardar reservas en el array global
+            console.log('✅ Reservas cargadas:', reservas.length);
+            mostrarReservasEnTabla(data.reservas);
+          } else {
+            console.error('Error al cargar reservas:', data.error);
+            document.getElementById("reservas-container").innerHTML = 
+              '<div class="error-message">Error al cargar las reservas.</div>';
+          }
+        })
+        .catch(error => {
+          console.error('Error cargando reservas:', error);
+          document.getElementById("reservas-container").innerHTML = 
+            '<div class="error-message">Error al cargar las reservas.</div>';
+        });
+    }
+
+    // Función para mostrar reservas en tabla
+    function mostrarReservasEnTabla(reservas) {
+      const container = document.getElementById("reservas-container");
+      
+      if (!reservas || reservas.length === 0) {
+        container.innerHTML = `
+          <div class="mensaje-vacio">
+            <h3>📋 No hay reservas registradas</h3>
+            <p>Aún no se han realizado reservas en el restaurante</p>
+          </div>
+        `;
+        return;
+      }
+
+      let html = `
+        <div class="tabla-container">
+          <table class="tabla-datos">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Cliente</th>
+                <th>Mesa</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Personas</th>
+                <th>Estado</th>
+                <th>Duración</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+      `;
+
+      reservas.forEach(reserva => {
+        const estado = reserva.estado || 'pendiente';
+        html += `
+          <tr>
+            <td><strong>#${reserva.id}</strong></td>
+            <td>
+              <div class="cliente-info">
+                <strong>${reserva.cliente_nombre || reserva.nombre_cliente || 'Sin nombre'}</strong>
+                ${reserva.cliente_telefono ? `<br><small>📞 ${reserva.cliente_telefono}</small>` : ''}
+                ${reserva.cliente_email ? `<br><small>📧 ${reserva.cliente_email}</small>` : ''}
+              </div>
+            </td>
+            <td>${reserva.mesa_id ? `Mesa ${reserva.mesa_id}` : '<span style="color: #999;">Sin asignar</span>'}</td>
+            <td>📅 ${reserva.fecha_reserva}</td>
+            <td>⏰ ${reserva.hora_reserva}</td>
+            <td>👥 ${reserva.numero_personas}</td>
+            <td><span class="estado-${estado}">${estado.charAt(0).toUpperCase() + estado.slice(1)}</span></td>
+            <td>${reserva.duracion || 120} min</td>
+            <td class="acciones">
+              <button onclick="editarReserva(${reserva.id})" class="btn-editar" title="Editar reserva">
+                ✏️ Editar
+              </button>
+              <button onclick="eliminarReserva(${reserva.id})" class="btn-eliminar" title="Eliminar reserva" 
+                      onclick="return confirm('¿Estás seguro de eliminar esta reserva?')">
+                🗑️ Eliminar
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+
+      html += `
+            </tbody>
+          </table>
+        </div>
+      `;
+
+      container.innerHTML = html;
+    }
+
+    // Cargar estadísticas
+    function cargarEstadisticas() {
+      fetch("../../src/api/reservas/estadisticas.php")
+        .then(res => res.json())
+        .then(data => {
+          if (data.error) {
+            console.error('Error al cargar estadísticas:', data.error);
+            return;
+          }
+          
+          document.getElementById('total-reservas').textContent = data.total_reservas;
+          document.getElementById('reservas-pendientes').textContent = data.reservas_pendientes;
+          document.getElementById('reservas-confirmadas').textContent = data.reservas_confirmadas;
+          document.getElementById('reservas-hoy').textContent = data.reservas_hoy;
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          // Mantener valores por defecto en caso de error
+          document.getElementById('total-reservas').textContent = '-';
+          document.getElementById('reservas-pendientes').textContent = '-';
+          document.getElementById('reservas-confirmadas').textContent = '-';
+          document.getElementById('reservas-hoy').textContent = '-';
+        });
+    }
+
+    // Editar reserva
+    function editarReserva(id) {
+      console.log('🔧 Editando reserva ID:', id);
+      
+      // Obtener datos directamente del servidor
+      fetch(`../../src/api/reservas/obtener.php?id=${id}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.error) {
+            alert('Error: ' + data.error);
+            return;
+          }
+          
+          console.log('📄 Datos de la reserva:', data);
+
+          // Llenar el formulario con valores por defecto para campos vacíos
+          const elementos = {
+            'edit-id-reserva': data.id,
+            'edit-cliente-nombre': data.cliente_nombre || data.nombre_cliente || '',
+            'edit-numero-personas': data.numero_personas || '1',
+            'edit-fecha-reserva': data.fecha_reserva,
+            'edit-hora-reserva': data.hora_reserva,
+            'edit-duracion': data.duracion || '120',
+            'edit-estado': data.estado || 'pendiente', // 🔧 VALOR POR DEFECTO
+            'edit-mesa': data.mesa_id || '',
+            'edit-comentarios': data.comentarios || ''
+          };
+
+          console.log('🔧 Estado asignado:', elementos['edit-estado']);
+
+          // Asignar valores a los campos
+          Object.keys(elementos).forEach(id => {
+            const elemento = document.getElementById(id);
+            if (elemento) {
+              elemento.value = elementos[id];
+              console.log(`✅ ${id}: ${elementos[id]}`);
+            } else {
+              console.warn('⚠️ Elemento no encontrado:', id);
+            }
+          });
+
+          // Abrir modal
+          abrirModal();
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('Error al cargar los datos de la reserva');
+        });
+    }
+
+    // Función para abrir modal
+    function abrirModal() {
+      console.log('🚀 Abriendo modal...');
+      const modal = document.getElementById('modal-editar-reserva');
+      if (modal) {
+        modal.classList.add('show');
+        modalAbierto = true;
+        console.log('✅ Modal abierto exitosamente');
+      } else {
+        console.error('❌ Modal no encontrado');
+      }
+    }
+
+    // Función para cerrar modal
+    function cerrarModal() {
+      console.log('🔒 Cerrando modal...');
+      const modal = document.getElementById('modal-editar-reserva');
+      if (modal) {
+        modal.classList.remove('show');
+        modalAbierto = false;
+        
+        // Limpiar formulario
+        const form = document.getElementById('formEditarReserva');
+        if (form) form.reset();
+      }
+    }
+
+    // Función para guardar reserva
+    function guardarReserva() {
+      const form = document.getElementById('formEditarReserva');
+      const formData = new FormData(form);
+
+      // Debug: mostrar datos que se van a enviar
+      console.log('📤 Datos a enviar:');
+      for (let [key, value] of formData.entries()) {
+        console.log(`${key}: ${value}`);
+      }
+
+      fetch('../../src/api/reservas/editar.php', {
+        method: 'POST',
+        body: formData
+      })
+      .then(res => res.text())
+      .then(response => {
+        try {
+          const data = JSON.parse(response);
+          if (data.success) {
+            alert('✅ ' + data.message);
+            location.reload(); // Recargar la página para ver los cambios
+          } else {
+            alert('❌ Error: ' + data.error);
+          }
+        } catch (e) {
+          // Si no es JSON válido, mostrar la respuesta tal como está
+          alert('Respuesta del servidor:\n' + response);
+          if (!response.toLowerCase().includes('error')) {
+            location.reload();
+          }
+        }
+      })
+      .catch(error => {
+        alert('Error: ' + error);
+      });
+    }
+
+    // Filtros
+    function aplicarFiltros() {
+      console.log('Aplicando filtros...');
+      cargarReservas();
+    }
+
+    function limpiarFiltros() {
+      document.getElementById('filtro-estado').value = '';
+      document.getElementById('filtro-fecha').value = '';
+      document.getElementById('buscar-cliente').value = '';
+      cargarReservas();
+    }
+
+    // Funciones auxiliares
+    function mostrarAlertaPersonalizada(mensaje) {
+      const alerta = document.createElement('div');
+      alerta.className = `alerta-personalizada ${mensaje.toLowerCase().includes('error') ? 'alerta-error' : 'alerta-exito'}`;
+      alerta.textContent = mensaje;
+      document.body.appendChild(alerta);
+      
+      setTimeout(() => {
+        alerta.style.animation = 'slideOut 0.3s ease forwards';
+        setTimeout(() => alerta.remove(), 300);
+      }, 4000);
+    }
+
+    function actualizarLista() {
+      cargarReservas();
+      cargarEstadisticas();
+    }
+
+    function exportarReservas() {
+      alert('Función de exportación en desarrollo');
+    }
+
+    // Función para eliminar reserva
+    function eliminarReserva(id) {
+      if (!confirm('¿Estás seguro de que quieres eliminar esta reserva?')) {
+        return;
+      }
+      
+      console.log('🗑️ Eliminando reserva ID:', id);
+      
+      fetch('../../src/api/reservas/eliminar.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'id=' + id
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          alert('✅ ' + data.message);
+          cargarReservas(); // Recargar la lista
+          cargarEstadisticas(); // Actualizar estadísticas
+        } else {
+          alert('❌ Error: ' + data.error);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Error al eliminar la reserva');
+      });
+    }
+
+    function validarSesion() {
+      fetch('../../src/helpers/validar_sesion.php')
+        .then(res => res.text())
+        .then(data => {
+          if (data !== "ok") {
+            window.location.href = "login.html";
+          }
+        })
+        .catch(error => {
+          console.error('Error validando sesión:', error);
+        });
+    }
+
+    // Cerrar modal al hacer clic fuera
+    document.addEventListener('click', function(event) {
+      const modal = document.getElementById('modal-editar-reserva');
+      if (event.target === modal) {
+        cerrarModal();
+      }
+    });
+
+    console.log('🎯 FUNCIONES MODALES DEFINITIVAS CARGADAS');
+  </script>
+
+  <!-- 🐛 DEBUG SIMPLE PARA ESTADO -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Buscar el formulario y agregar listener
+      const form = document.getElementById("formEditarReserva");
+      if (form) {
+        form.addEventListener("submit", function(e) {
+          e.preventDefault();
+          
+          alert('🔍 INICIANDO DEBUG...');
+          
+          // Verificar el select de estado
+          const estadoSelect = document.getElementById('edit-estado');
+          const estadoValor = estadoSelect ? estadoSelect.value : 'NO ENCONTRADO';
+          
+          alert('Estado seleccionado: "' + estadoValor + '"');
+          
+          // Crear FormData y verificar
+          const formData = new FormData(this);
+          const estadoEnFormData = formData.get('estado');
+          
+          alert('Estado en FormData: "' + estadoEnFormData + '"');
+          
+          // Mostrar todos los datos
+          let datos = '';
+          for (let [key, value] of formData.entries()) {
+            datos += key + ': "' + value + '"\n';
+          }
+          alert('Todos los datos:\n' + datos);
+          
+          // Enviar al archivo real de edición
+          fetch("../../src/api/reservas/editar.php", {
+            method: "POST",
+            body: formData
+          })
+          .then(res => res.text())
+          .then(response => {
+            alert('Respuesta del servidor:\n' + response);
+          })
+          .catch(error => {
+            alert('Error: ' + error);
+          });
+        });
+      } else {
+        alert('❌ No se encontró el formulario formEditarReserva');
+      }
+    });
+  </script>
+</body>
+</html>
+ 

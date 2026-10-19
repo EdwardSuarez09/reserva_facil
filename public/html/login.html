@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Iniciar Sesión</title>
+  <link rel="stylesheet" href="../assets/css/estilos_login.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings:
+        'FILL' 0,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 48;
+    }
+
+    /* ESTILO PERSONALIZADO SOLO PARA EL ICONO DE LA CAMPANA */
+    .icono-campana {
+      font-size: 60px;
+      color: #f39c12;
+      display: block;
+      margin: 0 auto 10px auto;
+    }
+
+    .logo-superior h1 {
+      color: #f39c12;
+      font-size: 24px;
+      margin: 0;
+    }
+
+    .logo-superior {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .registro-link {
+      text-align: center;
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px solid #eee;
+    }
+
+    .registro-link a {
+      color: #f39c12;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .registro-link a:hover {
+      text-decoration: underline;
+    }
+
+    .registro-link p {
+      color: #666;
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="fondo"></div>
+
+  <div class="login-container">
+    <div class="logo-superior">
+      <span class="material-symbols-outlined icono-campana">room_service</span>
+      <h1>RESERVA FÁCIL</h1>
+    </div>
+
+    <form id="formLogin">
+      <div class="input-group">
+        <span class="material-symbols-outlined">person</span>
+        <input type="email" name="correo" placeholder="Correo electrónico" required>
+      </div>
+      <div class="input-group">
+        <span class="material-symbols-outlined">lock</span>
+        <input type="password" name="contrasena" placeholder="Contraseña" required>
+      </div>
+      <button type="submit">Ingresar</button>
+    </form>
+
+    <p id="mensaje" class="error-msg"></p>
+    
+    <!-- Enlace de registro -->
+    <div class="registro-link">
+      <p>¿No tienes cuenta? <a href="registro.html">Regístrate aquí</a></p>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("formLogin").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const datos = new FormData(this);
+
+      fetch("../../src/api/auth/login.php", {
+        method: "POST",
+        body: datos
+      })
+      .then(res => res.text())
+      .then(data => {
+        if (data.startsWith("ok|")) {
+          const rol = data.split("|")[1];
+          if (rol === "superadmin") {
+            window.location.href = "../index_superadmin.html";
+          } else if (rol === "admin") {
+            window.location.href = "../index_admin.html";
+          } else if (rol === "usuario") {
+            window.location.href = "../index_cliente.html";
+          } else {
+            window.location.href = "../index.html";
+          }
+        } else {
+          document.getElementById("mensaje").innerText = data;
+        }
+      })
+      .catch(error => {
+        document.getElementById("mensaje").innerText = "Error al procesar la solicitud.";
+        console.error(error);
+      });
+    });
+  </script>
+</body>
+</html>

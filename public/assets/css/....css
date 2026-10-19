@@ -1,0 +1,372 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+/* === GENERAL === */
+body {
+  margin: 0;
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
+  display: flex;
+  background-color: #f5f5f5;
+}
+
+/* === BARRA LATERAL === */
+nav {
+  background-color: #2c2c2c;
+  color: white;
+  width: 250px;
+  min-height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+nav img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  margin-bottom: 20px;
+}
+
+
+nav a {
+  color: #ddd;
+  margin: 15px 0;
+  text-decoration: none;
+  font-size: 18px;
+  width: 100%;
+  text-align: center;
+  padding: 10px 0;
+  transition: background-color 0.3s, color 0.3s;
+  border-radius: 8px;
+}
+
+nav a:hover {
+  background-color: #f39c12;
+  color: #2c2c2c;
+}
+
+/* === CONTENEDOR DERECHO GENERAL === */
+.contenido-principal {
+  flex: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 40px;
+  min-height: 100vh;
+  box-sizing: border-box;
+  overflow: auto;
+}
+
+.contenido-principal::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('../img/Imagenes/imagen 2.jpg') no-repeat center center;
+  background-size: cover;
+  filter: blur(6px);
+  z-index: 0;
+}
+
+.contenido-principal.mostrar-tabla {
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 40px;
+}
+
+/* === FORMULARIO TARJETA === */
+.form-container {
+  position: relative;
+  z-index: 1;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 500px;
+  transition: all 0.3s ease;
+}
+
+.registro-form h2 {
+  text-align: center;
+  color: #222;
+  font-size: 24px;
+  margin-bottom: 25px;
+}
+
+.registro-form label {
+  display: block;
+  margin-bottom: 10px;
+  color: #333;
+  font-weight: 600;
+}
+
+.registro-form input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+
+.registro-form input:focus {
+  border-color: #4caf50;
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
+  outline: none;
+}
+
+.registro-form button {
+  width: 100%;
+  padding: 14px;
+  background-color: #6e4c1e; /* Café elegante */
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.registro-form button:hover {
+  background-color: #5c3f19; /* Más oscuro al pasar el cursor */
+}
+
+/* Botón Mostrar/Ocultar (ANTES era naranja) */
+/* Botón Mostrar/Ocultar con efecto profesional */
+#toggleAdmins {
+  background: linear-gradient(145deg, #c2a76f, #a7864e); /* dorado profesional */
+  color: #fff;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  border: none;
+  border-radius: 10px;
+  padding: 14px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+}
+
+#toggleAdmins:hover {
+  background: linear-gradient(145deg, #b8965c, #92733c);
+  transform: scale(1.02);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+}
+
+
+/* Encabezados de tabla con efecto visual pro */
+#tabla-admins th {
+  background: linear-gradient(135deg, #a87e35, #8b632c); /* mismo tono del botón */
+  color: white;
+  padding: 12px 10px;
+  text-align: left;
+  font-weight: bold;
+  text-transform: uppercase;
+  border-bottom: 1px solid #6b4a1b;
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.2);
+}
+#toggleAdmins {
+  font-size: 15px;
+  letter-spacing: 0.3px;
+}
+
+/* Encabezado de la tabla */
+#tabla-admins th {
+  background-color: #b07d33 !important;  /* reemplaza el naranja */
+  color: white;
+  padding: 12px 10px;
+  text-align: left;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+#toggleAdmins:hover {
+  background-color: #8c6127 !important;  /* más oscuro al pasar el cursor */
+}
+
+#toggleAdmins:hover {
+  background-color: #7f6426; /* Versión más oscura al hacer hover */
+}
+
+
+
+.registro-form button:hover {
+  background-color: #388e3c;
+}
+
+#toggleAdmins {
+  background-color: #ffa000;
+}
+
+#toggleAdmins:hover {
+  background-color: #fb8c00;
+}
+
+/* === TABLA TARJETA === */
+.tabla-container {
+  position: relative;
+  z-index: 1;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+  max-width: 600px;
+  width: 100%;
+  padding: 0 30px;
+
+  
+}
+
+.tabla-container.visible {
+  opacity: 1;
+  max-height: 2000px;
+  padding: 30px;
+  transform: translateY(0);
+  transition: 
+    opacity 0.8s ease,
+    max-height 1s ease,
+    transform 0.8s ease,
+    padding 0.6s ease;
+}
+
+.tabla-container h3 {
+  text-align: center;
+  font-size: 20px;
+  color: #222;
+  margin-bottom: 20px;
+}
+
+#tabla-admins table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Segoe UI', sans-serif;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+#tabla-admins th {
+  background-color: #f39c12;
+  color: white;
+  padding: 12px 10px;
+  text-align: left;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+#tabla-admins td {
+  padding: 12px 10px;
+  background-color: white;
+}
+
+#tabla-admins tr:nth-child(even) td {
+  background-color: #f9f9f9;
+}
+
+#tabla-admins tr:hover td {
+  background-color: #f1f1f1;
+}
+
+/* Estilo general para los botones de la tabla */
+#tabla-admins button.editar-btn {
+  background-color: #7a5c3c;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 14px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+#tabla-admins button.editar-btn:hover {
+  background-color: #5f432c;
+}
+
+#tabla-admins button.eliminar-btn {
+  background-color: #c1442e;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 14px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+#tabla-admins button.eliminar-btn:hover {
+  background-color: #a53826;
+}
+
+
+/* Botón Editar: verde oliva sobrio */
+#tabla-admins button.editar-btn {
+  background-color: #6b8e23; /* OliveDrab */
+}
+#tabla-admins button.editar-btn:hover {
+  background-color: #557219;
+}
+
+/* Botón Eliminar: rojo vino elegante */
+#tabla-admins button.eliminar-btn {
+  background-color: #8b3a3a;
+}
+#tabla-admins button.eliminar-btn:hover {
+  background-color: #6a2c2c;
+}
+
+.editar-btn {
+  background-color: #7a5c3c;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 14px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.editar-btn:hover {
+  background-color: #5f432c;
+}
+
+.eliminar-btn {
+  background-color: #c1442e;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 14px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.eliminar-btn:hover {
+  background-color: #a53826;
+}

@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReservaFácil - Descubre los Mejores Restaurantes</title>
+    <link rel="stylesheet" href="assets/css/panel_cliente.css">
+</head>
+<body>
+    <!-- Header moderno para clientes -->
+    <header class="client-header">
+        <div class="header-container">
+            <div class="logo-section">
+                <img src="assets/img/Imagenes/DALL·E 2024-11-06 21.54.50 - An elegant logo for a restaurant, featuring a stylized fork and knife crossed over a plate with subtle decorative elements. The background should be s.webp" alt="Logo ReservaFácil" class="header-logo">
+                <div class="brand-info">
+                    <h1 class="brand-name">ReservaFácil</h1>
+                    <p class="brand-tagline">Tu mesa perfecta te espera</p>
+                </div>
+            </div>
+            
+            <nav class="client-nav">
+                <a href="#inicio" class="nav-item active">Inicio</a>
+                <a href="#restaurantes" class="nav-item">Restaurantes</a>
+                <a href="#sobre-nosotros" class="nav-item">Nosotros</a>
+                <a href="#contacto" class="nav-item">Contacto</a>
+            </nav>
+            
+            <div class="auth-section">
+                <div class="user-menu" id="user-menu" style="display: none;">
+                    <div class="user-info">
+                        <span class="user-icon">Usuario</span>
+                        <span class="user-name" id="user-name">Usuario</span>
+                        <div class="dropdown-arrow">▼</div>
+                    </div>
+                    <div class="user-dropdown" id="user-dropdown">
+                        <a href="#" onclick="verMisReservas()" class="dropdown-item">
+                            <span class="dropdown-icon">Reservas</span>
+                            Mis Reservas
+                        </a>
+                        <a href="#" onclick="verPerfil()" class="dropdown-item">
+                            <span class="dropdown-icon">Perfil</span>
+                            Mi Perfil
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" onclick="cerrarSesion()" class="dropdown-item logout">
+                            <span class="dropdown-icon">Salir</span>
+                            Cerrar Sesión
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="auth-buttons" id="auth-buttons">
+                    <button class="btn-login" onclick="mostrarLogin()">
+                        <span class="auth-icon">Ingresar</span>
+                        Iniciar Sesión
+                    </button>
+                    <button class="btn-register" onclick="mostrarRegistro()">
+                        <span class="auth-icon">Registro</span>
+                        Registrarse
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section" id="inicio">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h2 class="hero-title">Descubre Sabores Únicos</h2>
+            <p class="hero-subtitle">Los mejores restaurantes de la ciudad te esperan. Explora, elige y reserva tu experiencia gastronómica perfecta.</p>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="stat-number" id="total-restaurants">-</span>
+                    <span class="stat-text">Restaurantes</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="total-bookings">-</span>
+                    <span class="stat-text">Reservas Realizadas</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="happy-customers">-</span>
+                    <span class="stat-text">Clientes Satisfechos</span>
+                </div>
+            </div>
+            <a href="#restaurantes" class="cta-button">
+                <span class="cta-icon">Explorar</span>
+                Explorar Restaurantes
+            </a>
+        </div>
+    </section>
+
+    <!-- Filtros de búsqueda -->
+    <section class="search-section" id="restaurantes">
+        <div class="container">
+            <h2 class="section-title">Encuentra tu Restaurante Ideal</h2>
+            <div class="search-filters">
+                <div class="filter-group">
+                    <label for="search-name">Buscar por nombre:</label>
+                    <input type="text" id="search-name" placeholder="Nombre del restaurante..." class="search-input">
+                </div>
+                <div class="filter-group">
+                    <label for="filter-type">Tipo de cocina:</label>
+                    <select id="filter-type" class="filter-select">
+                        <option value="">Todos los tipos</option>
+                        <option value="italiana">Italiana</option>
+                        <option value="mexicana">Mexicana</option>
+                        <option value="china">China</option>
+                        <option value="japonesa">Japonesa</option>
+                        <option value="mediterránea">Mediterránea</option>
+                        <option value="americana">Americana</option>
+                        <option value="peruana">Peruana</option>
+                        <option value="francesa">Francesa</option>
+                        <option value="india">India</option>
+                        <option value="tailandesa">Tailandesa</option>
+                    </select>
+                </div>
+                <button class="filter-button" onclick="aplicarFiltros()">
+                    <span class="filter-icon">Buscar</span>
+                    Buscar
+                </button>
+                <button class="clear-button" onclick="limpiarFiltros()">
+                    <span class="clear-icon">Limpiar</span>
+                    Limpiar
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Catálogo de restaurantes -->
+    <section class="restaurants-catalog">
+        <div class="container">
+            <div class="catalog-header">
+                <h2 class="catalog-title">Restaurantes Disponibles</h2>
+                <div class="view-controls">
+                    <button class="view-btn active" data-view="grid" title="Vista en cuadrícula">
+                        <span class="view-icon">Grid</span>
+                    </button>
+                    <button class="view-btn" data-view="list" title="Vista en lista">
+                        <span class="view-icon">Lista</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="loading-state" id="loading-restaurants">
+                <div class="loading-spinner"></div>
+                <p>Cargando restaurantes increíbles...</p>
+            </div>
+            
+            <div class="restaurants-grid" id="restaurants-container">
+                <!-- Los restaurantes se cargan dinámicamente aquí -->
+            </div>
+            
+            <div class="no-results" id="no-results" style="display: none;">
+                <div class="no-results-icon">Buscar</div>
+                <h3>No se encontraron restaurantes</h3>
+                <p>Intenta ajustar tus filtros de búsqueda</p>
+                <button class="btn-clear-filters" onclick="limpiarFiltros()">Mostrar Todos</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección "Sobre Nosotros" -->
+    <section class="about-section" id="sobre-nosotros">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-content">
+                    <h2 class="about-title">¿Por qué elegir ReservaFácil?</h2>
+                    <div class="features-grid">
+                        <div class="feature-item">
+                            <div class="feature-icon">Velocidad</div>
+                            <h3>Reservas Instantáneas</h3>
+                            <p>Confirma tu mesa en segundos sin llamadas ni esperas. Disponibilidad en tiempo real.</p>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">Variedad</div>
+                            <h3>Amplia Selección</h3>
+                            <p>Descubre restaurantes únicos para cada ocasión, desde cenas íntimas hasta celebraciones especiales.</p>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">Calidad</div>
+                            <h3>Experiencias Únicas</h3>
+                            <p>Cada restaurante es cuidadosamente seleccionado para ofrecerte sabores inolvidables.</p>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">Seguridad</div>
+                            <h3>Reservas Seguras</h3>
+                            <p>Tu información personal y reservas están protegidas con la más alta seguridad.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="client-footer" id="contacto">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h3>ReservaFácil</h3>
+                    <p>Tu compañero gastronómico de confianza. Descubre, reserva y disfruta de las mejores experiencias culinarias.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link">Facebook</a>
+                        <a href="#" class="social-link">Instagram</a>
+                        <a href="#" class="social-link">Twitter</a>
+                        <a href="#" class="social-link">TikTok</a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Enlaces Rápidos</h4>
+                    <ul class="footer-links">
+                        <li><a href="#inicio">Inicio</a></li>
+                        <li><a href="#restaurantes">Restaurantes</a></li>
+                        <li><a href="#sobre-nosotros">Sobre Nosotros</a></li>
+                        <li><a href="#contacto">Contacto</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Para Comensales</h4>
+                    <ul class="footer-links">
+                        <li><a href="#" onclick="mostrarRegistro()">Crear Cuenta</a></li>
+                        <li><a href="#" onclick="mostrarLogin()">Iniciar Sesión</a></li>
+                        <li><a href="#" onclick="verMisReservas()">Mis Reservas</a></li>
+                        <li><a href="#">Ayuda</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contacto</h4>
+                    <div class="contact-info">
+                        <p>Email: info@reservafacil.com</p>
+                        <p>Teléfono: +1 (555) 123-4567</p>
+                        <p>Dirección: 123 Calle Gastronómica, Ciudad</p>
+                        <p>Horario: Lun-Dom: 24/7</p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 ReservaFácil. Todos los derechos reservados. | <a href="#">Política de Privacidad</a> | <a href="#">Términos de Servicio</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal de Login -->
+    <div id="modal-login" class="auth-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Bienvenido de Vuelta</h3>
+                <button class="modal-close" onclick="cerrarModales()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="form-login" onsubmit="procesarLogin(event)">
+                    <div class="form-group">
+                        <label for="login-email">Correo Electrónico</label>
+                        <input type="email" id="login-email" name="email" required 
+                               placeholder="tu@email.com" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Contraseña</label>
+                        <input type="password" id="login-password" name="password" required 
+                               placeholder="Tu contraseña" class="form-input">
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">
+                            <span class="btn-icon">Acceder</span>
+                            Iniciar Sesión
+                        </button>
+                        <button type="button" class="btn-secondary" onclick="mostrarRegistro()">
+                            ¿No tienes cuenta? Regístrate aquí
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Registro -->
+    <div id="modal-registro" class="auth-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Únete a ReservaFácil</h3>
+                <button class="modal-close" onclick="cerrarModales()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="form-registro" onsubmit="procesarRegistro(event)">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="reg-nombre">Nombre</label>
+                            <input type="text" id="reg-nombre" name="nombre" required 
+                                   placeholder="Tu nombre" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-apellido">Apellido</label>
+                            <input type="text" id="reg-apellido" name="apellido" required 
+                                   placeholder="Tu apellido" class="form-input">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-email">Correo Electrónico</label>
+                        <input type="email" id="reg-email" name="email" required 
+                               placeholder="tu@email.com" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-telefono">Teléfono</label>
+                        <input type="tel" id="reg-telefono" name="telefono" required 
+                               placeholder="+1234567890" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-password">Contraseña</label>
+                        <input type="password" id="reg-password" name="password" required 
+                               placeholder="Mínimo 6 caracteres" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-confirm-password">Confirmar Contraseña</label>
+                        <input type="password" id="reg-confirm-password" name="confirm_password" required 
+                               placeholder="Repite tu contraseña" class="form-input">
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">
+                            <span class="btn-icon">Crear</span>
+                            Crear Cuenta
+                        </button>
+                        <button type="button" class="btn-secondary" onclick="mostrarLogin()">
+                            ¿Ya tienes cuenta? Inicia sesión
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Mis Reservas -->
+    <div id="modal-mis-reservas" class="auth-modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3>Mis Reservas</h3>
+                <button class="modal-close" onclick="cerrarModales()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="reservas-container">
+                    <div class="loading-state" id="loading-reservas">
+                        <div class="loading-spinner"></div>
+                        <p>Cargando tus reservas...</p>
+                    </div>
+                    <div id="reservas-content">
+                        <!-- Las reservas se cargan aquí dinámicamente -->
+                    </div>
+                    <div class="no-reservas" id="no-reservas" style="display: none;">
+                        <div class="no-data-icon">Reservas</div>
+                        <h4>No tienes reservas aún</h4>
+                        <p>¡Explora nuestros restaurantes y haz tu primera reserva!</p>
+                        <button class="btn-primary" onclick="cerrarModales(); document.querySelector('#restaurantes').scrollIntoView({behavior: 'smooth'})">
+                            Ver Restaurantes
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let allRestaurants = [];
+        let currentView = 'grid';
+        let clienteAutenticado = false;
+        let datosCliente = null;
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            verificarSesionCliente();
+            cargarEstadisticas();
+            cargarRestaurantes();
+            configurarEventos();
+            animarEntrada();
+            
+            // Auto-scroll a restaurantes si viene desde otra página
+            if (window.location.hash === '#restaurantes' || window.location.search.includes('mostrar=restaurantes')) {
+                setTimeout(() => {
+                    document.querySelector('#restaurantes').scrollIntoView({behavior: 'smooth'});
+                }, 1000);
+            }
+        });
+
+        // ================================
+        // FUNCIONES DE AUTENTICACIÓN
+        // ================================
+
+        function verificarSesionCliente() {
+            console.log('🔍 Verificando sesión del cliente...');
+            fetch('../src/helpers/verificar_sesion_cliente.php')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('📋 Respuesta de verificación:', data);
+                    if (data.autenticado) {
+                        clienteAutenticado = true;
+                        datosCliente = data.cliente;
+                        mostrarMenuUsuario();
+                        console.log('✅ Usuario autenticado:', datosCliente.nombre);
+                    } else {
+                        clienteAutenticado = false;
+                        mostrarBotonesAuth();
+                        console.log('❌ No hay sesión activa');
+                    }
+                })
+                .catch(error => {
+                    console.log('⚠️ Error o no hay sesión activa:', error);
+                    mostrarBotonesAuth();
+                });
+        }
+
+        function mostrarMenuUsuario() {
+            console.log('👤 Mostrando menú de usuario para:', datosCliente?.nombre);
+            
+            const authButtons = document.getElementById('auth-buttons');
+            const userMenu = document.getElementById('user-menu');
+            const userName = document.getElementById('user-name');
+            
+            if (authButtons) {
+                authButtons.style.display = 'none';
+                console.log('🔒 Botones de auth ocultados');
+            }
+            
+            if (userMenu) {
+                userMenu.style.display = 'flex';
+                console.log('👤 Menú de usuario mostrado');
+            }
+            
+            if (userName && datosCliente) {
+                userName.textContent = datosCliente.nombre || 'Cliente';
+                console.log('📝 Nombre de usuario establecido:', datosCliente.nombre);
+            }
+        }
+
+        function mostrarBotonesAuth() {
+            console.log('🔐 Mostrando botones de autenticación');
+            
+            const authButtons = document.getElementById('auth-buttons');
+            const userMenu = document.getElementById('user-menu');
+            
+            if (authButtons) {
+                authButtons.style.display = 'flex';
+                console.log('🔓 Botones de auth mostrados');
+            }
+            
+            if (userMenu) {
+                userMenu.style.display = 'none';
+                console.log('👤 Menú de usuario ocultado');
+            }
+        }
+
+        function mostrarLogin() {
+            cerrarModales();
+            document.getElementById('modal-login').style.display = 'flex';
+        }
+
+        function mostrarRegistro() {
+            cerrarModales();
+            document.getElementById('modal-registro').style.display = 'flex';
+        }
+
+        function cerrarModales() {
+            document.querySelectorAll('.auth-modal').forEach(modal => {
+                modal.style.display = 'none';
+            });
+        }
+
+        function procesarLogin(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            
+            fetch('../src/api/auth/login_cliente.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (data.rol === 'superadmin') {
+                        window.location.href = 'index_superadmin.html';
+                        return;
+                    }
+
+                    if (data.rol === 'admin') {
+                        window.location.href = 'index_admin.html';
+                        return;
+                    }
+
+                    clienteAutenticado = true;
+                    datosCliente = data.cliente;
+                    mostrarMenuUsuario();
+                    cerrarModales();
+                    mostrarNotificacion('¡Bienvenido de vuelta! Disfruta explorando nuestros restaurantes.', 'success');
+                } else {
+                    mostrarNotificacion(data.mensaje || 'Error al iniciar sesión', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                mostrarNotificacion('Error de conexión', 'error');
+            });
+        }
+
+        function procesarRegistro(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            
+            // Validar que las contraseñas coincidan
+            const password = formData.get('password');
+            const confirmPassword = formData.get('confirm_password');
+            
+            if (password !== confirmPassword) {
+                mostrarNotificacion('Las contraseñas no coinciden', 'error');
+                return;
+            }
+            
+            if (password.length < 6) {
+                mostrarNotificacion('La contraseña debe tener al menos 6 caracteres', 'error');
+                return;
+            }
+            
+            fetch('../src/api/auth/registro_cliente.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    clienteAutenticado = true;
+                    datosCliente = data.cliente;
+                    mostrarMenuUsuario();
+                    cerrarModales();
+                    mostrarNotificacion('¡Cuenta creada exitosamente! Bienvenido a ReservaFácil', 'success');
+                    
+                    // Scroll a restaurantes para nueva experiencia
+                    setTimeout(() => {
+                        document.querySelector('#restaurantes').scrollIntoView({behavior: 'smooth'});
+                    }, 2000);
+                } else {
+                    mostrarNotificacion(data.mensaje || 'Error al crear la cuenta', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                mostrarNotificacion('Error de conexión', 'error');
+            });
+        }
+
+        function cerrarSesion() {
+            fetch('../src/api/auth/cerrar_sesion_cliente.php', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                clienteAutenticado = false;
+                datosCliente = null;
+                mostrarBotonesAuth();
+                mostrarNotificacion('Sesión cerrada correctamente. ¡Esperamos verte pronto!', 'info');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        // ================================
+        // GESTIÓN DE RESERVAS
+        // ================================
+
+        function verMisReservas() {
+            if (!clienteAutenticado) {
+                mostrarLogin();
+                return;
+            }
+            
+            document.getElementById('modal-mis-reservas').style.display = 'flex';
+            document.getElementById('loading-reservas').style.display = 'block';
+            document.getElementById('reservas-content').innerHTML = '';
+            document.getElementById('no-reservas').style.display = 'none';
+            
+            fetch('../src/api/reservas/listar_cliente.php')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('loading-reservas').style.display = 'none';
+                    
+                    if (data.success && data.reservas.length > 0) {
+                        mostrarReservas(data.reservas);
+                    } else {
+                        document.getElementById('no-reservas').style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('loading-reservas').style.display = 'none';
+                    document.getElementById('reservas-content').innerHTML = 
+                        '<div class="error-message">Error al cargar las reservas</div>';
+                });
+        }
+
+        function mostrarReservas(reservas) {
+            const container = document.getElementById('reservas-content');
+            
+            container.innerHTML = reservas.map(reserva => `
+                <div class="reserva-item">
+                    <div class="reserva-header">
+                        <h4>${reserva.restaurante_nombre}</h4>
+                        <span class="reserva-estado ${reserva.estado.toLowerCase()}">${reserva.estado}</span>
+                    </div>
+                    <div class="reserva-details">
+                        <div class="reserva-info">
+                            <span class="info-icon">Fecha</span>
+                            <span>${formatearFecha(reserva.fecha_reserva)}</span>
+                        </div>
+                        <div class="reserva-info">
+                            <span class="info-icon">Hora</span>
+                            <span>${reserva.hora_reserva}</span>
+                        </div>
+                        <div class="reserva-info">
+                            <span class="info-icon">Personas</span>
+                            <span>${reserva.numero_personas} personas</span>
+                        </div>
+                        <div class="reserva-info">
+                            <span class="info-icon">Mesa</span>
+                            <span>Mesa ${reserva.mesa_numero || reserva.id_mesa}</span>
+                        </div>
+                    </div>
+                    ${reserva.comentarios ? `<div class="reserva-comentarios">Comentarios: ${reserva.comentarios}</div>` : ''}
+                    <div class="reserva-actions">
+                        ${reserva.estado === 'Pendiente' ? `
+                            <button class="btn-cancel" onclick="cancelarReserva(${reserva.id})">
+                                Cancelar
+                            </button>
+                        ` : ''}
+                        <button class="btn-details" onclick="verDetalleReserva(${reserva.id})">
+                            Ver Detalles
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function formatearFecha(fecha) {
+            return new Date(fecha).toLocaleDateString('es-ES', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        function cancelarReserva(reservaId) {
+            if (!confirm('¿Estás seguro de que deseas cancelar esta reserva?')) {
+                return;
+            }
+            
+            fetch('../src/api/reservas/cancelar_cliente.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ reserva_id: reservaId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    mostrarNotificacion('Reserva cancelada correctamente', 'success');
+                    verMisReservas(); // Recargar la lista
+                } else {
+                    mostrarNotificacion(data.mensaje || 'Error al cancelar la reserva', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                mostrarNotificacion('Error de conexión', 'error');
+            });
+        }
+
+        function verPerfil() {
+            mostrarNotificacion('Funcionalidad de perfil próximamente', 'info');
+        }
+
+        function verDetalleReserva(reservaId) {
+            mostrarNotificacion('Funcionalidad de detalles próximamente', 'info');
+        }
+
+        // ================================
+        // FUNCIONES PRINCIPALES
+        // ================================
+
+        function cargarEstadisticas() {
+            fetch('../src/api/restaurantes/estadisticas_publicas.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        animateCounter('total-restaurants', data.total_restaurantes || 0);
+                        animateCounter('total-bookings', data.total_reservas || 0);
+                        animateCounter('happy-customers', data.clientes_registrados || 0);
+                    } else {
+                        // En caso de error, mostrar solo datos reales disponibles
+                        animateCounter('total-restaurants', 0);
+                        animateCounter('total-bookings', 0);
+                        animateCounter('happy-customers', 0);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error cargando estadísticas:', error);
+                    // En caso de error de conexión, mostrar 0 en lugar de datos ficticios
+                    animateCounter('total-restaurants', 0);
+                    animateCounter('total-bookings', 0);
+                    animateCounter('happy-customers', 0);
+                });
+        }
+
+        function animateCounter(id, target) {
+            const element = document.getElementById(id);
+            let current = 0;
+            const increment = target / 50;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                element.textContent = Math.floor(current);
+            }, 50);
+        }
+        
+        function cargarRestaurantes() {
+            fetch('../src/api/restaurantes/listar_cliente.php')
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('loading-restaurants').style.display = 'none';
+                    document.getElementById('restaurants-container').innerHTML = html;
+                    
+                    // Aplicar vista seleccionada
+                    cambiarVista(currentView);
+                    
+                    // Animar entrada de tarjetas
+                    animarTarjetas();
+                })
+                .catch(error => {
+                    console.error('Error cargando restaurantes:', error);
+                    document.getElementById('loading-restaurants').style.display = 'none';
+                    document.getElementById('restaurants-container').innerHTML = 
+                        '<div class="error-message">Error al cargar los restaurantes. Por favor, recarga la página.</div>';
+                });
+        }
+
+        function configurarEventos() {
+            // Navegación suave
+            document.querySelectorAll('a[href^="#"]').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+
+            // Controles de vista
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentView = this.dataset.view;
+                    cambiarVista(currentView);
+                });
+            });
+
+            // Navegación activa en scroll
+            window.addEventListener('scroll', actualizarNavegacionActiva);
+            
+            // Cerrar modales al hacer clic fuera
+            document.querySelectorAll('.auth-modal').forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        cerrarModales();
+                    }
+                });
+            });
+            
+            // Dropdown del usuario
+            const userMenu = document.getElementById('user-menu');
+            if (userMenu) {
+                userMenu.addEventListener('click', function() {
+                    const dropdown = document.getElementById('user-dropdown');
+                    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+                });
+            }
+            
+            // Cerrar dropdown al hacer clic fuera
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('#user-menu')) {
+                    const dropdown = document.getElementById('user-dropdown');
+                    if (dropdown) dropdown.style.display = 'none';
+                }
+            });
+        }
+
+        function cambiarVista(vista) {
+            const container = document.getElementById('restaurants-container');
+            container.className = vista === 'grid' ? 'restaurants-grid' : 'restaurants-list';
+        }
+
+        function aplicarFiltros() {
+            const nombreFiltro = document.getElementById('search-name').value.toLowerCase();
+            const tipoFiltro = document.getElementById('filter-type').value.toLowerCase();
+            
+            const tarjetas = document.querySelectorAll('.restaurante-card');
+            let resultadosEncontrados = 0;
+
+            tarjetas.forEach(tarjeta => {
+                const nombre = tarjeta.querySelector('.restaurante-nombre').textContent.toLowerCase();
+                const tipo = tarjeta.dataset.tipo ? tarjeta.dataset.tipo.toLowerCase() : '';
+                
+                const coincideNombre = !nombreFiltro || nombre.includes(nombreFiltro);
+                const coincideTipo = !tipoFiltro || tipo.includes(tipoFiltro);
+                
+                if (coincideNombre && coincideTipo) {
+                    tarjeta.style.display = 'block';
+                    resultadosEncontrados++;
+                } else {
+                    tarjeta.style.display = 'none';
+                }
+            });
+
+            // Mostrar mensaje si no hay resultados
+            const noResults = document.getElementById('no-results');
+            if (resultadosEncontrados === 0) {
+                noResults.style.display = 'block';
+            } else {
+                noResults.style.display = 'none';
+            }
+            
+            // Scroll a resultados
+            if (resultadosEncontrados > 0) {
+                document.querySelector('#restaurants-container').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function limpiarFiltros() {
+            document.getElementById('search-name').value = '';
+            document.getElementById('filter-type').value = '';
+            
+            document.querySelectorAll('.restaurante-card').forEach(tarjeta => {
+                tarjeta.style.display = 'block';
+            });
+            
+            document.getElementById('no-results').style.display = 'none';
+        }
+
+        function actualizarNavegacionActiva() {
+            const secciones = document.querySelectorAll('section[id]');
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            let currentSection = '';
+            
+            secciones.forEach(seccion => {
+                const rect = seccion.getBoundingClientRect();
+                if (rect.top <= 100 && rect.bottom >= 100) {
+                    currentSection = seccion.id;
+                }
+            });
+
+            navItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('href') === `#${currentSection}`) {
+                    item.classList.add('active');
+                }
+            });
+        }
+
+        function animarEntrada() {
+            // Animar elementos del hero
+            setTimeout(() => {
+                document.querySelector('.hero-title').style.opacity = '1';
+                document.querySelector('.hero-title').style.transform = 'translateY(0)';
+            }, 200);
+            
+            setTimeout(() => {
+                document.querySelector('.hero-subtitle').style.opacity = '1';
+                document.querySelector('.hero-subtitle').style.transform = 'translateY(0)';
+            }, 400);
+            
+            setTimeout(() => {
+                document.querySelector('.hero-stats').style.opacity = '1';
+                document.querySelector('.hero-stats').style.transform = 'translateY(0)';
+            }, 600);
+            
+            setTimeout(() => {
+                document.querySelector('.cta-button').style.opacity = '1';
+                document.querySelector('.cta-button').style.transform = 'translateY(0)';
+            }, 800);
+        }
+
+        function animarTarjetas() {
+            const tarjetas = document.querySelectorAll('.restaurante-card');
+            tarjetas.forEach((tarjeta, index) => {
+                setTimeout(() => {
+                    tarjeta.style.opacity = '1';
+                    tarjeta.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        }
+
+        // ================================
+        // UTILIDADES
+        // ================================
+
+        function mostrarNotificacion(mensaje, tipo = 'info') {
+            // Crear elemento de notificación
+            const notificacion = document.createElement('div');
+            notificacion.className = `notificacion ${tipo}`;
+            notificacion.innerHTML = `
+                <div class="notificacion-content">
+                    <span class="notificacion-icon">${tipo === 'success' ? 'Éxito' : tipo === 'error' ? 'Error' : 'Info'}</span>
+                    <span class="notificacion-mensaje">${mensaje}</span>
+                    <button class="notificacion-close" onclick="this.parentElement.parentElement.remove()">&times;</button>
+                </div>
+            `;
+            
+            // Añadir al DOM
+            document.body.appendChild(notificacion);
+            
+            // Mostrar con animación
+            setTimeout(() => {
+                notificacion.classList.add('show');
+            }, 10);
+            
+            // Ocultar automáticamente después de 5 segundos
+            setTimeout(() => {
+                if (notificacion.parentElement) {
+                    notificacion.classList.remove('show');
+                    setTimeout(() => {
+                        if (notificacion.parentElement) {
+                            notificacion.remove();
+                        }
+                    }, 300);
+                }
+            }, 5000);
+        }
+
+        // Smooth scrolling para navegación
+        document.querySelectorAll('.nav-item[href^="#"]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetSection = document.querySelector(targetId);
+                if (targetSection) {
+                    const offsetTop = targetSection.offsetTop - 80;
+                    window.scrollTo({
+                        top: offsetTop,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

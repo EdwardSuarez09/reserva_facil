@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Solución Definitiva - Modales</title>
+  <script>
+    // SOLUCIÓN DEFINITIVA PARA MODALES QUE SE ABREN AUTOMÁTICAMENTE
+    
+    // 1. Al cargar la página, forzar el cierre de todos los modales
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('Página cargada - cerrando todos los modales automáticamente');
+      
+      // Buscar todos los elementos con clase 'modal' 
+      const modales = document.querySelectorAll('.modal, [id*="modal"]');
+      modales.forEach(modal => {
+        modal.style.display = 'none';
+        console.log('Modal cerrado:', modal.id);
+      });
+      
+      // También buscar por IDs comunes de modales
+      const idsComunes = [
+        'modal-editar-reserva',
+        'modal-editar-mesa', 
+        'modal-editar-categoria',
+        'modal-editar-plato'
+      ];
+      
+      idsComunes.forEach(id => {
+        const modal = document.getElementById(id);
+        if (modal) {
+          modal.style.display = 'none';
+          console.log('Modal común cerrado:', id);
+        }
+      });
+    });
+    
+    // 2. Función mejorada para cerrar modales
+    function cerrarModalDefinitivo(modalId) {
+      console.log('Cerrando modal:', modalId);
+      
+      if (modalId) {
+        // Cerrar modal específico
+        const modal = document.getElementById(modalId);
+        if (modal) {
+          modal.style.display = 'none';
+          
+          // Limpiar formularios si los hay
+          const forms = modal.querySelectorAll('form');
+          forms.forEach(form => form.reset());
+        }
+      } else {
+        // Cerrar TODOS los modales
+        const modales = document.querySelectorAll('.modal, [id*="modal"]');
+        modales.forEach(modal => {
+          modal.style.display = 'none';
+        });
+      }
+    }
+    
+    // 3. Prevenir que se abran modales en errores de JavaScript
+    window.addEventListener('error', function(event) {
+      console.error('Error detectado, cerrando modales:', event.error);
+      cerrarModalDefinitivo();
+    });
+    
+    // 4. Tecla ESC para cerrar modales
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        cerrarModalDefinitivo();
+      }
+    });
+    
+    console.log('Sistema anti-modal automático cargado');
+  </script>
+</head>
+<body>
+  <h1>Solución aplicada</h1>
+  <p>Este script previene que los modales se abran automáticamente.</p>
+  <p>Copie el código JavaScript a sus páginas de gestión.</p>
+</body>
+</html> 
