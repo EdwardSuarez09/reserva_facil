@@ -10,8 +10,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 include_once __DIR__ . '/../../config/conexion.php';
 include_once __DIR__ . '/../../helpers/password.php';
 
-$email = trim($_POST['email'] ?? '');
-$password = $_POST['password'] ?? '';
+$email = trim($_POST['email'] ?? $_POST['correo'] ?? '');
+$password = $_POST['password'] ?? $_POST['contrasena'] ?? '';
 
 if (empty($email) || empty($password)) {
     echo json_encode(['success' => false, 'mensaje' => 'Email y contraseña son requeridos']);
@@ -24,7 +24,13 @@ try {
     $stmt->execute([$email]);
     $cliente = $stmt->fetch(PDO::FETCH_ASSOC);
     
-    if ($cliente && verificarYActualizarContrasena(
+    $contrasenaClienteGuardada = (string) ($cliente['password'] ?? '');
+    $clienteTieneClaveInvitada = $cliente && (
+        hash_equals('temp123', $contrasenaClienteGuardada)
+        || password_verify('temp123', $contrasenaClienteGuardada)
+    );
+
+    if ($cliente && !$clienteTieneClaveInvitada && verificarYActualizarContrasena(
         $conn,
         'usuarios_cliente',
         'password',
@@ -33,6 +39,8 @@ try {
         (string) $cliente['password']
     )) {
         // Login exitoso como cliente
+        session_regenerate_id(true);
+        unset($_SESSION['id'], $_SESSION['rol']);
         $_SESSION['cliente_id'] = $cliente['id'];
         $_SESSION['cliente_nombre'] = $cliente['nombre'];
         $_SESSION['cliente_email'] = $cliente['email'];
@@ -56,7 +64,7 @@ try {
     $stmt->execute([$email]);
     $admin = $stmt->fetch(PDO::FETCH_ASSOC);
     
-    if ($admin && verificarYActualizarContrasena(
+    if ($admin && in_array($admin['rol'], ['admin', 'superadmin'], true) && verificarYActualizarContrasena(
         $conn,
         'admin',
         'contraseña',
@@ -65,6 +73,8 @@ try {
         (string) $admin['contraseña']
     )) {
         // Login exitoso como admin - convertir a formato de cliente para unificar sesión
+        session_regenerate_id(true);
+        unset($_SESSION['cliente_id'], $_SESSION['cliente_nombre'], $_SESSION['cliente_email'], $_SESSION['cliente_autenticado']);
         $_SESSION['cliente_id'] = $admin['id'];
         $_SESSION['cliente_nombre'] = $admin['nombre'] ?: 'Usuario Admin';
         $_SESSION['cliente_email'] = $admin['correo'];

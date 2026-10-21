@@ -9,5 +9,5 @@ echo "Probando búsqueda de mesas disponibles para el formulario web...\n";
 echo "Parámetros: " . json_encode($_GET) . "\n\n";
 
 // Incluir el archivo real
-include __DIR__ . '/../src/api/mesas/disponibilidad_clean.php';
+include __DIR__ . '/../../../src/api/mesas/disponibilidad_clean.php';
 ?> 

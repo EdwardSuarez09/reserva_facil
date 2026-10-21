@@ -6,7 +6,7 @@ echo "<h2>Test Simple de Mesas</h2>";
 // Test 1: Conexión
 echo "<h3>1. Test de Conexión</h3>";
 try {
-    include __DIR__ . '/../src/config/conexion.php';
+    include __DIR__ . '/../../../src/config/conexion.php';
     echo "✅ Conexión exitosa<br>";
 } catch (Exception $e) {
     echo "❌ Error de conexión: " . $e->getMessage() . "<br>";

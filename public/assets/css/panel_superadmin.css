@@ -43,16 +43,16 @@
    ================================ */
 
 /* Colores específicos para superadmin */
-.sidebar-nav {
+.superadmin-page .sidebar-nav {
   background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
 }
 
-.nav-link.active {
+.superadmin-page .nav-link.active {
   background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
   box-shadow: 0 3px 10px rgba(231, 76, 60, 0.3);
 }
 
-.nav-link:hover {
+.superadmin-page .nav-link:hover {
   background: rgba(255, 255, 255, 0.15);
 }
 
@@ -251,30 +251,6 @@
   border-radius: 12px;
   padding: 25px;
   border: 1px solid #ecf0f1;
-}
-
-/* Estilos especiales para vista de superadmin */
-.restaurants-container .restaurant-card {
-  position: relative;
-  overflow: visible;
-}
-
-.restaurants-container .restaurant-card::before {
-  content: "👑";
-  position: absolute;
-  top: -5px;
-  right: -5px;
-  background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
-  color: white;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.8rem;
-  box-shadow: 0 2px 8px rgba(243, 156, 18, 0.3);
-  z-index: 10;
 }
 
 /* ================================

@@ -2,7 +2,7 @@
 session_start();
 header('Content-Type: application/json');
 
-if (!isset($_SESSION['cliente_autenticado']) || $_SESSION['cliente_autenticado'] !== true) {
+if (!isset($_SESSION['cliente_autenticado']) || $_SESSION['cliente_autenticado'] !== true || isset($_SESSION['rol'])) {
     echo json_encode(['success' => false, 'mensaje' => 'Usuario no autenticado']);
     exit;
 }

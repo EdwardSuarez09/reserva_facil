@@ -1,12 +1,18 @@
 <?php
 include __DIR__ . '/../../config/conexion.php';
+include __DIR__ . '/../../helpers/reservas_access.php';
 
 header('Content-Type: application/json');
 
-$id = $_GET['id'] ?? null;
+$id = filter_var($_GET['id'] ?? null, FILTER_VALIDATE_INT);
 
-if (!$id) {
+if (!$id || $id < 1) {
+    http_response_code(400);
     echo json_encode(['error' => 'ID de reserva requerido']);
+    exit;
+}
+
+if (!autorizarGestionReserva($conn, $id)) {
     exit;
 }
 
@@ -21,7 +27,9 @@ try {
     
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $id);
-    $stmt->execute();
+    if (!$stmt->execute()) {
+        throw new RuntimeException('No se pudo consultar la reserva.');
+    }
     $resultado = $stmt->get_result();
 
     if ($resultado->num_rows > 0) {
@@ -38,6 +46,7 @@ try {
     }
 
 } catch (Exception $e) {
+    http_response_code(500);
     echo json_encode(['error' => 'Error del servidor: ' . $e->getMessage()]);
 }
 

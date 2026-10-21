@@ -7,7 +7,7 @@ $fecha = date('Y-m-d', strtotime('+1 day')); // Mañana
 $hora = '20:00';
 $personas = '2';
 
-$url = "../src/api/mesas/disponibilidad.php?restaurante=" . urlencode($restaurante) . 
+$url = "../../../src/api/mesas/disponibilidad.php?restaurante=" . urlencode($restaurante) .
        "&fecha=" . $fecha . "&hora=" . $hora . "&personas=" . $personas;
 
 echo "<p><strong>URL de prueba:</strong> $url</p>";
@@ -32,7 +32,7 @@ echo "<pre>";
 // Capturar la salida
 ob_start();
 try {
-    include __DIR__ . '/../src/api/mesas/disponibilidad.php';
+    include __DIR__ . '/../../../src/api/mesas/disponibilidad.php';
 } catch (Exception $e) {
     echo "ERROR: " . $e->getMessage();
 }

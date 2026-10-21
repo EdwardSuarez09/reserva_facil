@@ -1,177 +1,184 @@
 <?php
+session_start();
 include __DIR__ . '/../../config/conexion.php';
+include __DIR__ . '/../../helpers/reservas_rules.php';
 
-// Para esta funcionalidad, asumiremos que el cliente está logueado o proporciona su información
-// Por ahora simularemos un cliente_id, pero esto debería venir de la sesión
+header('Content-Type: application/json; charset=utf-8');
 
-$restaurante = $_POST['restaurante'] ?? '';
-$mesa_id = $_POST['id_mesa'] ?? null;
-$fecha = $_POST['fecha'] ?? '';
-$hora = $_POST['hora'] ?? '';
-$personas = $_POST['personas'] ?? 1;
-$duracion = $_POST['duracion'] ?? 120;
-$nombre_cliente = $_POST['nombre_cliente'] ?? '';
-$telefono_cliente = $_POST['telefono_cliente'] ?? '';
-$email_cliente = $_POST['email_cliente'] ?? '';
-$comentarios = $_POST['comentarios'] ?? '';
-
-// Validar campos requeridos
-if (empty($restaurante) || empty($fecha) || empty($hora) || empty($nombre_cliente) || empty($telefono_cliente) || empty($email_cliente)) {
-    echo json_encode(['success' => false, 'message' => 'Todos los campos requeridos deben ser completados']);
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo json_encode(['success' => false, 'message' => 'Método no permitido']);
     exit;
 }
 
-try {
-    // Obtener ID del restaurante y horarios
-    $stmt_rest = $conn->prepare("SELECT id, horario_apertura, horario_cierre FROM restaurantes WHERE nombre = ?");
-    $stmt_rest->bind_param("s", $restaurante);
-    $stmt_rest->execute();
-    $resultado_rest = $stmt_rest->get_result();
-    $restaurante_data = $resultado_rest->fetch_assoc();
-    
-    if (!$restaurante_data) {
-        echo json_encode(['success' => false, 'message' => 'Restaurante no encontrado']);
-        exit;
-    }
-    
-    $id_restaurante = $restaurante_data['id'];
-    
-    // VALIDACIÓN DE HORARIOS DEL RESTAURANTE
-    if (isset($restaurante_data['horario_apertura']) && isset($restaurante_data['horario_cierre'])) {
-        $horario_apertura = $restaurante_data['horario_apertura'];
-        $horario_cierre = $restaurante_data['horario_cierre'];
-        $hora_solicitada = date('H:i:s', strtotime($hora));
-        
-        // Verificar si la hora está dentro del rango de funcionamiento
-        if ($hora_solicitada < $horario_apertura || $hora_solicitada > $horario_cierre) {
-            $apertura_12h = date('g:i A', strtotime($horario_apertura));
-            $cierre_12h = date('g:i A', strtotime($horario_cierre));
-            
-            echo json_encode([
-                'success' => false, 
-                'message' => "Lo sentimos, {$restaurante} solo atiende de {$apertura_12h} a {$cierre_12h}. Por favor selecciona un horario dentro de nuestras horas de servicio.",
-                'tipo_error' => 'horario_invalido',
-                'horario_apertura' => $apertura_12h,
-                'horario_cierre' => $cierre_12h
-            ]);
-            exit;
-        }
-    }
-    
-    // Verificar si existe la tabla usuarios_cliente
-    $check_table = "SHOW TABLES LIKE 'usuarios_cliente'";
-    $table_exists = $conn->query($check_table)->num_rows > 0;
-    
-    $cliente_id = null;
-    
-    if ($table_exists) {
-        // Buscar si el cliente ya existe por email
-        $stmt_cliente = $conn->prepare("SELECT id FROM usuarios_cliente WHERE email = ?");
-        $stmt_cliente->bind_param("s", $email_cliente);
-        $stmt_cliente->execute();
-        $resultado_cliente = $stmt_cliente->get_result();
-        
-        if ($resultado_cliente->num_rows > 0) {
-            // Cliente existe, usar su ID
-            $cliente_data = $resultado_cliente->fetch_assoc();
-            $cliente_id = $cliente_data['id'];
-        } else {
-            // Cliente no existe, crear uno nuevo
-            $password_temp = password_hash('temp123', PASSWORD_DEFAULT); // Password temporal
-            $stmt_crear = $conn->prepare("INSERT INTO usuarios_cliente (nombre, email, telefono, password) VALUES (?, ?, ?, ?)");
-            $stmt_crear->bind_param("ssss", $nombre_cliente, $email_cliente, $telefono_cliente, $password_temp);
-            
-            if ($stmt_crear->execute()) {
-                $cliente_id = $conn->insert_id;
-            }
-        }
-    }
-    
-    // Verificar que la mesa siga disponible
-    if ($mesa_id) {
-        $hora_inicio = date('H:i', strtotime($hora . ' -2 hours'));
-        $hora_fin = date('H:i', strtotime($hora . ' +2 hours'));
-        
-        $stmt_check = $conn->prepare("
-            SELECT id FROM reservas 
-            WHERE mesa_id = ? 
-            AND fecha_reserva = ? 
-            AND hora_reserva BETWEEN ? AND ?
-            AND estado IN ('Pendiente', 'Confirmada')
-        ");
-        $stmt_check->bind_param("isss", $mesa_id, $fecha, $hora_inicio, $hora_fin);
-        $stmt_check->execute();
-        $result_check = $stmt_check->get_result();
-        
-        if ($result_check->num_rows > 0) {
-            echo json_encode(['success' => false, 'message' => 'Lo sentimos, esta mesa ya ha sido reservada por otro cliente']);
-            exit;
-        }
-    }
-    
-    // Insertar la reserva - usar ambos campos de restaurante según la estructura real de la tabla
-    $sql = "INSERT INTO reservas (cliente_id, id_restaurante, restaurante_id, mesa_id, nombre_cliente, telefono_cliente, 
-            email_cliente, fecha_reserva, hora_reserva, numero_personas, duracion, comentarios, estado) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Pendiente')";
-    
-    $stmt = $conn->prepare($sql);
-    
-    if ($cliente_id) {
-        $stmt->bind_param("iiiisssssiis", 
-            $cliente_id,
-            $id_restaurante,
-            $id_restaurante, // Llenar ambos campos de restaurante
-            $mesa_id, 
-            $nombre_cliente, 
-            $telefono_cliente, 
-            $email_cliente, 
-            $fecha, 
-            $hora, 
-            $personas, 
-            $duracion,
-            $comentarios
-        );
-    } else {
-        // Si no hay tabla usuarios_cliente, insertar con cliente_id NULL
-        $cliente_id_null = null;
-        $stmt->bind_param("iiiisssssiis", 
-            $cliente_id_null,
-            $id_restaurante,
-            $id_restaurante, // Llenar ambos campos de restaurante
-            $mesa_id, 
-            $nombre_cliente, 
-            $telefono_cliente, 
-            $email_cliente, 
-            $fecha, 
-            $hora, 
-            $personas, 
-            $duracion,
-            $comentarios
-        );
-    }
-    
-    if ($stmt->execute()) {
-        $reserva_id = $conn->insert_id;
-        echo json_encode([
-            'success' => true, 
-            'message' => '¡Reserva realizada exitosamente!',
-            'reserva_id' => $reserva_id,
-            'detalles' => [
-                'cliente' => $nombre_cliente,
-                'restaurante' => $restaurante,
-                'fecha' => $fecha,
-                'hora' => $hora,
-                'personas' => $personas,
-                'mesa' => $mesa_id
-            ]
-        ]);
-    } else {
-        echo json_encode(['success' => false, 'message' => 'Error al procesar la reserva: ' . $stmt->error]);
-    }
-    
-} catch (Exception $e) {
-    echo json_encode(['success' => false, 'message' => 'Error del servidor: ' . $e->getMessage()]);
-}
+$restaurante = trim($_POST['restaurante'] ?? '');
+$mesaId = filter_var($_POST['id_mesa'] ?? null, FILTER_VALIDATE_INT);
+$fecha = $_POST['fecha'] ?? '';
+$hora = $_POST['hora'] ?? '';
+$personas = filter_var($_POST['personas'] ?? null, FILTER_VALIDATE_INT);
+$duracion = filter_var($_POST['duracion'] ?? 120, FILTER_VALIDATE_INT);
+$nombre = trim($_POST['nombre_cliente'] ?? '');
+$telefono = trim($_POST['telefono_cliente'] ?? '');
+$email = trim($_POST['email_cliente'] ?? '');
+$comentarios = trim($_POST['comentarios'] ?? '');
+$transactionStarted = false;
 
-$conn->close();
-?> 
+try {
+    if (
+        $restaurante === ''
+        || !$mesaId || $mesaId < 1
+        || !$personas || $personas < 1
+        || $nombre === '' || $telefono === ''
+        || !filter_var($email, FILTER_VALIDATE_EMAIL)
+        || strlen($nombre) > 100 || strlen($telefono) > 20 || strlen($email) > 100
+        || strlen($comentarios) > 65535
+    ) {
+        throw new InvalidArgumentException('Completa todos los datos de la reserva.');
+    }
+
+    [$inicio, $fin] = crearIntervaloReserva($fecha, $hora, $duracion);
+    $stmtRestaurante = $conn->prepare(
+        'SELECT id, nombre FROM restaurantes WHERE nombre = ? LIMIT 2'
+    );
+    if (!$stmtRestaurante) {
+        throw new RuntimeException('No se pudo consultar el restaurante.');
+    }
+    $stmtRestaurante->bind_param('s', $restaurante);
+    if (!$stmtRestaurante->execute()) {
+        throw new RuntimeException('No se pudo consultar el restaurante.');
+    }
+    $resultadoRestaurante = $stmtRestaurante->get_result();
+    $restauranteData = $resultadoRestaurante->fetch_assoc();
+    $nombreDuplicado = $resultadoRestaurante->fetch_assoc() !== null;
+    $stmtRestaurante->close();
+
+    if (!$restauranteData || $nombreDuplicado) {
+        http_response_code($restauranteData ? 409 : 404);
+        throw new InvalidArgumentException(
+            $restauranteData ? 'El nombre del restaurante no identifica una opción única.' : 'Restaurante no encontrado.'
+        );
+    }
+
+    $clienteId = null;
+    if (
+        ($_SESSION['cliente_autenticado'] ?? false) === true
+        && isset($_SESSION['cliente_id'])
+        && !isset($_SESSION['rol'])
+    ) {
+        $clienteId = (int) $_SESSION['cliente_id'];
+        $stmtCliente = $conn->prepare('SELECT id FROM usuarios_cliente WHERE id = ?');
+        if (!$stmtCliente) {
+            throw new RuntimeException('No se pudo validar la sesión del cliente.');
+        }
+        $stmtCliente->bind_param('i', $clienteId);
+        if (!$stmtCliente->execute() || $stmtCliente->get_result()->num_rows !== 1) {
+            $stmtCliente->close();
+            throw new InvalidArgumentException('La sesión de cliente ya no es válida; vuelve a iniciar sesión.');
+        }
+        $stmtCliente->close();
+    }
+
+    $conn->begin_transaction();
+    $transactionStarted = true;
+    $stmtMesa = $conn->prepare(
+        'SELECT m.capacidad, r.horario_apertura, r.horario_cierre
+         FROM mesas m
+         INNER JOIN restaurantes r ON r.id = m.id_restaurante
+         WHERE m.id = ? AND r.id = ?
+         FOR UPDATE'
+    );
+    if (!$stmtMesa) {
+        throw new RuntimeException('No se pudo comprobar la disponibilidad de la mesa.');
+    }
+    $restauranteId = (int) $restauranteData['id'];
+    $stmtMesa->bind_param('ii', $mesaId, $restauranteId);
+    if (!$stmtMesa->execute()) {
+        throw new RuntimeException('No se pudo comprobar la disponibilidad de la mesa.');
+    }
+    $mesa = $stmtMesa->get_result()->fetch_assoc();
+    $stmtMesa->close();
+
+    if (!$mesa) {
+        http_response_code(400);
+        throw new InvalidArgumentException('La mesa no pertenece al restaurante seleccionado.');
+    }
+    if ($personas > (int) $mesa['capacidad']) {
+        throw new InvalidArgumentException('La cantidad de personas supera la capacidad de la mesa.');
+    }
+    if (!reservaDentroDeHorario($inicio, $fin, $mesa['horario_apertura'], $mesa['horario_cierre'])) {
+        throw new InvalidArgumentException('La reserva debe quedar dentro del horario de atención.');
+    }
+    if (mesaTieneReservaSolapada($conn, $mesaId, $inicio, $fin)) {
+        http_response_code(409);
+        throw new InvalidArgumentException('Esta mesa ya tiene una reserva en ese intervalo.');
+    }
+
+    $stmtReserva = $conn->prepare(
+        "INSERT INTO reservas
+         (cliente_id, id_restaurante, restaurante_id, mesa_id, nombre_cliente, telefono_cliente,
+          email_cliente, fecha_reserva, hora_reserva, numero_personas, duracion, comentarios, estado)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Pendiente')"
+    );
+    if (!$stmtReserva) {
+        throw new RuntimeException('No se pudo preparar la reserva.');
+    }
+
+    $fechaSql = $inicio->format('Y-m-d');
+    $horaSql = $inicio->format('H:i:s');
+    $stmtReserva->bind_param(
+        'iiiisssssiis',
+        $clienteId,
+        $restauranteId,
+        $restauranteId,
+        $mesaId,
+        $nombre,
+        $telefono,
+        $email,
+        $fechaSql,
+        $horaSql,
+        $personas,
+        $duracion,
+        $comentarios
+    );
+    if (!$stmtReserva->execute()) {
+        throw new RuntimeException('No se pudo guardar la reserva.');
+    }
+
+    $reservaId = $conn->insert_id;
+    $stmtReserva->close();
+    if (!$conn->commit()) {
+        throw new RuntimeException('No se pudo confirmar la reserva.');
+    }
+    $transactionStarted = false;
+
+    echo json_encode([
+        'success' => true,
+        'message' => '¡Reserva realizada exitosamente!',
+        'reserva_id' => $reservaId,
+        'detalles' => [
+            'cliente' => $nombre,
+            'restaurante' => $restauranteData['nombre'],
+            'fecha' => $fechaSql,
+            'hora' => $horaSql,
+            'personas' => $personas,
+            'mesa' => $mesaId,
+        ],
+    ], JSON_UNESCAPED_UNICODE);
+} catch (InvalidArgumentException $exception) {
+    if ($transactionStarted) {
+        $conn->rollback();
+    }
+    if (http_response_code() < 400) {
+        http_response_code(400);
+    }
+    echo json_encode(['success' => false, 'message' => $exception->getMessage()], JSON_UNESCAPED_UNICODE);
+} catch (Throwable $exception) {
+    if ($transactionStarted) {
+        $conn->rollback();
+    }
+    error_log('Error procesando reserva de cliente: ' . $exception->getMessage());
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'No fue posible procesar la reserva.']);
+} finally {
+    $conn->close();
+}

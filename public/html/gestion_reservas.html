@@ -6,8 +6,9 @@
   <title>Gestión de Reservas - ReservaFácil</title>
   <link rel="stylesheet" href="../assets/css/estilos_principal.css">
   <link rel="stylesheet" href="../assets/css/panel_admin.css">
-  <link rel="stylesheet" href="../assets/css/gestion_moderna.css">
+  <link rel="stylesheet" href="../assets/css/gestion_moderna.css?v=20261021-6">
   <link rel="stylesheet" href="../assets/css/gestion_reservas.css">
+  <link rel="stylesheet" href="../assets/css/gestion_panel_unificado.css?v=20261021-2">
   <style>
     /* Estilos específicos para tarjetas de reservas */
     .reserva-card {
@@ -375,7 +376,7 @@
 </head>
 <body>
   <!-- Navegación lateral -->
-  <nav class="sidebar-nav">
+  <nav class="sidebar-nav" aria-label="Navegación de administración">
     <div class="nav-header">
       <img src="../assets/img/Imagenes/DALL·E 2024-11-06 21.54.50 - An elegant logo for a restaurant, featuring a stylized fork and knife crossed over a plate with subtle decorative elements. The background should be s.webp" alt="Logo ReservaFácil" class="nav-logo">
       <h3 class="nav-title">Panel Admin</h3>
@@ -384,34 +385,27 @@
     
     <div class="nav-menu">
       <a href="../index_admin.html" class="nav-link">
-        <span class="nav-icon"></span>
         <span class="nav-text">Inicio</span>
       </a>
-      <a href="../index_cliente.html" class="nav-link">
-        <span class="nav-icon"></span>
-        <span class="nav-text">Catálogo</span>
-      </a>
       <a href="gestion_categoria.html" class="nav-link">
-        <span class="nav-icon"></span>
-        <span class="nav-text">Gestión Categorías</span>
+        <span class="nav-text">Categorías</span>
       </a>
       <a href="gestion_plato.html" class="nav-link">
-        <span class="nav-icon"></span>
-        <span class="nav-text">Gestión de Menú</span>
+        <span class="nav-text">Menú</span>
       </a>
       <a href="gestion_mesas.html" class="nav-link">
-        <span class="nav-icon"></span>
-        <span class="nav-text">Gestión de Mesas</span>
+        <span class="nav-text">Mesas</span>
       </a>
-      <a href="gestion_reservas.html" class="nav-link active">
-        <span class="nav-icon"></span>
-        <span class="nav-text">Gestión de Reservas</span>
+      <a href="gestion_reservas.html" class="nav-link active" aria-current="page">
+        <span class="nav-text">Reservas</span>
+      </a>
+      <a href="../index_cliente.html" class="nav-link">
+        <span class="nav-text">Catálogo público</span>
       </a>
     </div>
     
     <div class="nav-footer">
-      <a href="login.html" class="nav-link logout">
-        <span class="nav-icon"></span>
+      <a href="../../src/api/auth/logout.php" class="nav-link logout">
         <span class="nav-text">Cerrar Sesión</span>
       </a>
     </div>
@@ -420,9 +414,10 @@
   <!-- Contenido principal -->
   <main class="main-content">
     <!-- Header de la página -->
-    <header class="page-header">
+    <header class="page-header management-banner">
       <div class="header-content">
         <div class="header-text">
+          <p class="management-banner-eyebrow">Panel de control <span aria-hidden="true">·</span> Reservas del restaurante</p>
           <h1 class="page-title">Gestión de Reservas</h1>
           <p class="page-subtitle">Administra las reservas de tu restaurante</p>
         </div>
@@ -641,7 +636,7 @@
         .then(data => {
           if (data.success) {
             reservas = data.reservas; // Guardar reservas en el array global
-            console.log('✅ Reservas cargadas:', reservas.length);
+            console.log('Reservas cargadas:', reservas.length);
             mostrarReservasEnTabla(data.reservas);
           } else {
             console.error('Error al cargar reservas:', data.error);
@@ -663,8 +658,8 @@
       if (!reservas || reservas.length === 0) {
         container.innerHTML = `
           <div class="mensaje-vacio">
-            <h3>📋 No hay reservas registradas</h3>
-            <p>Aún no se han realizado reservas en el restaurante</p>
+            <h3>Aún no hay reservas</h3>
+            <p>Cuando recibas una reserva, aparecerá en esta lista.</p>
           </div>
         `;
         return;
@@ -697,23 +692,23 @@
             <td>
               <div class="cliente-info">
                 <strong>${reserva.cliente_nombre || reserva.nombre_cliente || 'Sin nombre'}</strong>
-                ${reserva.cliente_telefono ? `<br><small>📞 ${reserva.cliente_telefono}</small>` : ''}
-                ${reserva.cliente_email ? `<br><small>📧 ${reserva.cliente_email}</small>` : ''}
+                ${reserva.cliente_telefono ? `<br><small>${reserva.cliente_telefono}</small>` : ''}
+                ${reserva.cliente_email ? `<br><small>${reserva.cliente_email}</small>` : ''}
               </div>
             </td>
             <td>${reserva.mesa_id ? `Mesa ${reserva.mesa_id}` : '<span style="color: #999;">Sin asignar</span>'}</td>
-            <td>📅 ${reserva.fecha_reserva}</td>
-            <td>⏰ ${reserva.hora_reserva}</td>
-            <td>👥 ${reserva.numero_personas}</td>
+            <td>${reserva.fecha_reserva}</td>
+            <td>${reserva.hora_reserva}</td>
+            <td>${reserva.numero_personas}</td>
             <td><span class="estado-${estado}">${estado.charAt(0).toUpperCase() + estado.slice(1)}</span></td>
             <td>${reserva.duracion || 120} min</td>
             <td class="acciones">
               <button onclick="editarReserva(${reserva.id})" class="btn-editar" title="Editar reserva">
-                ✏️ Editar
+                Editar
               </button>
               <button onclick="eliminarReserva(${reserva.id})" class="btn-eliminar" title="Eliminar reserva" 
                       onclick="return confirm('¿Estás seguro de eliminar esta reserva?')">
-                🗑️ Eliminar
+                Eliminar
               </button>
             </td>
           </tr>
@@ -756,7 +751,7 @@
 
     // Editar reserva
     function editarReserva(id) {
-      console.log('🔧 Editando reserva ID:', id);
+      console.log('Editando reserva ID:', id);
       
       // Obtener datos directamente del servidor
       fetch(`../../src/api/reservas/obtener.php?id=${id}`)
@@ -767,7 +762,7 @@
             return;
           }
           
-          console.log('📄 Datos de la reserva:', data);
+          console.log('Datos de la reserva:', data);
 
           // Llenar el formulario con valores por defecto para campos vacíos
           const elementos = {
@@ -777,21 +772,21 @@
             'edit-fecha-reserva': data.fecha_reserva,
             'edit-hora-reserva': data.hora_reserva,
             'edit-duracion': data.duracion || '120',
-            'edit-estado': data.estado || 'pendiente', // 🔧 VALOR POR DEFECTO
+            'edit-estado': data.estado || 'pendiente',
             'edit-mesa': data.mesa_id || '',
             'edit-comentarios': data.comentarios || ''
           };
 
-          console.log('🔧 Estado asignado:', elementos['edit-estado']);
+          console.log('Estado asignado:', elementos['edit-estado']);
 
           // Asignar valores a los campos
           Object.keys(elementos).forEach(id => {
             const elemento = document.getElementById(id);
             if (elemento) {
               elemento.value = elementos[id];
-              console.log(`✅ ${id}: ${elementos[id]}`);
+              console.log(`${id}: ${elementos[id]}`);
             } else {
-              console.warn('⚠️ Elemento no encontrado:', id);
+              console.warn('Elemento no encontrado:', id);
             }
           });
 
@@ -806,20 +801,20 @@
 
     // Función para abrir modal
     function abrirModal() {
-      console.log('🚀 Abriendo modal...');
+      console.log('Abriendo modal...');
       const modal = document.getElementById('modal-editar-reserva');
       if (modal) {
         modal.classList.add('show');
         modalAbierto = true;
-        console.log('✅ Modal abierto exitosamente');
+        console.log('Modal abierto correctamente.');
       } else {
-        console.error('❌ Modal no encontrado');
+        console.error('Modal no encontrado.');
       }
     }
 
     // Función para cerrar modal
     function cerrarModal() {
-      console.log('🔒 Cerrando modal...');
+      console.log('Cerrando modal...');
       const modal = document.getElementById('modal-editar-reserva');
       if (modal) {
         modal.classList.remove('show');
@@ -836,8 +831,7 @@
       const form = document.getElementById('formEditarReserva');
       const formData = new FormData(form);
 
-      // Debug: mostrar datos que se van a enviar
-      console.log('📤 Datos a enviar:');
+      console.log('Datos de la reserva que se van a enviar:');
       for (let [key, value] of formData.entries()) {
         console.log(`${key}: ${value}`);
       }
@@ -851,10 +845,10 @@
         try {
           const data = JSON.parse(response);
           if (data.success) {
-            alert('✅ ' + data.message);
+            alert(data.message);
             location.reload(); // Recargar la página para ver los cambios
           } else {
-            alert('❌ Error: ' + data.error);
+            alert('Error: ' + data.error);
           }
         } catch (e) {
           // Si no es JSON válido, mostrar la respuesta tal como está
@@ -910,7 +904,7 @@
         return;
       }
       
-      console.log('🗑️ Eliminando reserva ID:', id);
+      console.log('Eliminando reserva ID:', id);
       
       fetch('../../src/api/reservas/eliminar.php', {
         method: 'POST',
@@ -922,11 +916,11 @@
       .then(res => res.json())
       .then(data => {
         if (data.success) {
-          alert('✅ ' + data.message);
+          alert(data.message);
           cargarReservas(); // Recargar la lista
           cargarEstadisticas(); // Actualizar estadísticas
         } else {
-          alert('❌ Error: ' + data.error);
+          alert('Error: ' + data.error);
         }
       })
       .catch(error => {
@@ -956,57 +950,9 @@
       }
     });
 
-    console.log('🎯 FUNCIONES MODALES DEFINITIVAS CARGADAS');
+    console.log('Funciones de edición de reservas cargadas.');
   </script>
 
-  <!-- 🐛 DEBUG SIMPLE PARA ESTADO -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      // Buscar el formulario y agregar listener
-      const form = document.getElementById("formEditarReserva");
-      if (form) {
-        form.addEventListener("submit", function(e) {
-          e.preventDefault();
-          
-          alert('🔍 INICIANDO DEBUG...');
-          
-          // Verificar el select de estado
-          const estadoSelect = document.getElementById('edit-estado');
-          const estadoValor = estadoSelect ? estadoSelect.value : 'NO ENCONTRADO';
-          
-          alert('Estado seleccionado: "' + estadoValor + '"');
-          
-          // Crear FormData y verificar
-          const formData = new FormData(this);
-          const estadoEnFormData = formData.get('estado');
-          
-          alert('Estado en FormData: "' + estadoEnFormData + '"');
-          
-          // Mostrar todos los datos
-          let datos = '';
-          for (let [key, value] of formData.entries()) {
-            datos += key + ': "' + value + '"\n';
-          }
-          alert('Todos los datos:\n' + datos);
-          
-          // Enviar al archivo real de edición
-          fetch("../../src/api/reservas/editar.php", {
-            method: "POST",
-            body: formData
-          })
-          .then(res => res.text())
-          .then(response => {
-            alert('Respuesta del servidor:\n' + response);
-          })
-          .catch(error => {
-            alert('Error: ' + error);
-          });
-        });
-      } else {
-        alert('❌ No se encontró el formulario formEditarReserva');
-      }
-    });
-  </script>
 </body>
 </html>
  

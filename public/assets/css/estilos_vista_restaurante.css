@@ -2021,4 +2021,525 @@ h2:after {
   word-spacing: 10px !important;
 }
 
+/* Restaurant profile refresh */
+.restaurant-detail-page {
+  color: #252a31;
+  background: #f4f3f0;
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+}
 
+.restaurant-detail-page .main-container {
+  flex: 1 0 auto;
+  align-items: stretch;
+  min-height: 0;
+}
+
+.restaurant-detail-page nav.sidebar {
+  position: sticky;
+  top: 0;
+  width: 248px;
+  height: 100vh;
+  min-height: 100vh;
+  padding: 28px 18px;
+  background: linear-gradient(180deg, #202327 0%, #17191c 100%);
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 8px 0 28px rgba(18, 21, 26, 0.12);
+}
+
+.restaurant-detail-page nav.sidebar .logo-nav {
+  width: 100%;
+  margin-bottom: 24px;
+  padding: 8px 0 22px;
+  border-bottom-color: rgba(255, 255, 255, 0.12);
+}
+
+.restaurant-detail-page nav.sidebar a {
+  width: 100%;
+  margin: 5px 0;
+  padding: 13px 15px;
+  color: #c6c8cb;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 550;
+  text-align: left;
+  transition: color 180ms ease, background 180ms ease, transform 180ms ease;
+}
+
+.restaurant-detail-page nav.sidebar a:hover,
+.restaurant-detail-page nav.sidebar a.active {
+  color: #fff;
+  background: linear-gradient(100deg, #c96a2b, #a74e22);
+  box-shadow: 0 8px 20px rgba(169, 78, 34, 0.22);
+  transform: translateX(2px);
+}
+
+.restaurant-detail-page .contenido-principal {
+  min-width: 0;
+  background: #f6f5f2;
+}
+
+.restaurant-detail-page .contenido-principal > section {
+  padding: 76px clamp(24px, 5vw, 76px);
+}
+
+.restaurant-detail-page #inicio {
+  min-height: max(620px, calc(100svh - 24px));
+  padding: 32px clamp(24px, 5vw, 76px);
+  background:
+    radial-gradient(ellipse at 82% 15%, rgba(203, 104, 42, 0.18), transparent 35%),
+    linear-gradient(125deg, #202a32 0%, #263847 52%, #314653 100%);
+}
+
+.restaurant-detail-page #info-restaurante {
+  width: 100%;
+  max-width: 1120px;
+}
+
+.restaurant-detail-page .hero-restaurante {
+  max-width: 1120px;
+}
+
+.restaurant-detail-page .hero-contenido {
+  justify-content: center;
+  gap: clamp(40px, 7vw, 100px);
+  padding: 68px 24px;
+}
+
+.restaurant-detail-page .hero-imagen {
+  width: clamp(190px, 22vw, 270px);
+  height: clamp(190px, 22vw, 270px);
+  flex: 0 0 auto;
+  border: 6px solid rgba(255, 255, 255, 0.9);
+  outline: 2px solid rgba(203, 104, 42, 0.9);
+  outline-offset: 5px;
+  box-shadow: 0 24px 55px rgba(0, 0, 0, 0.3);
+}
+
+.restaurant-detail-page .hero-imagen:hover {
+  transform: translateY(-3px) scale(1.015);
+}
+
+.restaurant-detail-page .hero-texto {
+  max-width: 580px;
+}
+
+.restaurant-detail-page .hero-titulo {
+  margin-bottom: 12px;
+  color: #fff;
+  font-size: clamp(2.8rem, 5vw, 4.8rem);
+  font-weight: 650;
+  letter-spacing: -0.045em;
+  line-height: 1.05;
+  text-shadow: 0 10px 28px rgba(0, 0, 0, 0.2);
+  text-transform: none;
+}
+
+.restaurant-detail-page .hero-slogan {
+  margin-bottom: 22px;
+  color: #f2b27f;
+  font-size: 1.15rem;
+  font-style: normal;
+  font-weight: 600;
+}
+
+.restaurant-detail-page .hero-descripcion {
+  max-width: 520px;
+  margin-bottom: 32px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 1.08rem;
+  line-height: 1.75;
+}
+
+.restaurant-detail-page .hero-acciones {
+  gap: 13px;
+}
+
+.restaurant-detail-page .btn-hero {
+  min-height: 50px;
+  padding: 14px 24px;
+  border-radius: 13px;
+  font-size: 0.9rem;
+  letter-spacing: 0.04em;
+}
+
+.restaurant-detail-page .btn-reservar {
+  background: linear-gradient(135deg, #d87632, #b95725);
+  box-shadow: 0 12px 26px rgba(184, 87, 37, 0.28);
+}
+
+.restaurant-detail-page .btn-reservar:hover {
+  background: linear-gradient(135deg, #e28743, #c6662d);
+}
+
+.restaurant-detail-page .btn-menu {
+  border: 1px solid rgba(255, 255, 255, 0.52);
+}
+
+.restaurant-detail-page .btn-menu:hover {
+  color: #202a32;
+  background: #fff;
+  border-color: #fff;
+}
+
+.restaurant-detail-page .hero-decoracion {
+  opacity: 0.55;
+}
+
+.restaurant-detail-page #menu,
+.restaurant-detail-page #reservas {
+  background: #f6f5f2;
+}
+
+.restaurant-detail-page #menu h2,
+.restaurant-detail-page #reservas > h2 {
+  margin-bottom: 48px;
+  color: #263847;
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  font-weight: 650;
+  letter-spacing: -0.025em;
+  text-transform: none;
+}
+
+.restaurant-detail-page #menu h2::after,
+.restaurant-detail-page #reservas > h2::after {
+  bottom: -16px;
+  width: 58px;
+  height: 3px;
+  background: #c96a2b;
+}
+
+.restaurant-detail-page #menu-restaurante,
+.restaurant-detail-page #mesas-galeria,
+.restaurant-detail-page #platos-reservas {
+  max-width: 1120px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.restaurant-detail-page #menu-restaurante > p {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 22px 26px;
+  color: #68717b;
+  background: #fff;
+  border: 1px solid #e8e5df;
+  border-radius: 16px;
+  box-shadow: 0 10px 28px rgba(35, 42, 50, 0.06);
+  text-align: center;
+}
+
+.restaurant-detail-page .reservation-cta {
+  max-width: 980px;
+  margin: 0 auto 42px;
+  padding: clamp(28px, 5vw, 48px);
+  color: #fff;
+  background:
+    radial-gradient(ellipse at 90% 10%, rgba(255, 255, 255, 0.17), transparent 38%),
+    linear-gradient(120deg, #263847, #344d5d);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 22px;
+  box-shadow: 0 20px 45px rgba(35, 56, 71, 0.16);
+  text-align: center;
+}
+
+.restaurant-detail-page .reservation-cta h3 {
+  margin: 0 0 12px;
+  font-size: clamp(1.45rem, 2.8vw, 2rem);
+  font-weight: 650;
+}
+
+.restaurant-detail-page .reservation-cta p {
+  margin: 0 0 25px;
+  color: rgba(255, 255, 255, 0.76);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.restaurant-detail-page .reservation-cta-button {
+  min-height: 50px;
+  padding: 14px 24px;
+  color: #fff;
+  background: linear-gradient(135deg, #d87632, #b95725);
+  border: 0;
+  border-radius: 13px;
+  box-shadow: 0 10px 22px rgba(184, 87, 37, 0.25);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.restaurant-detail-page .reservation-cta-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px rgba(184, 87, 37, 0.32);
+}
+
+.restaurant-detail-page .reservation-cta-button:focus-visible,
+.restaurant-detail-page nav.sidebar a:focus-visible {
+  outline: 3px solid #f2b27f;
+  outline-offset: 3px;
+}
+
+.restaurant-detail-page .footer-restaurante {
+  padding: 54px 0 28px !important;
+  background: linear-gradient(135deg, #1d2024, #151719) !important;
+  text-align: left !important;
+}
+
+.restaurant-detail-page .footer-contenido {
+  max-width: 1120px !important;
+}
+
+.restaurant-detail-page .footer-main {
+  margin-bottom: 30px !important;
+}
+
+.restaurant-detail-page .footer-nombre {
+  margin-bottom: 8px;
+  font-size: clamp(1.7rem, 3vw, 2.25rem);
+  font-weight: 650;
+  letter-spacing: -0.025em;
+  text-transform: none;
+}
+
+.restaurant-detail-page .footer-descripcion {
+  color: #b8bdc3;
+  font-size: 0.98rem;
+  font-style: normal;
+}
+
+.restaurant-detail-page .footer-info-detalle {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
+  gap: 12px;
+  margin-top: 24px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+}
+
+.restaurant-detail-page .footer-direccion,
+.restaurant-detail-page .footer-horario,
+.restaurant-detail-page .footer-telefonos,
+.restaurant-detail-page .footer-web {
+  min-width: 0;
+  padding: 16px;
+  overflow-wrap: anywhere;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-left: 2px solid #c96a2b;
+  border-radius: 12px;
+  font-size: 0.88rem;
+}
+
+.restaurant-detail-page .footer-direccion strong,
+.restaurant-detail-page .footer-horario strong,
+.restaurant-detail-page .footer-telefonos strong,
+.restaurant-detail-page .footer-web strong {
+  color: #e89a61;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.restaurant-detail-page .footer-web a {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  margin-top: 5px;
+  padding: 7px 11px;
+  overflow: hidden;
+  color: #ffe1ca;
+  background: rgba(201, 106, 43, 0.14);
+  border: 1px solid rgba(232, 154, 97, 0.3);
+  border-radius: 9px;
+  font-size: 0.86rem;
+  font-weight: 650;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color 180ms ease, background 180ms ease, border-color 180ms ease;
+}
+
+.restaurant-detail-page .footer-web a:hover {
+  color: #fff;
+  background: rgba(201, 106, 43, 0.3);
+  border-color: rgba(232, 154, 97, 0.65);
+}
+
+.restaurant-detail-page .footer-nav {
+  justify-content: flex-start;
+  gap: 12px;
+  margin: 28px 0;
+}
+
+.restaurant-detail-page .footer-nav-link {
+  padding: 8px 10px;
+  color: #c5c9ce;
+  font-size: 0.77rem;
+  font-weight: 650;
+}
+
+.restaurant-detail-page .footer-bottom {
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 28px;
+  padding-top: 22px;
+  border-top-color: rgba(255, 255, 255, 0.12);
+}
+
+.restaurant-detail-page .footer-copyright {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: #b4bac1;
+  font-size: 0.82rem;
+}
+
+.restaurant-detail-page .footer-credits {
+  color: #858c94;
+}
+
+.restaurant-detail-page .footer-redes {
+  max-width: 340px;
+  color: #aeb4bb;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 768px) {
+  .restaurant-detail-page .main-container {
+    flex-direction: column;
+  }
+
+  .restaurant-detail-page nav.sidebar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: 4px;
+    overflow-x: auto;
+    padding: 10px 12px;
+    border-right: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .restaurant-detail-page nav.sidebar .logo-nav {
+    width: auto;
+    flex: 0 0 auto;
+    margin: 0 8px 0 0;
+    padding: 0 12px 0 0;
+    border-right: 1px solid rgba(255, 255, 255, 0.12);
+    border-bottom: 0;
+  }
+
+  .restaurant-detail-page nav.sidebar .logo-nav img {
+    width: 46px !important;
+    height: 46px !important;
+  }
+
+  .restaurant-detail-page nav.sidebar a {
+    width: auto;
+    flex: 0 0 auto;
+    margin: 0;
+    padding: 10px 12px;
+    font-size: 0.82rem;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .restaurant-detail-page .contenido-principal > section {
+    padding: 58px 22px;
+  }
+
+  .restaurant-detail-page #inicio {
+    min-height: 0;
+    padding: 20px 18px;
+  }
+
+  .restaurant-detail-page .hero-contenido {
+    gap: 32px;
+    padding: 54px 12px;
+  }
+
+  .restaurant-detail-page .hero-imagen {
+    width: 180px;
+    height: 180px;
+  }
+
+  .restaurant-detail-page .hero-texto {
+    min-width: 0;
+    text-align: center;
+  }
+
+  .restaurant-detail-page .hero-titulo {
+    font-size: clamp(2.4rem, 10vw, 3.4rem);
+  }
+
+  .restaurant-detail-page .hero-acciones {
+    justify-content: center;
+  }
+
+  .restaurant-detail-page .footer-restaurante {
+    text-align: center !important;
+  }
+
+  .restaurant-detail-page .footer-nav {
+    justify-content: center;
+  }
+
+  .restaurant-detail-page .footer-bottom {
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .restaurant-detail-page .contenido-principal > section {
+    padding: 48px 16px;
+  }
+
+  .restaurant-detail-page .hero-contenido {
+    padding: 42px 8px;
+  }
+
+  .restaurant-detail-page .hero-imagen {
+    width: 150px;
+    height: 150px;
+  }
+
+  .restaurant-detail-page .hero-acciones {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .restaurant-detail-page .btn-hero {
+    width: 100%;
+  }
+
+  .restaurant-detail-page .reservation-cta {
+    padding: 28px 20px;
+    border-radius: 18px;
+  }
+
+  .restaurant-detail-page .footer-nav {
+    gap: 4px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .restaurant-detail-page *,
+  .restaurant-detail-page *::before,
+  .restaurant-detail-page *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

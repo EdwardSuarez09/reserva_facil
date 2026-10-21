@@ -1,5 +1,5 @@
 <?php
-include __DIR__ . '/../src/config/conexion.php';
+include __DIR__ . '/../../../src/config/conexion.php';
 
 echo "<h2>ESTRUCTURA DE TABLA MESAS:</h2>";
 $result = $conn->query("DESCRIBE mesas");

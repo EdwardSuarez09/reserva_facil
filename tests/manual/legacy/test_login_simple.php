@@ -25,7 +25,7 @@
     
     <script>
         // Verificar sesión al cargar
-        fetch('../src/helpers/verificar_sesion_cliente.php')
+        fetch('../../../src/helpers/verificar_sesion_cliente.php')
             .then(response => response.json())
             .then(data => {
                 console.log('Respuesta de verificación:', data);
@@ -52,7 +52,7 @@
             event.preventDefault();
             const formData = new FormData(event.target);
             
-            fetch('../src/api/auth/login_cliente.php', {
+            fetch('../../../src/api/auth/login_cliente.php', {
                 method: 'POST',
                 body: formData
             })
@@ -73,7 +73,7 @@
         }
         
         function doLogout() {
-            fetch('../src/api/auth/cerrar_sesion_cliente.php', {
+            fetch('../../../src/api/auth/cerrar_sesion_cliente.php', {
                 method: 'POST'
             })
             .then(response => response.json())

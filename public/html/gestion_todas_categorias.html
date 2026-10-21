@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gestión de Todas las Categorías - ReservaFácil</title>
   <link rel="stylesheet" href="../assets/css/estilos_principal.css">
-  <link rel="stylesheet" href="../assets/css/panel_superadmin.css">
-  <link rel="stylesheet" href="../assets/css/gestion_moderna.css">
+  <link rel="stylesheet" href="../assets/css/panel_superadmin.css?v=20261021-4">
+  <link rel="stylesheet" href="../assets/css/gestion_moderna.css?v=20261021-6">
 </head>
-<body>
+<body class="superadmin-page">
   <!-- Navegación lateral -->
   <nav class="sidebar-nav">
     <div class="nav-header">
@@ -53,7 +53,7 @@
     </div>
     
     <div class="nav-footer">
-      <a href="login.html" class="nav-link logout">
+      <a href="../../src/api/auth/logout.php" class="nav-link logout">
         <span class="nav-icon"></span>
         <span class="nav-text">Cerrar Sesión</span>
       </a>
@@ -63,9 +63,10 @@
   <!-- Contenido principal -->
   <main class="main-content">
     <!-- Header de la página -->
-    <header class="page-header">
+    <header class="page-header management-banner">
       <div class="header-content">
         <div class="header-text">
+          <p class="management-banner-eyebrow">Panel de control <span aria-hidden="true">·</span> Categorías del sistema</p>
           <h1 class="page-title">Gestión de Todas las Categorías</h1>
           <p class="page-subtitle">Administra todas las categorías de menú de todos los restaurantes</p>
         </div>
@@ -177,27 +178,27 @@
   </main>
 
   <!-- Modal para detalles de la categoría -->
-  <div id="modal-detalle-categoria" class="modal">
+  <div id="modal-detalle-categoria" class="modal" hidden>
     <div class="modal-content">
       <div class="modal-header">
         <h3>Detalles de la Categoría</h3>
         <button class="modal-close" onclick="cerrarModal()">&times;</button>
       </div>
       <div class="modal-body" id="detalle-categoria-content">
-        <!-- Contenido dinámico -->
+        Selecciona una categoría para consultar sus detalles.
       </div>
     </div>
   </div>
 
   <!-- Modal para platos de la categoría -->
-  <div id="modal-platos-categoria" class="modal">
+  <div id="modal-platos-categoria" class="modal" hidden>
     <div class="modal-content">
       <div class="modal-header">
         <h3>Platos de la Categoría</h3>
         <button class="modal-close" onclick="cerrarModalPlatos()">&times;</button>
       </div>
       <div class="modal-body" id="platos-categoria-content">
-        <!-- Contenido dinámico -->
+        Selecciona una categoría para consultar sus platos.
       </div>
     </div>
   </div>
@@ -315,21 +316,79 @@
     }
 
     function verDetalleCategoria(id) {
-      document.getElementById('modal-detalle-categoria').style.display = 'block';
-      console.log('Mostrando detalles de la categoría:', id);
+      const modal = document.getElementById('modal-detalle-categoria');
+      const content = document.getElementById('detalle-categoria-content');
+      content.textContent = 'Cargando detalles...';
+      modal.hidden = false;
+      modal.classList.add('show');
+
+      fetch(`../../src/api/categorias/obtener_detalle_superadmin.php?id=${encodeURIComponent(id)}`)
+        .then(response => {
+          if (!response.ok) throw new Error('No se pudieron cargar los detalles de la categoría.');
+          return response.json();
+        })
+        .then(category => {
+          if (category.error) throw new Error(category.error);
+          content.replaceChildren();
+          [
+            ['Categoría', category.nombre],
+            ['Restaurante', category.restaurante],
+            ['Platos registrados', category.total_platos]
+          ].forEach(([label, value]) => {
+            const paragraph = document.createElement('p');
+            const strong = document.createElement('strong');
+            strong.textContent = `${label}: `;
+            paragraph.append(strong, document.createTextNode(value ?? 'No disponible'));
+            content.appendChild(paragraph);
+          });
+        })
+        .catch(error => {
+          content.textContent = error.message;
+        });
     }
 
     function verPlatosCategoria(id) {
-      document.getElementById('modal-platos-categoria').style.display = 'block';
-      console.log('Mostrando platos de la categoría:', id);
+      const modal = document.getElementById('modal-platos-categoria');
+      const content = document.getElementById('platos-categoria-content');
+      content.textContent = 'Cargando platos...';
+      modal.hidden = false;
+      modal.classList.add('show');
+
+      fetch(`../../src/api/categorias/listar_platos_superadmin.php?id=${encodeURIComponent(id)}`)
+        .then(response => {
+          if (!response.ok) throw new Error('No se pudieron cargar los platos de la categoría.');
+          return response.json();
+        })
+        .then(data => {
+          if (data.error) throw new Error(data.error);
+          if (data.length === 0) {
+            content.textContent = 'Esta categoría todavía no tiene platos.';
+            return;
+          }
+
+          const list = document.createElement('ul');
+          data.forEach(dish => {
+            const item = document.createElement('li');
+            item.textContent = `${dish.nombre} — $${dish.precio}`;
+            list.appendChild(item);
+          });
+          content.replaceChildren(list);
+        })
+        .catch(error => {
+          content.textContent = error.message;
+        });
     }
 
     function cerrarModal() {
-      document.getElementById('modal-detalle-categoria').style.display = 'none';
+      const modal = document.getElementById('modal-detalle-categoria');
+      modal.classList.remove('show');
+      modal.hidden = true;
     }
 
     function cerrarModalPlatos() {
-      document.getElementById('modal-platos-categoria').style.display = 'none';
+      const modal = document.getElementById('modal-platos-categoria');
+      modal.classList.remove('show');
+      modal.hidden = true;
     }
 
     // Cerrar modales al hacer clic fuera
@@ -338,12 +397,29 @@
       const modalPlatos = document.getElementById('modal-platos-categoria');
       
       if (event.target === modalDetalle) {
-        modalDetalle.style.display = 'none';
+        cerrarModal();
       }
       if (event.target === modalPlatos) {
-        modalPlatos.style.display = 'none';
+        cerrarModalPlatos();
       }
     });
+
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        cerrarModal();
+        cerrarModalPlatos();
+      }
+    });
+
+    function ocultarModalesAlCargar() {
+      cerrarModal();
+      cerrarModalPlatos();
+      document.querySelectorAll('#modal-detalle-categoria, #modal-platos-categoria')
+        .forEach(modal => modal.style.removeProperty('display'));
+    }
+
+    document.addEventListener('DOMContentLoaded', ocultarModalesAlCargar, { once: true });
+    window.addEventListener('pageshow', ocultarModalesAlCargar);
   </script>
 </body>
 </html> 

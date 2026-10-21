@@ -2,92 +2,104 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>ReservaFácil - Sistema de Reservas</title>
-  <link rel="stylesheet" href="assets/css/estilos_index.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Descubre restaurantes, revisa su información y reserva tu próxima mesa con ReservaFácil.">
+  <meta name="theme-color" content="#173d36">
+  <title>ReservaFácil | Encuentra tu próxima mesa</title>
+  <link rel="stylesheet" href="assets/css/estilos_index.css?v=20261021-main-1">
+  <link rel="stylesheet" href="assets/css/experiencia_publica.css?v=20261021-main-1">
 </head>
-<body>
-  <nav class="navegacion-principal">
+<body class="pagina-inicio">
+  <header class="navegacion-principal">
     <div class="nav-container">
-      <div class="logo-nav">
-        <img src="assets/img/Imagenes/DALL·E 2024-11-06 21.54.50 - An elegant logo for a restaurant, featuring a stylized fork and knife crossed over a plate with subtle decorative elements. The background should be s.webp" alt="Logo ReservaFácil">
-        <span class="logo-texto">ReservaFácil</span>
-      </div>
-      <div class="nav-links">
-        <a href="index.html" class="nav-link activo">Inicio</a>
-        <a href="index_cliente.html" class="nav-link">Explorar Restaurantes</a>
-        <a href="html/login.html" class="nav-link">Acceso Admin</a>
-      </div>
+      <a class="logo-nav" href="index.html" aria-label="ReservaFácil, inicio">
+        <img src="assets/img/Imagenes/DALL·E 2024-11-06 21.54.50 - An elegant logo for a restaurant, featuring a stylized fork and knife crossed over a plate with subtle decorative elements. The background should be s.webp" alt="">
+        <span class="logo-texto">Reserva<span>Fácil</span></span>
+      </a>
+      <nav class="nav-links" aria-label="Navegación principal">
+        <a href="index.html" class="nav-link activo" aria-current="page">Inicio</a>
+        <a href="index_cliente.html" class="nav-link">Restaurantes</a>
+        <a href="html/login.html" class="nav-link nav-link-admin">Acceso administrativo</a>
+      </nav>
     </div>
-  </nav>
+  </header>
 
-  <div class="hero-principal">
+  <main>
+  <section class="hero-principal">
     <div class="hero-content">
-      <h1>ReservaFácil</h1>
-      <p>La manera más fácil de descubrir restaurantes increíbles y reservar tu mesa perfecta</p>
+      <p class="hero-eyebrow">Tu próxima salida empieza aquí</p>
+      <h1>Una buena mesa<br><span>cambia el plan.</span></h1>
+      <p>Descubre restaurantes, conoce su propuesta y organiza tu próxima comida en pocos pasos.</p>
       <div class="hero-buttons">
         <a href="index_cliente.html" class="btn-hero btn-cliente-hero">
-          Explorar Restaurantes
+          Explorar restaurantes <span aria-hidden="true">→</span>
         </a>
         <a href="html/login.html" class="btn-hero btn-admin-hero">
-          Acceso Administrativo
+          Soy administrador
         </a>
       </div>
     </div>
-  </div>
+    <div class="hero-imagen" role="img" aria-label="Mesa preparada en un restaurante"></div>
+    <div class="hero-nota" aria-hidden="true">
+      <span class="hero-nota-linea"></span>
+      <span>Un lugar para cada ocasión</span>
+    </div>
+  </section>
   
-  <!-- Sección principal para clientes -->
-  <section class="seccion-clientes">
+  <section class="seccion-clientes" aria-labelledby="cliente-titulo">
     <div class="cliente-hero">
-      <h2 class="cliente-titulo">Descubre tu próxima experiencia gastronómica</h2>
+      <p class="seccion-eyebrow">ReservaFácil, a tu manera</p>
+      <h2 class="cliente-titulo" id="cliente-titulo">De elegir restaurante a disfrutar la mesa.</h2>
       <p class="cliente-subtitulo">
-        Explora una cuidada selección de restaurantes, consulta sus menús, lee reseñas de otros comensales 
-        y reserva tu mesa en solo unos clics. Todo desde una plataforma segura y fácil de usar.
+        Explora las opciones disponibles, consulta los detalles de cada lugar y envía tu reserva en línea.
       </p>
       
       <div class="features-preview">
         <div class="feature-preview">
-          <span class="feature-icon">Búsqueda</span>
-          <h3 class="feature-titulo">Explora Restaurantes</h3>
-          <p class="feature-descripcion">Descubre restaurantes únicos con filtros avanzados por tipo de cocina, ubicación y precio.</p>
+          <span class="feature-icon" aria-hidden="true">01</span>
+          <h3 class="feature-titulo">Encuentra tu lugar</h3>
+          <p class="feature-descripcion">Busca restaurantes y revisa su ubicación, horario y propuesta gastronómica.</p>
         </div>
         
         <div class="feature-preview">
-          <span class="feature-icon">Reservas</span>
-          <h3 class="feature-titulo">Reserva Fácil</h3>
-          <p class="feature-descripcion">Selecciona fecha, hora y número de personas. Confirma tu reserva al instante.</p>
+          <span class="feature-icon" aria-hidden="true">02</span>
+          <h3 class="feature-titulo">Elige los detalles</h3>
+          <p class="feature-descripcion">Selecciona la fecha, la hora y el número de personas para tu visita.</p>
         </div>
         
         <div class="feature-preview">
-          <span class="feature-icon">Calidad</span>
-          <h3 class="feature-titulo">Experiencias Únicas</h3>
-          <p class="feature-descripcion">Disfruta de experiencias gastronómicas cuidadosamente seleccionadas para ti.</p>
-        </div>
-        
-        <div class="feature-preview">
-          <span class="feature-icon">Seguridad</span>
-          <h3 class="feature-titulo">Reservas Seguras</h3>
-          <p class="feature-descripcion">Tus datos y reservas están protegidos con los más altos estándares de seguridad.</p>
+          <span class="feature-icon" aria-hidden="true">03</span>
+          <h3 class="feature-titulo">Disfruta tu visita</h3>
+          <p class="feature-descripcion">Organiza tu salida desde un solo lugar y llega listo para compartir.</p>
         </div>
       </div>
       
       <a href="index_cliente.html" class="btn-explorar">
-        Comenzar a Explorar
+        Ver restaurantes <span aria-hidden="true">→</span>
       </a>
     </div>
   </section>
 
-  <!-- Sección administrativa (discreta) -->
   <section class="seccion-admin">
     <div class="admin-container">
-      <h3 class="admin-titulo">¿Eres propietario de un restaurante?</h3>
-      <p class="admin-descripcion">Accede al panel de gestión para administrar tu restaurante</p>
-      <div class="admin-acceso">
-        <a href="html/login.html" class="btn-admin-acceso">
-          Acceso Administrativo
-        </a>
+      <div>
+        <p class="seccion-eyebrow">Para restaurantes</p>
+        <h2 class="admin-titulo">¿Administras un restaurante?</h2>
+        <p class="admin-descripcion">Ingresa a tu panel para gestionar el menú, las mesas y las reservas.</p>
       </div>
+      <a href="html/login.html" class="btn-admin-acceso">Ir al acceso administrativo <span aria-hidden="true">→</span></a>
     </div>
   </section>
+  </main>
+
+  <footer class="inicio-footer">
+    <a class="logo-nav" href="index.html" aria-label="ReservaFácil, inicio">
+      <img src="assets/img/Imagenes/DALL·E 2024-11-06 21.54.50 - An elegant logo for a restaurant, featuring a stylized fork and knife crossed over a plate with subtle decorative elements. The background should be s.webp" alt="">
+      <span class="logo-texto">Reserva<span>Fácil</span></span>
+    </a>
+    <p>Encuentra un lugar y haz espacio para disfrutar.</p>
+    <a href="index_cliente.html">Explorar restaurantes</a>
+  </footer>
 
   <script>
     // Redirección automática basada en el rol (para compatibilidad)

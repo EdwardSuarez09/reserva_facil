@@ -1,6 +1,6 @@
 <?php
-include __DIR__ . '/../src/config/conexion.php';
-include __DIR__ . '/../src/helpers/verificar_rol.php';
+include __DIR__ . '/../../../src/config/conexion.php';
+include __DIR__ . '/../../../src/helpers/verificar_rol.php';
 verificarRol(['admin', 'superadmin']);
 
 if (session_status() === PHP_SESSION_NONE) {

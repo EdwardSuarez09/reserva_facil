@@ -1,5 +1,6 @@
 <?php
 include __DIR__ . '/../../config/conexion.php';
+include __DIR__ . '/../../helpers/reservas_access.php';
 
 header('Content-Type: application/json');
 
@@ -8,23 +9,20 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-if (!isset($_POST['id']) || empty($_POST['id'])) {
+if (!isset($_POST['id'])) {
     echo json_encode(['success' => false, 'error' => 'ID de reserva requerido']);
     exit;
 }
 
-$id = intval($_POST['id']);
+$id = filter_var($_POST['id'], FILTER_VALIDATE_INT);
+if (!$id || $id < 1) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'error' => 'ID de reserva inválido']);
+    exit;
+}
 
 try {
-    // Verificar que la reserva existe
-    $check_sql = "SELECT id FROM reservas WHERE id = ?";
-    $check_stmt = $conn->prepare($check_sql);
-    $check_stmt->bind_param("i", $id);
-    $check_stmt->execute();
-    $result = $check_stmt->get_result();
-    
-    if ($result->num_rows === 0) {
-        echo json_encode(['success' => false, 'error' => 'Reserva no encontrada']);
+    if (!autorizarGestionReserva($conn, $id)) {
         exit;
     }
     

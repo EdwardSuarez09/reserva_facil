@@ -131,6 +131,7 @@ if ($result && $result->num_rows > 0) {
         echo "<td>" . ($row['duracion'] ?? '120') . " min</td>";
         
         echo "<td class='acciones'>";
+        echo "<button onclick='verDetalleReserva({$row['id']})' class='btn-ver' title='Ver detalles de la reserva'>Ver</button>";
         echo "<button onclick='editarReserva({$row['id']})' class='btn-editar' title='Editar reserva'>Editar</button>";
         echo "<button onclick='eliminarReserva({$row['id']})' class='btn-eliminar' title='Eliminar reserva'>Eliminar</button>";
         echo "</td>";

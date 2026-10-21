@@ -1,83 +1,72 @@
 // footer-dinamico.js - Manejo dinámico del footer por restaurante
 
 function actualizarFooterConDatos(restauranteInfo) {
-    console.log('Actualizando footer con datos:', restauranteInfo);
-    
     if (!restauranteInfo) {
-        console.log('No hay datos del restaurante para actualizar el footer');
         return;
     }
-    
-    // Actualizar dirección
-    if (restauranteInfo.direccion) {
-        const footerDireccion = document.getElementById("footer-direccion");
-        if (footerDireccion) {
-            footerDireccion.innerHTML = `<strong>Dirección:</strong> ${restauranteInfo.direccion}`;
+
+    const setLabeledText = (id, label, value) => {
+        const element = document.getElementById(id);
+        if (!element) return;
+
+        const strong = document.createElement('strong');
+        strong.textContent = `${label}: `;
+        element.replaceChildren(strong, document.createTextNode(value || 'No disponible'));
+    };
+
+    setLabeledText('footer-direccion', 'Dirección', restauranteInfo.direccion);
+    setLabeledText(
+        'footer-horario',
+        'Horario',
+        restauranteInfo.horario || 'Consultar horarios'
+    );
+
+    const contacto = [restauranteInfo.telefono, restauranteInfo.correo]
+        .filter(Boolean)
+        .join(' | ');
+    setLabeledText('footer-contacto', 'Contacto', contacto);
+
+    const footerWeb = document.getElementById('footer-web');
+    if (footerWeb) {
+        const strong = document.createElement('strong');
+        strong.textContent = 'Web: ';
+        footerWeb.replaceChildren(strong);
+
+        try {
+            const website = String(restauranteInfo.web || '').trim();
+            const url = new URL(/^https?:\/\//i.test(website) ? website : `https://${website}`);
+            if (['http:', 'https:'].includes(url.protocol)) {
+                const link = document.createElement('a');
+                link.href = url.href;
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+                link.textContent = url.hostname.replace(/^www\./i, '');
+                link.title = url.href;
+                link.setAttribute('aria-label', `Visitar sitio web de ${url.hostname}`);
+                footerWeb.appendChild(link);
+            } else {
+                footerWeb.appendChild(document.createTextNode('No disponible'));
+            }
+        } catch {
+            footerWeb.appendChild(document.createTextNode('No disponible'));
         }
     }
-    
-    // Actualizar horario
-    if (restauranteInfo.horario) {
-        const footerHorario = document.getElementById("footer-horario");
-        if (footerHorario) {
-            footerHorario.innerHTML = `<strong>Horario:</strong> ${restauranteInfo.horario}`;
-        }
-    } else {
-        const footerHorario = document.getElementById("footer-horario");
-        if (footerHorario) {
-            footerHorario.innerHTML = `<strong>Horario:</strong> Consultar horarios`;
+
+    const footerSocialWeb = document.getElementById('footer-social-web');
+    if (footerSocialWeb) {
+        try {
+            const website = String(restauranteInfo.web || '').trim();
+            const url = new URL(/^https?:\/\//i.test(website) ? website : `https://${website}`);
+            footerSocialWeb.href = ['http:', 'https:'].includes(url.protocol) ? url.href : '#';
+        } catch {
+            footerSocialWeb.href = '#';
         }
     }
-    
-    // Actualizar contacto
-    let contactoText = '<strong>Contacto:</strong> ';
-    if (restauranteInfo.telefono && restauranteInfo.correo) {
-        contactoText += `${restauranteInfo.telefono} | ${restauranteInfo.correo}`;
-    } else if (restauranteInfo.telefono) {
-        contactoText += restauranteInfo.telefono;
-    } else if (restauranteInfo.correo) {
-        contactoText += restauranteInfo.correo;
-    } else {
-        contactoText += 'No disponible';
+
+    const footerRedes = document.getElementById('footer-redes-value');
+    if (footerRedes) {
+        footerRedes.textContent = restauranteInfo.redes || 'No disponible';
     }
-    
-    const footerContacto = document.getElementById("footer-contacto");
-    if (footerContacto) {
-        footerContacto.innerHTML = contactoText;
-    }
-    
-    // Actualizar web
-    if (restauranteInfo.web) {
-        const footerWeb = document.getElementById("footer-web");
-        const footerSocialWeb = document.getElementById("footer-social-web");
-        
-        if (footerWeb) {
-            footerWeb.innerHTML = `<strong>Web:</strong> <a href="${restauranteInfo.web}" target="_blank">${restauranteInfo.web}</a>`;
-        }
-        if (footerSocialWeb) {
-            footerSocialWeb.href = restauranteInfo.web;
-        }
-    } else {
-        const footerWeb = document.getElementById("footer-web");
-        if (footerWeb) {
-            footerWeb.innerHTML = `<strong>Web:</strong> No disponible`;
-        }
-    }
-    
-    // Actualizar redes sociales
-    if (restauranteInfo.redes) {
-        const footerRedesValue = document.getElementById("footer-redes-value");
-        if (footerRedesValue) {
-            footerRedesValue.textContent = restauranteInfo.redes;
-        }
-    } else {
-        const footerRedesValue = document.getElementById("footer-redes-value");
-        if (footerRedesValue) {
-            footerRedesValue.textContent = 'No disponible';
-        }
-    }
-    
-    console.log('✅ Footer actualizado correctamente con datos dinámicos');
 }
 
 // Función que se ejecuta cuando los datos del restaurante están disponibles

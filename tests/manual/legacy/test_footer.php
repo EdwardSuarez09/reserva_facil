@@ -1,6 +1,6 @@
 <?php
 // Archivo de prueba para verificar el footer
-include __DIR__ . '/../src/config/conexion.php';
+include __DIR__ . '/../../../src/config/conexion.php';
 
 echo "<h2>Test de conexión y footer</h2>";
 

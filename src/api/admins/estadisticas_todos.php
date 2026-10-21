@@ -16,7 +16,7 @@ try {
     ];
 
     // Total administradores
-    $sql_total = "SELECT COUNT(*) as total FROM admin";
+    $sql_total = "SELECT COUNT(*) as total FROM admin WHERE rol IN ('admin', 'superadmin')";
     $result_total = $conn->query($sql_total);
     if ($result_total) {
         $row = $result_total->fetch_assoc();
@@ -32,7 +32,7 @@ try {
     }
 
     // Usuarios normales
-    $sql_usuarios = "SELECT COUNT(*) as total FROM admin WHERE rol = 'usuario'";
+    $sql_usuarios = "SELECT COUNT(*) as total FROM usuarios_cliente";
     $result_usuarios = $conn->query($sql_usuarios);
     if ($result_usuarios) {
         $row = $result_usuarios->fetch_assoc();
@@ -40,7 +40,7 @@ try {
     }
 
     // Último administrador registrado
-    $sql_ultimo = "SELECT nombre FROM admin ORDER BY id DESC LIMIT 1";
+    $sql_ultimo = "SELECT nombre FROM admin WHERE rol IN ('admin', 'superadmin') ORDER BY id DESC LIMIT 1";
     $result_ultimo = $conn->query($sql_ultimo);
     if ($result_ultimo && $result_ultimo->num_rows > 0) {
         $ultimo = $result_ultimo->fetch_assoc();

@@ -74,6 +74,37 @@ nav a:hover {
 .restaurant-info p {
     color: #777;
 }
+.restaurant-card-details {
+    display: grid;
+    gap: 12px;
+    margin-top: 16px;
+    padding-top: 15px;
+    border-top: 1px solid #eceef1;
+}
+.restaurant-card-detail {
+    display: grid;
+    gap: 3px;
+    margin: 0;
+}
+.restaurant-card-label {
+    color: #8b929b;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+}
+.restaurant-card-value {
+    color: #505965;
+    font-size: 0.9rem;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+.restaurant-info .restaurant-card-description {
+    margin: 16px 0 0;
+    color: #555d67;
+    font-size: 0.94rem;
+    line-height: 1.55;
+}
 .restaurant-details {
     display: none;
     padding: 20px;

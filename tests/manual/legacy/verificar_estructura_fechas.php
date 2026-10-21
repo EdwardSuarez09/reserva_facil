@@ -1,6 +1,6 @@
 <?php
-include __DIR__ . '/../src/config/conexion.php';
-include __DIR__ . '/../src/helpers/verificar_rol.php';
+include __DIR__ . '/../../../src/config/conexion.php';
+include __DIR__ . '/../../../src/helpers/verificar_rol.php';
 verificarRol(['superadmin']);
 
 echo "<h2>Verificación y Actualización de Estructura de Base de Datos</h2>";

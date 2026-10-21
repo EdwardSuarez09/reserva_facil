@@ -4,60 +4,110 @@ include __DIR__ . '/../../helpers/verificar_rol.php';
 include __DIR__ . '/../../helpers/rutas_assets.php';
 verificarRol(['superadmin']);
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    exit('Método no permitido.');
 }
 
-$id_admin = $_SESSION['id'] ?? null;
-if (!$id_admin) {
-    echo "<p style='color:red;'>Sesión no válida. Por favor inicia sesión.</p>";
-    exit;
+$id = filter_var($_POST['id'] ?? null, FILTER_VALIDATE_INT);
+if (!$id || $id < 1) {
+    http_response_code(400);
+    exit('ID inválido.');
 }
 
-$id = $_POST['id'] ?? null;
+$imagenPath = null;
+$transactionStarted = false;
 
-if (!$id) {
-    echo "ID inválido.";
-    exit;
-}
+try {
+    $conn->begin_transaction();
+    $transactionStarted = true;
 
-// PASO 0: Obtener la ruta de la imagen para eliminarla después
-$sql_imagen = "SELECT imagen_path FROM restaurantes WHERE id = ?";
-$stmt_imagen = $conn->prepare($sql_imagen);
-$stmt_imagen->bind_param("i", $id);
-$stmt_imagen->execute();
-$result_imagen = $stmt_imagen->get_result();
-$imagen_path = null;
-if ($result_imagen->num_rows > 0) {
-    $row_imagen = $result_imagen->fetch_assoc();
-    $imagen_path = $row_imagen['imagen_path'];
-}
-$stmt_imagen->close();
-
-// PASO 1: Eliminar platos de las categorías de este restaurante
-$conn->query("DELETE FROM platosmenu WHERE categoria_id IN (SELECT id FROM categorias WHERE id_restaurante = $id)");
-
-// PASO 2: Eliminar categorías del restaurante
-$conn->query("DELETE FROM categorias WHERE id_restaurante = $id");
-
-// PASO 3: Eliminar el restaurante
-$sql = "DELETE FROM restaurantes WHERE id = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $id);
-
-if ($stmt->execute()) {
-    // PASO 4: Eliminar la imagen del sistema de archivos si existe
-    if ($imagen_path) {
-        $rutaImagenArchivo = obtenerRutaImagenArchivo($imagen_path);
-        if (is_file($rutaImagenArchivo)) {
-            unlink($rutaImagenArchivo);
-        }
+    $stmt = $conn->prepare('SELECT imagen_path FROM restaurantes WHERE id = ? FOR UPDATE');
+    if (!$stmt) {
+        throw new RuntimeException('No se pudo preparar la consulta del restaurante.');
     }
-    echo "Restaurante eliminado correctamente.";
-} else {
-    echo "Error al eliminar el restaurante: " . $stmt->error;
+    $stmt->bind_param('i', $id);
+    if (!$stmt->execute()) {
+        throw new RuntimeException('No se pudo consultar el restaurante.');
+    }
+    $result = $stmt->get_result();
+    $restaurante = $result->fetch_assoc();
+    $stmt->close();
+
+    if (!$restaurante) {
+        $conn->rollback();
+        $transactionStarted = false;
+        http_response_code(404);
+        exit('Restaurante no encontrado.');
+    }
+    $imagenPath = $restaurante['imagen_path'];
+
+    $eliminar = static function (string $sql, int $parametros) use ($conn, $id): void {
+        $stmt = $conn->prepare($sql);
+        if (!$stmt) {
+            throw new RuntimeException('No se pudo preparar la eliminación relacionada.');
+        }
+
+        if ($parametros === 2) {
+            $stmt->bind_param('ii', $id, $id);
+        } else {
+            $stmt->bind_param('i', $id);
+        }
+
+        if (!$stmt->execute()) {
+            $stmt->close();
+            throw new RuntimeException('No se pudo eliminar la información relacionada.');
+        }
+        $stmt->close();
+    };
+
+    $eliminar(
+        'DELETE dr
+         FROM detalle_reserva dr
+         LEFT JOIN reservas r ON r.id = dr.reserva_id
+         LEFT JOIN platosmenu p ON p.id = dr.plato_id
+         WHERE r.id_restaurante = ? OR p.id_restaurante = ?',
+        2
+    );
+    $eliminar(
+        'DELETE dp FROM detalle_pedido dp
+         INNER JOIN pedidos p ON p.id = dp.pedido_id
+         WHERE p.id_restaurante = ?',
+        1
+    );
+    $eliminar('DELETE FROM pedidos WHERE id_restaurante = ?', 1);
+    $eliminar('DELETE FROM reservas WHERE id_restaurante = ? OR restaurante_id = ?', 2);
+    $eliminar(
+        'DELETE FROM platosmenu
+         WHERE id_restaurante = ?
+            OR categoria_id IN (SELECT id FROM categorias WHERE id_restaurante = ?)',
+        2
+    );
+    $eliminar('DELETE FROM categorias WHERE id_restaurante = ?', 1);
+    $eliminar('DELETE FROM cliente WHERE id_restaurante = ?', 1);
+    $eliminar('DELETE FROM estilos_restaurante WHERE restaurante_id = ?', 1);
+    $eliminar('DELETE FROM restaurantes WHERE id = ?', 1);
+
+    if (!$conn->commit()) {
+        throw new RuntimeException('No se pudo confirmar la eliminación.');
+    }
+    $transactionStarted = false;
+} catch (Throwable $exception) {
+    if ($transactionStarted) {
+        $conn->rollback();
+        $transactionStarted = false;
+    }
+    error_log('Error al eliminar restaurante ' . $id . ': ' . $exception->getMessage());
+    http_response_code(500);
+    $conn->close();
+    exit('No fue posible eliminar el restaurante. No se confirmaron cambios parciales.');
 }
 
-$stmt->close();
-$conn->close();
-?>
+if ($imagenPath) {
+    $rutaImagen = obtenerRutaImagenArchivo($imagenPath);
+    if (is_file($rutaImagen) && !unlink($rutaImagen)) {
+        error_log('No se pudo eliminar la imagen del restaurante: ' . $rutaImagen);
+    }
+}
+
+echo 'Restaurante eliminado correctamente.';

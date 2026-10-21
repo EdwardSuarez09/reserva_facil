@@ -3,15 +3,20 @@ session_start();
 include __DIR__ . '/../../config/conexion.php';
 
 // Verificar que hay sesión activa
-if (!isset($_SESSION['id']) || $_SESSION['rol'] !== 'usuario') {
+if (
+    ($_SESSION['cliente_autenticado'] ?? false) !== true
+    || !isset($_SESSION['cliente_id'])
+    || isset($_SESSION['rol'])
+) {
+    http_response_code(401);
     echo json_encode(['error' => 'No autorizado']);
     exit;
 }
 
-$id_usuario = $_SESSION['id'];
+$id_usuario = (int) $_SESSION['cliente_id'];
 
 try {
-    $sql = "SELECT nombre, correo FROM admin WHERE id = ?";
+    $sql = "SELECT nombre, email AS correo FROM usuarios_cliente WHERE id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $id_usuario);
     $stmt->execute();

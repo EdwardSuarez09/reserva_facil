@@ -4,7 +4,7 @@ $tomorrow = date('Y-m-d', strtotime('+1 day'));
 $url_params = "?restaurante=Calipollo&fecha=$tomorrow&hora=20:00&personas=2";
 
 echo "<h2>Test Directo de Mesas</h2>";
-echo "<p><strong>URL que se probará:</strong> ../src/api/mesas/disponibilidad.php$url_params</p>";
+echo "<p><strong>URL que se probará:</strong> ../../../src/api/mesas/disponibilidad.php$url_params</p>";
 
 // Simular $_GET
 $_GET['restaurante'] = 'Calipollo';
@@ -25,7 +25,7 @@ echo "<pre>";
 
 // Capturar la salida del script
 ob_start();
-include __DIR__ . '/../src/api/mesas/disponibilidad.php';
+include __DIR__ . '/../../../src/api/mesas/disponibilidad.php';
 $output = ob_get_clean();
 
 echo htmlspecialchars($output);

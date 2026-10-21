@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ver Todas las Reservas - ReservaFácil</title>
   <link rel="stylesheet" href="../assets/css/estilos_principal.css">
-  <link rel="stylesheet" href="../assets/css/panel_superadmin.css">
-  <link rel="stylesheet" href="../assets/css/gestion_moderna.css">
+  <link rel="stylesheet" href="../assets/css/panel_superadmin.css?v=20261021-4">
+  <link rel="stylesheet" href="../assets/css/gestion_moderna.css?v=20261021-6">
 </head>
-<body>
+<body class="superadmin-page">
   <!-- Navegación lateral -->
   <nav class="sidebar-nav">
     <div class="nav-header">
@@ -32,7 +32,7 @@
       </a>
       <a href="ver_todas_reservas.html" class="nav-link active">
         <span class="nav-icon"></span>
-        <span class="nav-text">Ver Todas las Reservas</span>
+        <span class="nav-text">Reservas</span>
       </a>
       <a href="gestion_todas_categorias.html" class="nav-link">
         <span class="nav-icon"></span>
@@ -53,7 +53,7 @@
     </div>
     
     <div class="nav-footer">
-      <a href="login.html" class="nav-link logout">
+      <a href="../../src/api/auth/logout.php" class="nav-link logout">
         <span class="nav-icon"></span>
         <span class="nav-text">Cerrar Sesión</span>
       </a>
@@ -63,9 +63,10 @@
   <!-- Contenido principal -->
   <main class="main-content">
     <!-- Header de la página -->
-    <header class="page-header">
+    <header class="page-header management-banner">
       <div class="header-content">
         <div class="header-text">
+          <p class="management-banner-eyebrow">Panel de control <span aria-hidden="true">·</span> Reservas del sistema</p>
           <h1 class="page-title">Ver Todas las Reservas</h1>
           <p class="page-subtitle">Monitorea todas las reservas del sistema</p>
         </div>
@@ -178,14 +179,14 @@
   </main>
 
   <!-- Modal para detalles de la reserva -->
-  <div id="modal-detalle-reserva" class="modal">
+  <div id="modal-detalle-reserva" class="modal" hidden>
     <div class="modal-content">
       <div class="modal-header">
         <h3>Detalles de la Reserva</h3>
         <button class="modal-close" onclick="cerrarModal()">&times;</button>
       </div>
       <div class="modal-body" id="detalle-reserva-content">
-        <!-- Contenido dinámico -->
+        Selecciona una reserva para consultar sus detalles.
       </div>
     </div>
   </div>
@@ -292,35 +293,44 @@
     }
 
     function verDetalleReserva(id) {
-      // Mostrar detalles de la reserva en un modal
-      fetch(`../../src/api/reservas/obtener.php?id=${id}`)
-        .then(response => response.json())
+      const modal = document.getElementById('modal-detalle-reserva');
+      const content = document.getElementById('detalle-reserva-content');
+      content.textContent = 'Cargando detalles...';
+      modal.hidden = false;
+      modal.classList.add('show');
+
+      fetch(`../../src/api/reservas/obtener.php?id=${encodeURIComponent(id)}`)
+        .then(response => {
+          if (!response.ok) throw new Error('No se pudieron cargar los detalles de la reserva.');
+          return response.json();
+        })
         .then(data => {
           if (data.error) {
-            alert('Error: ' + data.error);
-            return;
+            throw new Error(data.error);
           }
-          
-          // Construir contenido del modal
-          const content = `
-            <div class="detalle-reserva">
-              <p><strong>ID Reserva:</strong> ${data.id}</p>
-              <p><strong>Restaurante:</strong> ${data.restaurante_nombre || 'Sin especificar'}</p>
-              <p><strong>Cliente ID:</strong> ${data.cliente_id || 'Sin especificar'}</p>
-              <p><strong>Fecha:</strong> ${new Date(data.fecha_reserva).toLocaleDateString('es-ES')}</p>
-              <p><strong>Hora:</strong> ${data.hora_reserva}</p>
-              <p><strong>Estado:</strong> <span class="estado-${data.estado}">${data.estado.charAt(0).toUpperCase() + data.estado.slice(1)}</span></p>
-              <p><strong>Duración:</strong> ${data.duracion || '120'} minutos</p>
-              <p><strong>Mesa:</strong> ${data.mesa_id ? 'Mesa ID: ' + data.mesa_id : 'Sin asignar'}</p>
-            </div>
-          `;
-          
-          document.getElementById('detalle-reserva-content').innerHTML = content;
-          document.getElementById('modal-detalle-reserva').style.display = 'block';
+          const details = document.createElement('div');
+          details.className = 'detalle-reserva';
+          [
+            ['ID Reserva', data.id],
+            ['Restaurante', data.restaurante_nombre || 'Sin especificar'],
+            ['Cliente', data.nombre_cliente || data.cliente_id || 'Sin especificar'],
+            ['Fecha', data.fecha_reserva ? new Date(data.fecha_reserva).toLocaleDateString('es-ES') : 'Sin especificar'],
+            ['Hora', data.hora_reserva || 'Sin especificar'],
+            ['Estado', data.estado || 'Sin especificar'],
+            ['Duración', `${data.duracion || 120} minutos`],
+            ['Mesa', data.mesa_id ? `Mesa ID: ${data.mesa_id}` : 'Sin asignar']
+          ].forEach(([label, value]) => {
+            const paragraph = document.createElement('p');
+            const strong = document.createElement('strong');
+            strong.textContent = `${label}: `;
+            paragraph.append(strong, document.createTextNode(String(value)));
+            details.appendChild(paragraph);
+          });
+          content.replaceChildren(details);
         })
         .catch(error => {
           console.error('Error:', error);
-          alert('Error al cargar los detalles de la reserva');
+          content.textContent = error.message;
         });
     }
 
@@ -353,16 +363,29 @@
     }
 
     function cerrarModal() {
-      document.getElementById('modal-detalle-reserva').style.display = 'none';
+      const modal = document.getElementById('modal-detalle-reserva');
+      modal.classList.remove('show');
+      modal.hidden = true;
     }
 
-    // Cerrar modal al hacer clic fuera
-    window.onclick = function(event) {
+    document.addEventListener('click', function(event) {
       const modal = document.getElementById('modal-detalle-reserva');
       if (event.target === modal) {
-        modal.style.display = 'none';
+        cerrarModal();
       }
+    });
+
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') cerrarModal();
+    });
+
+    function ocultarModalAlCargar() {
+      cerrarModal();
+      document.getElementById('modal-detalle-reserva').style.removeProperty('display');
     }
+
+    document.addEventListener('DOMContentLoaded', ocultarModalAlCargar, { once: true });
+    window.addEventListener('pageshow', ocultarModalAlCargar);
   </script>
 </body>
 </html> 

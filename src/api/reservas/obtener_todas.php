@@ -39,7 +39,7 @@ try {
                 FROM reservas r 
                 LEFT JOIN restaurantes rest ON r.id_restaurante = rest.id 
                 LEFT JOIN mesas m ON r.mesa_id = m.id
-                WHERE (rest.id_admin = ? OR rest.id_admin IS NULL)
+                WHERE rest.id_admin = ?
                 ORDER BY r.fecha_reserva DESC, r.hora_reserva DESC";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("i", $id_usuario);

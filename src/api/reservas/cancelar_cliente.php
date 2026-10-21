@@ -2,7 +2,7 @@
 session_start();
 header('Content-Type: application/json');
 
-if (!isset($_SESSION['cliente_autenticado']) || $_SESSION['cliente_autenticado'] !== true) {
+if (!isset($_SESSION['cliente_autenticado']) || $_SESSION['cliente_autenticado'] !== true || isset($_SESSION['rol'])) {
     echo json_encode(['success' => false, 'mensaje' => 'Usuario no autenticado']);
     exit;
 }
@@ -47,8 +47,8 @@ try {
     }
     
     // Actualizar estado a cancelada
-    $stmt = $pdo->prepare("UPDATE reservas SET estado = 'Cancelada' WHERE id = ?");
-    $stmt->execute([$reservaId]);
+    $stmt = $pdo->prepare("UPDATE reservas SET estado = 'Cancelada' WHERE id = ? AND cliente_id = ?");
+    $stmt->execute([$reservaId, $clienteId]);
     
     echo json_encode([
         'success' => true,

@@ -25,6 +25,36 @@ function getFooterData($data, $campo, $default = 'No disponible') {
     return (!empty($data[$campo])) ? htmlspecialchars($data[$campo]) : $default;
 }
 
+function getFooterWebsite($website): string {
+    $website = trim((string) $website);
+    if ($website === '') {
+        return 'No disponible';
+    }
+
+    if (!preg_match('/^https?:\/\//i', $website)) {
+        $website = 'https://' . $website;
+    }
+
+    $parts = parse_url($website);
+    if (
+        $parts === false
+        || !in_array(strtolower($parts['scheme'] ?? ''), ['http', 'https'], true)
+        || empty($parts['host'])
+        || isset($parts['user'])
+        || isset($parts['pass'])
+    ) {
+        return 'No disponible';
+    }
+
+    $label = preg_replace('/^www\./i', '', $parts['host']);
+    return '<a href="' . htmlspecialchars($website, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')
+        . '" target="_blank" rel="noopener noreferrer" title="'
+        . htmlspecialchars($website, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')
+        . '" aria-label="Visitar sitio web de '
+        . htmlspecialchars($label, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')
+        . '">' . htmlspecialchars($label, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</a>';
+}
+
 // Preparar datos del footer
 if ($restauranteData) {
     $footerDireccion = getFooterData($restauranteData, 'direccion');
@@ -41,12 +71,7 @@ if ($restauranteData) {
         $footerContacto = 'No disponible';
     }
     
-    $footerWeb = '';
-    if (!empty($restauranteData['web'])) {
-        $footerWeb = '<a href="' . htmlspecialchars($restauranteData['web']) . '" target="_blank">' . htmlspecialchars($restauranteData['web']) . '</a>';
-    } else {
-        $footerWeb = 'No disponible';
-    }
+    $footerWeb = getFooterWebsite($restauranteData['web'] ?? '');
     
     $footerRedes = getFooterData($restauranteData, 'redes_sociales');
 } else {
@@ -60,11 +85,11 @@ if ($restauranteData) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Detalles del Restaurante</title>
-  <link rel="stylesheet" href="../../../public/assets/css/estilos_vista_restaurante.css">
+  <link rel="stylesheet" href="../../../public/assets/css/estilos_vista_restaurante.css?v=20261021-restaurant-2">
   <style>
   </style>
 </head>
-<body>
+<body class="restaurant-detail-page">
   <div class="main-container">
     <nav class="sidebar">
       <div id="logo-restaurante" class="logo-nav"></div>
@@ -89,37 +114,11 @@ if ($restauranteData) {
         <h2>Reservas</h2>
         
         <!-- Botón para hacer reserva -->
-        <div style="text-align: center; margin-bottom: 40px; padding: 40px; background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%); border-radius: 20px; color: white;">
-          <h3 style="margin-bottom: 20px; font-size: 2rem; font-weight: 300;">¿Quieres hacer una reserva?</h3>
-          <p style="margin-bottom: 30px; font-size: 1.2rem; opacity: 0.9;">Completa el formulario para reservar tu mesa de forma fácil y rápida</p>
-          <button onclick="irAHacerReserva()" style="
-            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-            color: white;
-            border: none;
-            padding: 18px 45px;
-            border-radius: 50px;
-            font-size: 1.2rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.3);
-            position: relative;
-            overflow: hidden;
-          " onmouseover="
-            this.style.transform='translateY(-3px)'; 
-            this.style.boxShadow='0 12px 35px rgba(231, 76, 60, 0.4)';
-            this.style.background='linear-gradient(135deg, #c0392b 0%, #a93226 100%)';
-          " onmouseout="
-            this.style.transform='translateY(0)'; 
-            this.style.boxShadow='0 8px 25px rgba(231, 76, 60, 0.3)';
-            this.style.background='linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)';
-          " onclick="
-            this.style.transform='scale(0.98)';
-            setTimeout(() => { this.style.transform='translateY(0)'; }, 150);
-          ">
-            HACER RESERVA AHORA
+        <div class="reservation-cta">
+          <h3>¿Quieres hacer una reserva?</h3>
+          <p>Completa el formulario para reservar tu mesa de forma fácil y rápida.</p>
+          <button class="reservation-cta-button" type="button" onclick="irAHacerReserva()">
+            Hacer reserva ahora
           </button>
         </div>
         
@@ -150,22 +149,7 @@ if ($restauranteData) {
         <a href="../../../public/index_cliente.html" class="footer-nav-link">CATÁLOGO</a>
       </nav>
       
-      <div class="footer-social">
-        <a href="#" class="social-icon" title="Sitio Web" id="footer-social-web">🌐</a>
-        <a href="#" class="social-icon" title="Facebook">📘</a>
-        <a href="#" class="social-icon" title="Instagram">📷</a>
-        <a href="#" class="social-icon" title="Twitter">🐦</a>
-      </div>
-      
       <div class="footer-bottom">
-        <div class="footer-award">
-          <div class="award-circle">
-            <span class="award-year">2025</span>
-            <span class="award-text">MEJOR<br>RESTAURANTE</span>
-            <span class="award-location">LOCAL</span>
-          </div>
-        </div>
-        
         <div class="footer-copyright">
           <span>&copy; 2025 <span id="footer-copyright-nombre"><?php echo htmlspecialchars($nombreRestaurante); ?></span> - Todos los derechos reservados</span>
           <span class="footer-credits">Diseño web por <strong>ReservaFácil</strong></span>
@@ -176,10 +160,6 @@ if ($restauranteData) {
         </div>
       </div>
       
-      <!-- Indicador de estado del footer -->
-      <div style="text-align: center; padding: 10px; font-size: 12px; color: #666; border-top: 1px solid #333;">
-        Footer activo - <span id="footer-timestamp"></span>
-      </div>
     </div>
   </footer>
 
@@ -212,6 +192,34 @@ if ($restauranteData) {
       }
     }
 
+    function crearContenidoWeb(website) {
+      const contenido = document.createDocumentFragment();
+      const label = document.createElement('strong');
+      label.textContent = 'Web:';
+      contenido.appendChild(label);
+
+      try {
+        const valor = String(website || '').trim();
+        const url = new URL(/^https?:\/\//i.test(valor) ? valor : `https://${valor}`);
+        if (!['http:', 'https:'].includes(url.protocol) || !url.hostname) {
+          throw new TypeError('URL no válida');
+        }
+
+        const link = document.createElement('a');
+        link.href = url.href;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.textContent = url.hostname.replace(/^www\./i, '');
+        link.title = url.href;
+        link.setAttribute('aria-label', `Visitar sitio web de ${url.hostname}`);
+        contenido.appendChild(link);
+      } catch {
+        contenido.appendChild(document.createTextNode('No disponible'));
+      }
+
+      return contenido;
+    }
+
     // Función global para actualizar el footer desde los datos del restaurante
     window.actualizarFooterDesdeRestaurante = function() {
       if (!window.restauranteInfo) {
@@ -220,7 +228,7 @@ if ($restauranteData) {
       }
       
       const info = window.restauranteInfo;
-      console.log('🔄 Actualizando footer con datos globales:', info);
+      console.log('Actualizando footer con datos globales:', info);
       
       // Verificar que los elementos existan
       const footerDireccion = document.getElementById('footer-direccion');
@@ -263,12 +271,8 @@ if ($restauranteData) {
       console.log('✅ Contacto actualizado:', contacto);
       
       // Actualizar web
-      if (info.web && info.web.trim() !== '') {
-        footerWeb.innerHTML = '<strong>Web:</strong> <a href="' + info.web + '" target="_blank">' + info.web + '</a>';
-        console.log('✅ Web actualizada:', info.web);
-      } else {
-        footerWeb.innerHTML = '<strong>Web:</strong> No disponible';
-        console.log('⚠️ Web no disponible');
+      if (footerWeb) {
+        footerWeb.replaceChildren(crearContenidoWeb(info.web));
       }
       
       // Actualizar redes sociales
@@ -282,14 +286,14 @@ if ($restauranteData) {
         }
       }
       
-      console.log('🎉 Footer actualizado completamente desde función global!');
+      console.log('Footer actualizado desde la función global.');
       return true;
     };
 
     // Función para actualizar el footer con datos dinámicos
     function actualizarFooterDinamico() {
-      console.log('🔍 Iniciando actualización del footer...');
-      console.log('🔍 Verificando window.restauranteInfo:', window.restauranteInfo);
+      console.log('Iniciando actualización del footer...');
+      console.log('Verificando window.restauranteInfo:', window.restauranteInfo);
       
       if (window.restauranteInfo) {
         return window.actualizarFooterDesdeRestaurante();
@@ -352,6 +356,11 @@ if ($restauranteData) {
         .then(res => res.text())
         .then(html => {
           document.getElementById("info-restaurante").innerHTML = html;
+          const datosRestaurante = document.getElementById('restaurante-info-data');
+          if (datosRestaurante) {
+            window.restauranteInfo = JSON.parse(datosRestaurante.textContent);
+            window.actualizarFooterConDatos?.(window.restauranteInfo);
+          }
   
           const logo = document.querySelector("#info-restaurante img");
           if (logo) {
@@ -367,7 +376,7 @@ if ($restauranteData) {
                   // Si se agregó un script, verificar si contiene restauranteInfo
                   setTimeout(() => {
                     if (window.restauranteInfo) {
-                      console.log('🎯 Script detectado! Actualizando footer con:', window.restauranteInfo);
+                      console.log('Script detectado. Actualizando footer con:', window.restauranteInfo);
                       actualizarFooterConDatos(window.restauranteInfo);
                       observer.disconnect(); // Desconectar el observer una vez que encontramos los datos
                     }
@@ -386,7 +395,7 @@ if ($restauranteData) {
           // También intentar con timeout como respaldo
           setTimeout(() => {
             if (window.restauranteInfo) {
-              console.log('🔄 Timeout: Actualizando footer con:', window.restauranteInfo);
+              console.log('Timeout: actualizando footer con:', window.restauranteInfo);
               actualizarFooterConDatos(window.restauranteInfo);
             } else {
               console.log('❌ Timeout: Datos aún no disponibles');
@@ -399,7 +408,7 @@ if ($restauranteData) {
   
       // Función para actualizar footer con los datos del restaurante
       function actualizarFooterConDatos(info) {
-        console.log('📝 Actualizando footer con:', info);
+        console.log('Actualizando footer con:', info);
         
         // Actualizar dirección
         if (info.direccion) {
@@ -438,18 +447,9 @@ if ($restauranteData) {
         }
         
         // Actualizar web
-        if (info.web && info.web.trim() !== '') {
-          const footerWeb = document.getElementById("footer-web");
-          if (footerWeb) {
-            footerWeb.innerHTML = `<strong>Web:</strong> <a href="${info.web}" target="_blank">${info.web}</a>`;
-            console.log('✅ Web:', info.web);
-          }
-        } else {
-          const footerWeb = document.getElementById("footer-web");
-          if (footerWeb) {
-            footerWeb.innerHTML = `<strong>Web:</strong> No disponible`;
-            console.log('⚠️ Web no disponible');
-          }
+        const footerWeb = document.getElementById("footer-web");
+        if (footerWeb) {
+          footerWeb.replaceChildren(crearContenidoWeb(info.web));
         }
         
         // Actualizar redes sociales
@@ -467,7 +467,7 @@ if ($restauranteData) {
           }
         }
         
-        console.log('🎉 Footer completamente actualizado!');
+        console.log('Footer actualizado completamente.');
       }
   
       // Cargar menú
@@ -515,7 +515,7 @@ if ($restauranteData) {
           if (window.restauranteInfo) {
             const footerDireccion = document.getElementById('footer-direccion');
             if (footerDireccion && footerDireccion.innerHTML.includes('Cargando')) {
-              console.log('🔄 Detectados datos del restaurante, actualizando footer desde setInterval...');
+              console.log('Datos del restaurante detectados. Actualizando footer desde setInterval...');
               if (window.actualizarFooterDesdeRestaurante) {
                 window.actualizarFooterDesdeRestaurante();
               } else {
@@ -691,12 +691,10 @@ if ($restauranteData) {
       });
     });
 
-    // Hacer la función disponible globalmente
-    window.irAReservaHero = irAReservaHero;
   </script>
   
   <!-- Script para manejo dinámico del footer -->
-  <script src="../../../public/assets/js/footer-dinamico.js"></script>
+  <script src="../../../public/assets/js/footer-dinamico.js?v=20261021-restaurant-2"></script>
 
 </body>
 </html>

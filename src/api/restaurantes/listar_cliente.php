@@ -7,6 +7,7 @@ try {
     $stmt->execute();
     $restaurantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $projectUrl = rtrim(dirname($_SERVER['SCRIPT_NAME'], 4), '/');
+    $escape = static fn ($value): string => htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
     
     if (count($restaurantes) > 0) {
         foreach ($restaurantes as $restaurante) {
@@ -42,30 +43,39 @@ try {
                 }
             }
             
-            $descripcion = !empty($restaurante['descripcion']) ? $restaurante['descripcion'] : 'Deliciosa experiencia gastronómica te espera en este establecimiento único.';
-            $tipo_cocina = !empty($restaurante['tipo_cocina']) ? $restaurante['tipo_cocina'] : 'Cocina Variada';
-            $telefono = !empty($restaurante['telefono']) ? $restaurante['telefono'] : '';
-            $direccion = !empty($restaurante['direccion']) ? $restaurante['direccion'] : '';
-            
-            echo "<div class='restaurant-card' data-id='{$restaurante['id']}' onclick='seleccionarRestaurante({$restaurante['id']}, \"{$restaurante['nombre']}\")'>
-                    <div class='restaurant-image'>
-                        <img src='{$imagen}' alt='{$restaurante['nombre']}'>
+            $descripcion = !empty($restaurante['descripcion'])
+                ? $restaurante['descripcion']
+                : 'Una experiencia gastronómica para descubrir.';
+            $tipoCocina = !empty($restaurante['tipo_cocina'])
+                ? $restaurante['tipo_cocina']
+                : 'Cocina variada';
+            $telefono = trim((string) ($restaurante['telefono'] ?? ''));
+            $direccion = trim((string) ($restaurante['direccion'] ?? ''));
+            $nombre = (string) ($restaurante['nombre'] ?? '');
+            $detalleUrl = $projectUrl . '/public/html/restaurante.html?restaurante=' . rawurlencode($nombre);
+
+            echo "<a class='restaurante-card' data-id='" . (int) $restaurante['id'] . "' data-tipo='" . $escape($tipoCocina) . "' href='" . $escape($detalleUrl) . "'>
+                    <div class='restaurante-image-container'>
+                        <img class='restaurante-image' src='" . $escape($imagen) . "' alt='" . $escape($nombre) . "' loading='lazy'>
                     </div>
-                    <div class='restaurant-info'>
-                        <h3>{$restaurante['nombre']}</h3>
-                        <p class='restaurant-cuisine'>{$tipo_cocina}</p>
-                        <p class='restaurant-description'>{$descripcion}</p>";
-            
-            if ($direccion) {
-                echo "<p class='restaurant-address'>📍 {$direccion}</p>";
+                    <div class='restaurante-info'>
+                        <span class='restaurante-tipo'>" . $escape($tipoCocina) . "</span>
+                        <h3 class='restaurante-nombre'>" . $escape($nombre) . "</h3>
+                        <p class='restaurante-descripcion'>" . $escape($descripcion) . "</p>
+                        <div class='restaurante-detalles'>";
+
+            if ($direccion !== '') {
+                echo "<div class='detalle-item'><span class='detalle-etiqueta'>Dirección</span><span class='detalle-texto'>" . $escape($direccion) . "</span></div>";
             }
-            
-            if ($telefono) {
-                echo "<p class='restaurant-phone'>📞 {$telefono}</p>";
+
+            if ($telefono !== '') {
+                echo "<div class='detalle-item'><span class='detalle-etiqueta'>Teléfono</span><span class='detalle-texto'>" . $escape($telefono) . "</span></div>";
             }
-            
-            echo "  </div>
-                  </div>";
+
+            echo "      </div>
+                        <span class='btn-ver-restaurante'>Conocer restaurante</span>
+                    </div>
+                  </a>";
         }
     } else {
         echo "<p style='text-align: center; color: #666; font-size: 18px; margin: 40px 0;'>No hay restaurantes disponibles en este momento.</p>";

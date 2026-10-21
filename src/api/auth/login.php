@@ -19,7 +19,7 @@ try {
     $result = $stmt->get_result();
     $admin = $result->fetch_assoc();
 
-    if ($admin) {
+    if ($admin && in_array($admin['rol'], ['admin', 'superadmin'], true)) {
         if (verificarYActualizarContrasena(
             $conn,
             'admin',
@@ -28,6 +28,8 @@ try {
             $contrasena,
             (string) $admin['contraseña']
         )) {
+            session_regenerate_id(true);
+            unset($_SESSION['cliente_id'], $_SESSION['cliente_nombre'], $_SESSION['cliente_email'], $_SESSION['cliente_autenticado']);
             $_SESSION['id'] = $admin['id'];
             $_SESSION['rol'] = $admin['rol'];
 

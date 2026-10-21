@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Restaurantes - ReservaFácil</title>
-    <link rel="stylesheet" href="../assets/css/gestion_moderna.css">
+    <link rel="stylesheet" href="../assets/css/panel_superadmin.css?v=20261021-4">
+    <link rel="stylesheet" href="../assets/css/gestion_moderna.css?v=20261021-6">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
       .file-input-hidden {
@@ -48,7 +49,7 @@
       }
     </style>
 </head>
-<body>
+<body class="superadmin-page">
     <!-- Navegación lateral -->
     <nav class="sidebar-nav">
         <div class="nav-header">
@@ -70,21 +71,25 @@
                 <span class="nav-icon"></span>
                 <span class="nav-text">Restaurantes</span>
             </a>
+            <a href="ver_todas_reservas.html" class="nav-link">
+                <span class="nav-icon"></span>
+                <span class="nav-text">Reservas</span>
+            </a>
             <a href="gestion_todas_categorias.html" class="nav-link">
                 <span class="nav-icon"></span>
-                <span class="nav-text">Todas las Categorías</span>
+                <span class="nav-text">Categorías</span>
             </a>
             <a href="gestion_todos_platos.html" class="nav-link">
                 <span class="nav-icon"></span>
-                <span class="nav-text">Todos los Platos</span>
+                <span class="nav-text">Platos</span>
             </a>
             <a href="gestion_todas_mesas.html" class="nav-link">
                 <span class="nav-icon"></span>
-                <span class="nav-text">Todas las Mesas</span>
+                <span class="nav-text">Mesas</span>
             </a>
-            <a href="ver_todas_reservas.html" class="nav-link">
+            <a href="../index_cliente.html" class="nav-link">
                 <span class="nav-icon"></span>
-                <span class="nav-text">Todas las Reservas</span>
+                <span class="nav-text">Catálogo Público</span>
             </a>
         </div>
         
@@ -99,9 +104,10 @@
     <!-- Contenido principal -->
     <main class="main-content">
         <!-- Header de la página -->
-        <header class="page-header">
+        <header class="page-header management-banner">
             <div class="header-content">
                 <div class="header-text">
+                    <p class="management-banner-eyebrow">Panel de control <span aria-hidden="true">·</span> Restaurantes</p>
                     <h1 class="page-title">Gestión de Restaurantes</h1>
                     <p class="page-subtitle">Administra los restaurantes y sus asignaciones de administradores</p>
                 </div>

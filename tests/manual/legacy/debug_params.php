@@ -1,6 +1,6 @@
 <?php
 // Archivo para capturar y debuggear los parámetros que llegan al servidor
-include __DIR__ . '/../src/config/conexion.php';
+include __DIR__ . '/../../../src/config/conexion.php';
 
 // Capturar todos los parámetros
 $allParams = [

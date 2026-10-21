@@ -6,7 +6,8 @@
   <title>Gestión de Categorías - ReservaFácil</title>
   <link rel="stylesheet" href="../assets/css/estilos_principal.css">
   <link rel="stylesheet" href="../assets/css/panel_admin.css">
-  <link rel="stylesheet" href="../assets/css/gestion_moderna.css">
+  <link rel="stylesheet" href="../assets/css/gestion_moderna.css?v=20261021-6">
+  <link rel="stylesheet" href="../assets/css/gestion_panel_unificado.css?v=20261021-2">
   
   <!-- 🛡️ PROTECCIÓN CRÍTICA ANTI-MODAL 🛡️ -->
   <style>
@@ -75,7 +76,7 @@
 </head>
 <body>
   <!-- Navegación lateral -->
-  <nav class="sidebar-nav">
+  <nav class="sidebar-nav" aria-label="Navegación de administración">
     <div class="nav-header">
       <img src="../assets/img/Imagenes/DALL·E 2024-11-06 21.54.50 - An elegant logo for a restaurant, featuring a stylized fork and knife crossed over a plate with subtle decorative elements. The background should be s.webp" alt="Logo ReservaFácil" class="nav-logo">
       <h3 class="nav-title">Panel Admin</h3>
@@ -84,34 +85,27 @@
     
     <div class="nav-menu">
       <a href="../index_admin.html" class="nav-link">
-        <span class="nav-icon"></span>
         <span class="nav-text">Inicio</span>
       </a>
-      <a href="../index_cliente.html" class="nav-link">
-        <span class="nav-icon"></span>
-        <span class="nav-text">Catálogo</span>
-      </a>
-      <a href="gestion_categoria.html" class="nav-link active">
-        <span class="nav-icon"></span>
-        <span class="nav-text">Gestión Categorías</span>
+      <a href="gestion_categoria.html" class="nav-link active" aria-current="page">
+        <span class="nav-text">Categorías</span>
       </a>
       <a href="gestion_plato.html" class="nav-link">
-        <span class="nav-icon"></span>
-        <span class="nav-text">Gestión de Menú</span>
+        <span class="nav-text">Menú</span>
       </a>
       <a href="gestion_mesas.html" class="nav-link">
-        <span class="nav-icon"></span>
-        <span class="nav-text">Gestión de Mesas</span>
+        <span class="nav-text">Mesas</span>
       </a>
       <a href="gestion_reservas.html" class="nav-link">
-        <span class="nav-icon"></span>
-        <span class="nav-text">Gestión de Reservas</span>
+        <span class="nav-text">Reservas</span>
+      </a>
+      <a href="../index_cliente.html" class="nav-link">
+        <span class="nav-text">Catálogo público</span>
       </a>
     </div>
     
     <div class="nav-footer">
-      <a href="login.html" class="nav-link logout">
-        <span class="nav-icon"></span>
+      <a href="../../src/api/auth/logout.php" class="nav-link logout">
         <span class="nav-text">Cerrar Sesión</span>
       </a>
     </div>
@@ -120,9 +114,10 @@
   <!-- Contenido principal -->
   <main class="main-content">
     <!-- Header de la página -->
-    <header class="page-header">
+    <header class="page-header management-banner">
       <div class="header-content">
         <div class="header-text">
+          <p class="management-banner-eyebrow">Panel de control <span aria-hidden="true">·</span> Menú y categorías</p>
           <h1 class="page-title">Gestión de Categorías</h1>
           <p class="page-subtitle">Administra las categorías de menú de tu restaurante</p>
         </div>

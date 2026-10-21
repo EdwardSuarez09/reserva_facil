@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gestión de Todas las Mesas - ReservaFácil</title>
   <link rel="stylesheet" href="../assets/css/estilos_principal.css">
-  <link rel="stylesheet" href="../assets/css/panel_superadmin.css">
-  <link rel="stylesheet" href="../assets/css/gestion_moderna.css">
+  <link rel="stylesheet" href="../assets/css/panel_superadmin.css?v=20261021-4">
+  <link rel="stylesheet" href="../assets/css/gestion_moderna.css?v=20261021-6">
 </head>
-<body>
+<body class="superadmin-page">
   <!-- Navegación lateral -->
   <nav class="sidebar-nav">
     <div class="nav-header">
@@ -53,7 +53,7 @@
     </div>
     
     <div class="nav-footer">
-      <a href="login.html" class="nav-link logout">
+      <a href="../../src/api/auth/logout.php" class="nav-link logout">
         <span class="nav-icon"></span>
         <span class="nav-text">Cerrar Sesión</span>
       </a>
@@ -63,9 +63,10 @@
   <!-- Contenido principal -->
   <main class="main-content">
     <!-- Header de la página -->
-    <header class="page-header">
+    <header class="page-header management-banner">
       <div class="header-content">
         <div class="header-text">
+          <p class="management-banner-eyebrow">Panel de control <span aria-hidden="true">·</span> Mesas del sistema</p>
           <h1 class="page-title">Gestión de Todas las Mesas</h1>
           <p class="page-subtitle">Administra todas las mesas de todos los restaurantes del sistema</p>
         </div>
@@ -177,27 +178,27 @@
   </main>
 
   <!-- Modal para detalles de la mesa -->
-  <div id="modal-detalle-mesa" class="modal">
+  <div id="modal-detalle-mesa" class="modal" hidden>
     <div class="modal-content">
       <div class="modal-header">
         <h3>Detalles de la Mesa</h3>
         <button class="modal-close" onclick="cerrarModal()">&times;</button>
       </div>
       <div class="modal-body" id="detalle-mesa-content">
-        <!-- Contenido dinámico -->
+        Selecciona una mesa para consultar sus detalles.
       </div>
     </div>
   </div>
 
   <!-- Modal para reservas de la mesa -->
-  <div id="modal-reservas-mesa" class="modal">
+  <div id="modal-reservas-mesa" class="modal" hidden>
     <div class="modal-content">
       <div class="modal-header">
         <h3>Reservas de la Mesa</h3>
         <button class="modal-close" onclick="cerrarModalReservas()">&times;</button>
       </div>
       <div class="modal-body" id="reservas-mesa-content">
-        <!-- Contenido dinámico -->
+        Selecciona una mesa para consultar sus reservas.
       </div>
     </div>
   </div>
@@ -322,21 +323,94 @@
     }
 
     function verDetalleMesa(id) {
-      document.getElementById('modal-detalle-mesa').style.display = 'block';
-      console.log('Mostrando detalles de la mesa:', id);
+      const modal = document.getElementById('modal-detalle-mesa');
+      const content = document.getElementById('detalle-mesa-content');
+      content.textContent = 'Cargando detalles...';
+      modal.hidden = false;
+      modal.classList.add('show');
+
+      fetch(`../../src/api/mesas/obtener.php?id=${encodeURIComponent(id)}`)
+        .then(response => {
+          if (!response.ok) throw new Error('No se pudieron cargar los detalles de la mesa.');
+          return response.json();
+        })
+        .then(table => {
+          if (table.error) throw new Error(table.error);
+          content.replaceChildren();
+          [
+            ['Mesa', table.numero_mesa],
+            ['Capacidad', `${table.capacidad} personas`],
+            ['Restaurante', table.restaurante || 'Sin restaurante asignado']
+          ].forEach(([label, value]) => {
+            const paragraph = document.createElement('p');
+            const strong = document.createElement('strong');
+            strong.textContent = `${label}: `;
+            paragraph.append(strong, document.createTextNode(value));
+            content.appendChild(paragraph);
+          });
+        })
+        .catch(error => {
+          content.textContent = error.message;
+        });
     }
 
     function verReservasMesa(id) {
-      document.getElementById('modal-reservas-mesa').style.display = 'block';
-      console.log('Mostrando reservas de la mesa:', id);
+      const modal = document.getElementById('modal-reservas-mesa');
+      const content = document.getElementById('reservas-mesa-content');
+      content.textContent = 'Cargando reservas...';
+      modal.hidden = false;
+      modal.classList.add('show');
+
+      fetch(`../../src/api/mesas/listar_reservas_superadmin.php?id=${encodeURIComponent(id)}`)
+        .then(response => {
+          if (!response.ok) throw new Error('No se pudieron cargar las reservas de la mesa.');
+          return response.json();
+        })
+        .then(data => {
+          if (data.error) throw new Error(data.error);
+          if (data.length === 0) {
+            content.textContent = 'Esta mesa no tiene reservas.';
+            return;
+          }
+
+          const table = document.createElement('table');
+          table.className = 'tabla-moderna';
+          const header = table.createTHead().insertRow();
+          ['Cliente', 'Fecha', 'Hora', 'Personas', 'Estado'].forEach(label => {
+            const cell = document.createElement('th');
+            cell.textContent = label;
+            header.appendChild(cell);
+          });
+          const body = table.createTBody();
+          data.forEach(reservation => {
+            const row = body.insertRow();
+            [
+              reservation.nombre_cliente || 'Cliente',
+              reservation.fecha_reserva,
+              reservation.hora_reserva,
+              reservation.numero_personas,
+              reservation.estado
+            ].forEach(value => {
+              row.insertCell().textContent = value ?? '';
+            });
+          });
+          content.replaceChildren(table);
+        })
+        .catch(error => {
+          content.textContent = error.message;
+        });
     }
 
     function cerrarModal() {
-      document.getElementById('modal-detalle-mesa').style.display = 'none';
+      const modal = document.getElementById('modal-detalle-mesa');
+      modal.classList.remove('show');
+      modal.hidden = true;
     }
 
     function cerrarModalReservas() {
-      document.getElementById('modal-reservas-mesa').style.display = 'none';
+      const modal = document.getElementById('modal-reservas-mesa');
+      modal.classList.remove('show');
+      modal.hidden = true;
     }
 
     // Cerrar modales al hacer clic fuera
@@ -345,12 +419,29 @@
       const modalReservas = document.getElementById('modal-reservas-mesa');
       
       if (event.target === modalDetalle) {
-        modalDetalle.style.display = 'none';
+        cerrarModal();
       }
       if (event.target === modalReservas) {
-        modalReservas.style.display = 'none';
+        cerrarModalReservas();
       }
     });
+
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        cerrarModal();
+        cerrarModalReservas();
+      }
+    });
+
+    function ocultarModalesAlCargar() {
+      cerrarModal();
+      cerrarModalReservas();
+      document.querySelectorAll('#modal-detalle-mesa, #modal-reservas-mesa')
+        .forEach(modal => modal.style.removeProperty('display'));
+    }
+
+    document.addEventListener('DOMContentLoaded', ocultarModalesAlCargar, { once: true });
+    window.addEventListener('pageshow', ocultarModalesAlCargar);
   </script>
 </body>
 </html> 

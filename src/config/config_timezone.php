@@ -29,4 +29,3 @@ function hora_colombia($formato = 'H:i:s') {
 function datetime_colombia($formato = 'Y-m-d H:i:s') {
     return date($formato);
 }
-?> 

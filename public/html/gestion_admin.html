@@ -4,10 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Administradores - ReservaFácil</title>
-    <link rel="stylesheet" href="../assets/css/gestion_moderna.css">
+    <link rel="stylesheet" href="../assets/css/panel_superadmin.css?v=20261021-4">
+    <link rel="stylesheet" href="../assets/css/gestion_moderna.css?v=20261021-6">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="superadmin-page">
     <!-- Navegación lateral -->
     <nav class="sidebar-nav">
         <div class="nav-header">
@@ -29,21 +30,25 @@
                 <span class="nav-icon"></span>
                 <span class="nav-text">Restaurantes</span>
             </a>
+            <a href="ver_todas_reservas.html" class="nav-link">
+                <span class="nav-icon"></span>
+                <span class="nav-text">Reservas</span>
+            </a>
             <a href="gestion_todas_categorias.html" class="nav-link">
                 <span class="nav-icon"></span>
-                <span class="nav-text">Todas las Categorías</span>
+                <span class="nav-text">Categorías</span>
             </a>
             <a href="gestion_todos_platos.html" class="nav-link">
                 <span class="nav-icon"></span>
-                <span class="nav-text">Todos los Platos</span>
+                <span class="nav-text">Platos</span>
             </a>
             <a href="gestion_todas_mesas.html" class="nav-link">
                 <span class="nav-icon"></span>
-                <span class="nav-text">Todas las Mesas</span>
+                <span class="nav-text">Mesas</span>
             </a>
-            <a href="ver_todas_reservas.html" class="nav-link">
+            <a href="../index_cliente.html" class="nav-link">
                 <span class="nav-icon"></span>
-                <span class="nav-text">Todas las Reservas</span>
+                <span class="nav-text">Catálogo Público</span>
             </a>
         </div>
         
@@ -58,9 +63,10 @@
     <!-- Contenido principal -->
     <main class="main-content">
         <!-- Header de la página -->
-        <header class="page-header">
+        <header class="page-header management-banner">
             <div class="header-content">
                 <div class="header-text">
+                    <p class="management-banner-eyebrow">Panel de control <span aria-hidden="true">·</span> Seguridad y accesos</p>
                     <h1 class="page-title">Gestión de Administradores</h1>
                     <p class="page-subtitle">Administra los usuarios con permisos administrativos del sistema</p>
                 </div>
@@ -96,7 +102,7 @@
                     <div class="stat-icon"></div>
                     <div class="stat-content">
                         <span class="stat-number" id="total-usuarios">-</span>
-                        <span class="stat-label">Usuarios Normales</span>
+                        <span class="stat-label">Clientes</span>
                     </div>
                 </div>
                 <div class="stat-card">
@@ -144,7 +150,6 @@
                                 <option value="">Seleccionar rol</option>
                                 <option value="superadmin">Super Administrador</option>
                                 <option value="admin">Administrador</option>
-                                <option value="usuario">Usuario</option>
                             </select>
                             <div class="input-helper">Nivel de permisos en el sistema</div>
                         </div>
@@ -175,9 +180,8 @@
                                 <label for="filtro-rol" class="filter-label">Rol</label>
                                 <select id="filtro-rol" class="filter-select">
                                     <option value="">Todos los roles</option>
-            <option value="superadmin">Super Admin</option>
-            <option value="admin">Admin</option>
-            <option value="usuario">Usuario</option>
+                                    <option value="superadmin">Super Admin</option>
+                                    <option value="admin">Admin</option>
           </select>
                             </div>
                             
@@ -206,7 +210,7 @@
     </main>
 
     <!-- Modal de edición -->
-  <div id="modalEditar" class="modal">
+  <div id="modalEditar" class="modal" hidden>
     <div class="modal-content">
             <div class="modal-header">
                 <h3>Editar Administrador</h3>
@@ -237,7 +241,6 @@
                         <select id="edit-rol" name="rol" class="select-modern" required>
                             <option value="superadmin">Super Administrador</option>
                             <option value="admin">Administrador</option>
-            <option value="usuario">Usuario</option>
           </select>
                     </div>
 
@@ -400,19 +403,25 @@
         // Editar administrador
         function editarAdmin(id) {
             fetch(`${GESTION_CONFIG.endpoints.obtener}?id=${id}`)
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) throw new Error('No se pudo cargar el administrador.');
+                    return response.json();
+                })
                 .then(data => {
+                    if (data.error) throw new Error(data.error);
                     document.getElementById('edit-id').value = data.id;
                     document.getElementById('edit-nombre').value = data.nombre;
                     document.getElementById('edit-correo').value = data.correo;
                     document.getElementById('edit-contraseña').value = '';
                     document.getElementById('edit-rol').value = data.rol;
-                    
-                    document.getElementById('modalEditar').style.display = 'block';
+
+                    const modal = document.getElementById('modalEditar');
+                    modal.hidden = false;
+                    modal.classList.add('show');
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Error al cargar datos del administrador');
+                    alert(error.message || 'Error al cargar datos del administrador');
                 });
         }
 
@@ -441,8 +450,28 @@
 
         // Cerrar modal
         function cerrarModal() {
-            document.getElementById('modalEditar').style.display = 'none';
+            const modal = document.getElementById('modalEditar');
+            modal.classList.remove('show');
+            modal.hidden = true;
         }
+
+        document.getElementById('modalEditar').addEventListener('click', function(event) {
+            if (event.target === this) cerrarModal();
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') cerrarModal();
+        });
+
+        function ocultarModalAlCargar() {
+            const modal = document.getElementById('modalEditar');
+            modal.classList.remove('show');
+            modal.hidden = true;
+            modal.style.removeProperty('display');
+        }
+
+        document.addEventListener('DOMContentLoaded', ocultarModalAlCargar, { once: true });
+        window.addEventListener('pageshow', ocultarModalAlCargar);
 
         // Actualizar datos
         function actualizarDatos() {

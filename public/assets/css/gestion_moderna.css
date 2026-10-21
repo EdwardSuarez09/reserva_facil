@@ -980,10 +980,13 @@ body {
   height: 100%;
   background: rgba(0,0,0,0.5);
   backdrop-filter: blur(5px);
-  display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
+}
+
+.modal[hidden] {
+  display: none !important;
 }
 
 .modal.show {
@@ -1227,6 +1230,164 @@ body {
   }
 }
 
+.management-banner {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  margin: 24px 30px 30px;
+  padding: clamp(30px, 4vw, 48px) clamp(24px, 3.5vw, 42px);
+  color: #fff;
+  background:
+    radial-gradient(ellipse at 82% 15%, rgba(255, 255, 255, 0.2), transparent 32%),
+    linear-gradient(120deg, #4258c8 0%, #6653c7 52%, #823ea8 100%);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 22px;
+  box-shadow: 0 18px 42px rgba(74, 64, 163, 0.24);
+}
+
+.management-banner::before,
+.management-banner::after {
+  position: absolute;
+  z-index: -1;
+  content: "";
+  pointer-events: none;
+}
+
+.management-banner::before {
+  top: -145px;
+  right: 8%;
+  width: 310px;
+  height: 310px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 50%;
+  box-shadow: 0 0 0 30px rgba(255, 255, 255, 0.035), 0 0 0 65px rgba(255, 255, 255, 0.025);
+}
+
+.management-banner::after {
+  right: 20%;
+  bottom: -110px;
+  width: 260px;
+  height: 180px;
+  background: rgba(35, 26, 110, 0.15);
+  border-radius: 50%;
+  filter: blur(30px);
+}
+
+.management-banner .header-content {
+  position: relative;
+  z-index: 1;
+  gap: 28px;
+}
+
+.management-banner-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 14px;
+  padding: 7px 12px;
+  color: rgba(255, 255, 255, 0.94);
+  background: rgba(255, 255, 255, 0.13);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.management-banner-eyebrow span {
+  color: #c8d1ff;
+}
+
+.management-banner .page-title {
+  max-width: 760px;
+  margin-bottom: 10px;
+  color: #fff;
+  font-size: clamp(2rem, 3.2vw, 2.8rem);
+  font-weight: 750;
+  line-height: 1.12;
+  letter-spacing: -0.035em;
+  text-shadow: 0 2px 16px rgba(24, 25, 75, 0.2);
+}
+
+.management-banner .page-subtitle {
+  max-width: 620px;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+.management-banner .header-actions {
+  flex-shrink: 0;
+  gap: 12px;
+}
+
+.management-banner .btn {
+  min-height: 48px;
+  padding: 12px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  border-radius: 13px;
+  box-shadow: 0 8px 20px rgba(31, 31, 89, 0.15);
+  font-weight: 650;
+  transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+}
+
+.management-banner .btn-export {
+  background: linear-gradient(135deg, #13b981 0%, #07966e 100%);
+}
+
+.management-banner .btn-refresh {
+  background: rgba(255, 255, 255, 0.13);
+  backdrop-filter: blur(8px);
+}
+
+.management-banner .btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.07);
+  box-shadow: 0 12px 24px rgba(31, 31, 89, 0.23);
+}
+
+.management-banner .btn:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+
+@media (max-width: 768px) {
+  .management-banner {
+    width: calc(100vw - 64px);
+    margin: 18px 16px 24px;
+    padding: 28px 24px;
+  }
+
+  .management-banner .header-content {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .management-banner .header-actions {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .management-banner {
+    margin: 14px 12px 20px;
+    padding: 25px 20px;
+    border-radius: 18px;
+  }
+
+  .management-banner .header-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .management-banner .btn {
+    padding: 11px 10px;
+    font-size: 0.9rem;
+  }
+}
+
 /* ================================
    ESTADOS DE RESERVA
    ================================ */
@@ -1331,6 +1492,7 @@ body {
 }
 
 .btn-editar,
+.btn-ver,
 .btn-eliminar {
   background: none;
   border: none;
@@ -1343,6 +1505,10 @@ body {
 }
 
 .btn-editar:hover {
+  background: rgba(52, 152, 219, 0.1);
+}
+
+.btn-ver:hover {
   background: rgba(52, 152, 219, 0.1);
 }
 

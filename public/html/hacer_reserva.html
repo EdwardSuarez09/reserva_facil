@@ -396,7 +396,8 @@
       document.getElementById('no-mesas').style.display = 'none';
 
       // Hacer petición al archivo PHP real
-      const url = `../../src/api/mesas/disponibilidad_clean.php?restaurante=${encodeURIComponent(restauranteNombre)}&fecha=${fecha}&hora=${hora}&personas=${personas}`;
+      const duracion = document.getElementById('duracion-reserva').value;
+      const url = `../../src/api/mesas/disponibilidad_clean.php?restaurante=${encodeURIComponent(restauranteNombre)}&fecha=${fecha}&hora=${hora}&personas=${personas}&duracion=${duracion}`;
       
       console.log('URL de petición real:', url); // Debug adicional
       

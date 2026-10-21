@@ -3,20 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ReservaFácil - Descubre los Mejores Restaurantes</title>
-    <link rel="stylesheet" href="assets/css/panel_cliente.css">
+    <meta name="description" content="Explora restaurantes, revisa sus detalles y organiza tu próxima reserva con ReservaFácil.">
+    <meta name="theme-color" content="#173d36">
+    <title>Restaurantes | ReservaFácil</title>
+    <link rel="stylesheet" href="assets/css/panel_cliente.css?v=20261021-restaurant-2">
+    <link rel="stylesheet" href="assets/css/experiencia_publica.css?v=20261021-main-1">
 </head>
-<body>
+<body class="pagina-catalogo">
     <!-- Header moderno para clientes -->
     <header class="client-header">
         <div class="header-container">
-            <div class="logo-section">
-                <img src="assets/img/Imagenes/DALL·E 2024-11-06 21.54.50 - An elegant logo for a restaurant, featuring a stylized fork and knife crossed over a plate with subtle decorative elements. The background should be s.webp" alt="Logo ReservaFácil" class="header-logo">
+            <a class="logo-section" href="index.html" aria-label="ReservaFácil, volver al inicio">
+                <img src="assets/img/Imagenes/DALL·E 2024-11-06 21.54.50 - An elegant logo for a restaurant, featuring a stylized fork and knife crossed over a plate with subtle decorative elements. The background should be s.webp" alt="" class="header-logo">
                 <div class="brand-info">
                     <h1 class="brand-name">ReservaFácil</h1>
                     <p class="brand-tagline">Tu mesa perfecta te espera</p>
                 </div>
-            </div>
+            </a>
             
             <nav class="client-nav">
                 <a href="#inicio" class="nav-item active">Inicio</a>
@@ -28,22 +31,18 @@
             <div class="auth-section">
                 <div class="user-menu" id="user-menu" style="display: none;">
                     <div class="user-info">
-                        <span class="user-icon">Usuario</span>
                         <span class="user-name" id="user-name">Usuario</span>
                         <div class="dropdown-arrow">▼</div>
                     </div>
                     <div class="user-dropdown" id="user-dropdown">
                         <a href="#" onclick="verMisReservas()" class="dropdown-item">
-                            <span class="dropdown-icon">Reservas</span>
                             Mis Reservas
                         </a>
                         <a href="#" onclick="verPerfil()" class="dropdown-item">
-                            <span class="dropdown-icon">Perfil</span>
                             Mi Perfil
                         </a>
                         <div class="dropdown-divider"></div>
                         <a href="#" onclick="cerrarSesion()" class="dropdown-item logout">
-                            <span class="dropdown-icon">Salir</span>
                             Cerrar Sesión
                         </a>
                     </div>
@@ -51,11 +50,9 @@
                 
                 <div class="auth-buttons" id="auth-buttons">
                     <button class="btn-login" onclick="mostrarLogin()">
-                        <span class="auth-icon">Ingresar</span>
                         Iniciar Sesión
                     </button>
                     <button class="btn-register" onclick="mostrarRegistro()">
-                        <span class="auth-icon">Registro</span>
                         Registrarse
                     </button>
                 </div>
@@ -67,8 +64,9 @@
     <section class="hero-section" id="inicio">
         <div class="hero-overlay"></div>
         <div class="hero-content">
-            <h2 class="hero-title">Descubre Sabores Únicos</h2>
-            <p class="hero-subtitle">Los mejores restaurantes de la ciudad te esperan. Explora, elige y reserva tu experiencia gastronómica perfecta.</p>
+            <p class="catalog-eyebrow">Tu próxima mesa está más cerca</p>
+            <h2 class="hero-title">Encuentra el lugar<br>para <span>disfrutar.</span></h2>
+            <p class="hero-subtitle">Explora restaurantes, conoce sus detalles y organiza tu próxima salida con facilidad.</p>
             <div class="hero-stats">
                 <div class="stat-item">
                     <span class="stat-number" id="total-restaurants">-</span>
@@ -80,12 +78,11 @@
                 </div>
                 <div class="stat-item">
                     <span class="stat-number" id="happy-customers">-</span>
-                    <span class="stat-text">Clientes Satisfechos</span>
+                    <span class="stat-text">Clientes registrados</span>
                 </div>
             </div>
             <a href="#restaurantes" class="cta-button">
-                <span class="cta-icon">Explorar</span>
-                Explorar Restaurantes
+                Explorar restaurantes <span aria-hidden="true">↓</span>
             </a>
         </div>
     </section>
@@ -93,7 +90,9 @@
     <!-- Filtros de búsqueda -->
     <section class="search-section" id="restaurantes">
         <div class="container">
-            <h2 class="section-title">Encuentra tu Restaurante Ideal</h2>
+            <p class="section-eyebrow">El siguiente paso es elegir</p>
+            <h2 class="section-title">Explora restaurantes</h2>
+            <p class="search-intro">Busca por nombre o selecciona un tipo de cocina para encontrar opciones.</p>
             <div class="search-filters">
                 <div class="filter-group">
                     <label for="search-name">Buscar por nombre:</label>
@@ -116,11 +115,9 @@
                     </select>
                 </div>
                 <button class="filter-button" onclick="aplicarFiltros()">
-                    <span class="filter-icon">Buscar</span>
                     Buscar
                 </button>
                 <button class="clear-button" onclick="limpiarFiltros()">
-                    <span class="clear-icon">Limpiar</span>
                     Limpiar
                 </button>
             </div>
@@ -134,7 +131,7 @@
                 <h2 class="catalog-title">Restaurantes Disponibles</h2>
                 <div class="view-controls">
                     <button class="view-btn active" data-view="grid" title="Vista en cuadrícula">
-                        <span class="view-icon">Grid</span>
+                        <span class="view-icon">Cuadrícula</span>
                     </button>
                     <button class="view-btn" data-view="list" title="Vista en lista">
                         <span class="view-icon">Lista</span>
@@ -168,24 +165,24 @@
                     <h2 class="about-title">¿Por qué elegir ReservaFácil?</h2>
                     <div class="features-grid">
                         <div class="feature-item">
-                            <div class="feature-icon">Velocidad</div>
-                            <h3>Reservas Instantáneas</h3>
-                            <p>Confirma tu mesa en segundos sin llamadas ni esperas. Disponibilidad en tiempo real.</p>
+                            <div class="feature-icon" aria-hidden="true">01</div>
+                            <h3>Reserva en línea</h3>
+                            <p>Envía los datos de tu visita sin tener que llamar al restaurante.</p>
                         </div>
                         <div class="feature-item">
-                            <div class="feature-icon">Variedad</div>
-                            <h3>Amplia Selección</h3>
-                            <p>Descubre restaurantes únicos para cada ocasión, desde cenas íntimas hasta celebraciones especiales.</p>
+                            <div class="feature-icon" aria-hidden="true">02</div>
+                            <h3>Opciones para elegir</h3>
+                            <p>Compara restaurantes y encuentra una opción que encaje con tu plan.</p>
                         </div>
                         <div class="feature-item">
-                            <div class="feature-icon">Calidad</div>
-                            <h3>Experiencias Únicas</h3>
-                            <p>Cada restaurante es cuidadosamente seleccionado para ofrecerte sabores inolvidables.</p>
+                            <div class="feature-icon" aria-hidden="true">03</div>
+                            <h3>Información clara</h3>
+                            <p>Consulta los datos del restaurante antes de decidir dónde compartir tu próxima comida.</p>
                         </div>
                         <div class="feature-item">
-                            <div class="feature-icon">Seguridad</div>
-                            <h3>Reservas Seguras</h3>
-                            <p>Tu información personal y reservas están protegidas con la más alta seguridad.</p>
+                            <div class="feature-icon" aria-hidden="true">04</div>
+                            <h3>Tu plan organizado</h3>
+                            <p>Elige fecha, hora y número de personas para solicitar tu mesa.</p>
                         </div>
                     </div>
                 </div>
@@ -199,13 +196,7 @@
             <div class="footer-grid">
                 <div class="footer-section">
                     <h3>ReservaFácil</h3>
-                    <p>Tu compañero gastronómico de confianza. Descubre, reserva y disfruta de las mejores experiencias culinarias.</p>
-                    <div class="social-links">
-                        <a href="#" class="social-link">Facebook</a>
-                        <a href="#" class="social-link">Instagram</a>
-                        <a href="#" class="social-link">Twitter</a>
-                        <a href="#" class="social-link">TikTok</a>
-                    </div>
+                    <p>Descubre restaurantes, revisa sus detalles y organiza tu próxima salida desde un solo lugar.</p>
                 </div>
                 <div class="footer-section">
                     <h4>Enlaces Rápidos</h4>
@@ -222,21 +213,17 @@
                         <li><a href="#" onclick="mostrarRegistro()">Crear Cuenta</a></li>
                         <li><a href="#" onclick="mostrarLogin()">Iniciar Sesión</a></li>
                         <li><a href="#" onclick="verMisReservas()">Mis Reservas</a></li>
-                        <li><a href="#">Ayuda</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
                     <h4>Contacto</h4>
                     <div class="contact-info">
-                        <p>Email: info@reservafacil.com</p>
-                        <p>Teléfono: +1 (555) 123-4567</p>
-                        <p>Dirección: 123 Calle Gastronómica, Ciudad</p>
-                        <p>Horario: Lun-Dom: 24/7</p>
+                        <p>Consulta los datos de contacto directamente en el perfil de cada restaurante.</p>
                     </div>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 ReservaFácil. Todos los derechos reservados. | <a href="#">Política de Privacidad</a> | <a href="#">Términos de Servicio</a></p>
+                <p>&copy; 2026 ReservaFácil. Encuentra un lugar y haz espacio para disfrutar.</p>
             </div>
         </div>
     </footer>
@@ -262,7 +249,6 @@
                     </div>
                     <div class="form-actions">
                         <button type="submit" class="btn-primary">
-                            <span class="btn-icon">Acceder</span>
                             Iniciar Sesión
                         </button>
                         <button type="button" class="btn-secondary" onclick="mostrarRegistro()">
@@ -317,7 +303,6 @@
                     </div>
                     <div class="form-actions">
                         <button type="submit" class="btn-primary">
-                            <span class="btn-icon">Crear</span>
                             Crear Cuenta
                         </button>
                         <button type="button" class="btn-secondary" onclick="mostrarLogin()">

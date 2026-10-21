@@ -1,5 +1,5 @@
 <?php
-include __DIR__ . '/../src/config/conexion.php';
+include __DIR__ . '/../../../src/config/conexion.php';
 
 echo "<h2>ANÁLISIS DE RELACIONES</h2>";
 

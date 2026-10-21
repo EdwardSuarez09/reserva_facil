@@ -19,7 +19,7 @@ if (!$id) {
 // Verificar permisos según el rol
 if ($rol_usuario === 'admin') {
     // Admin solo puede obtener mesas de su restaurante
-    $sql = "SELECT m.id, m.numero_mesa, m.capacidad 
+    $sql = "SELECT m.id, m.numero_mesa, m.capacidad, r.nombre AS restaurante
             FROM mesas m 
             INNER JOIN restaurantes r ON m.id_restaurante = r.id 
             WHERE m.id = ? AND r.id_admin = ?";
@@ -27,7 +27,10 @@ if ($rol_usuario === 'admin') {
     $stmt->bind_param("ii", $id, $id_usuario);
 } else {
     // Super admin puede obtener cualquier mesa
-    $sql = "SELECT id, numero_mesa, capacidad FROM mesas WHERE id = ?";
+    $sql = "SELECT m.id, m.numero_mesa, m.capacidad, r.nombre AS restaurante
+            FROM mesas m
+            LEFT JOIN restaurantes r ON r.id = m.id_restaurante
+            WHERE m.id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $id);
 }

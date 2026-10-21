@@ -1,5 +1,5 @@
 <?php
-include __DIR__ . '/../src/config/conexion.php';
+include __DIR__ . '/../../../src/config/conexion.php';
 
 echo "=== DEBUG SIMPLE - RESERVA FACIL ===\n";
 

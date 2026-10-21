@@ -46,7 +46,7 @@ try {
                 FROM reservas r 
                 LEFT JOIN restaurantes rest ON r.id_restaurante = rest.id 
                 LEFT JOIN mesas m ON r.mesa_id = m.id
-                WHERE r.id = ? AND (rest.id_admin = ? OR rest.id_admin IS NULL)";
+                WHERE r.id = ? AND rest.id_admin = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("ii", $id, $id_usuario);
     }

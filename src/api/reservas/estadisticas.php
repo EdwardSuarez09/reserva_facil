@@ -49,7 +49,7 @@ try {
         $sql_total = "SELECT COUNT(*) as total 
                       FROM reservas r 
                       LEFT JOIN restaurantes rest ON r.id_restaurante = rest.id 
-                      WHERE rest.id_admin = ? OR r.id_restaurante IS NULL";
+                      WHERE rest.id_admin = ?";
         $stmt_total = $conn->prepare($sql_total);
         $stmt_total->bind_param("i", $id_usuario);
         $stmt_total->execute();
@@ -60,7 +60,7 @@ try {
         $sql_pendientes = "SELECT COUNT(*) as total 
                            FROM reservas r 
                            LEFT JOIN restaurantes rest ON r.id_restaurante = rest.id 
-                           WHERE (rest.id_admin = ? OR r.id_restaurante IS NULL) 
+                           WHERE rest.id_admin = ?
                            AND r.estado = 'Pendiente'";
         $stmt_pendientes = $conn->prepare($sql_pendientes);
         $stmt_pendientes->bind_param("i", $id_usuario);
@@ -72,7 +72,7 @@ try {
         $sql_confirmadas = "SELECT COUNT(*) as total 
                             FROM reservas r 
                             LEFT JOIN restaurantes rest ON r.id_restaurante = rest.id 
-                            WHERE (rest.id_admin = ? OR r.id_restaurante IS NULL) 
+                            WHERE rest.id_admin = ?
                             AND r.estado = 'Confirmada'";
         $stmt_confirmadas = $conn->prepare($sql_confirmadas);
         $stmt_confirmadas->bind_param("i", $id_usuario);
@@ -84,7 +84,7 @@ try {
         $sql_hoy = "SELECT COUNT(*) as total 
                     FROM reservas r 
                     LEFT JOIN restaurantes rest ON r.id_restaurante = rest.id 
-                    WHERE (rest.id_admin = ? OR r.id_restaurante IS NULL) 
+                    WHERE rest.id_admin = ?
                     AND DATE(r.fecha_reserva) = CURDATE()";
         $stmt_hoy = $conn->prepare($sql_hoy);
         $stmt_hoy->bind_param("i", $id_usuario);

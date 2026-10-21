@@ -91,25 +91,23 @@
       e.preventDefault();
       const datos = new FormData(this);
 
-      fetch("../../src/api/auth/login.php", {
+      fetch("../../src/api/auth/login_cliente.php", {
         method: "POST",
         body: datos
       })
-      .then(res => res.text())
+      .then(res => res.json())
       .then(data => {
-        if (data.startsWith("ok|")) {
-          const rol = data.split("|")[1];
+        if (data.success) {
+          const rol = data.rol;
           if (rol === "superadmin") {
             window.location.href = "../index_superadmin.html";
           } else if (rol === "admin") {
             window.location.href = "../index_admin.html";
-          } else if (rol === "usuario") {
-            window.location.href = "../index_cliente.html";
           } else {
-            window.location.href = "../index.html";
+            window.location.href = "../index_cliente.html";
           }
         } else {
-          document.getElementById("mensaje").innerText = data;
+          document.getElementById("mensaje").innerText = data.mensaje || "No fue posible iniciar sesión.";
         }
       })
       .catch(error => {

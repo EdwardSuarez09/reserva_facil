@@ -8,7 +8,7 @@ function verificarYActualizarContrasena(
     string $contrasenaGuardada
 ): bool {
     $columnasPermitidas = [
-        'admin' => hex2bin('636f6e7472617365c3b161'),
+        'admin' => 'contraseña',
         'usuarios_cliente' => 'password',
     ];
 
